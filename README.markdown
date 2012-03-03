@@ -63,3 +63,9 @@ Here's how to change the generated the object name:
 ```scala
 buildInfoObject  := "Info"
 ```
+
+License
+-------
+
+MIT License
+
