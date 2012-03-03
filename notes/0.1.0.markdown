@@ -1,0 +1,28 @@
+This is the initial release sbt-buildinfo.
+
+Usage
+-----
+
+Add the following in your `build.sbt`:
+
+
+    seq(buildInfoSettings: _*)
+    
+    sourceGenerators in Compile <+= buildInfo
+    
+    buildInfoKeys := Seq[Scoped](name, version, scalaVersion, sbtVersion)
+
+When you reload the settings and compile, this generates the following:
+
+    package buildinfo
+    
+    object BuildInfo {
+      val name = "helloworld"
+      val version = "0.1-SNAPSHOT"
+      val scalaVersion = "2.9.1"
+      val sbtVersion = "0.11.2"
+    }
+
+Any setting can be added to `buildInfoKeys`. See [readme][1] for more info.
+
+  [1]: https://github.com/sbt/sbt-buildinfo
