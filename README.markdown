@@ -26,12 +26,14 @@ seq(buildInfoSettings: _*)
 sourceGenerators in Compile <+= buildInfo
 
 buildInfoKeys := Seq[Scoped](name, version, scalaVersion, sbtVersion)
+
+buildInfoPackage := "hello"
 ```
 
 When you reload the settings and compile, this generates the following:
 
 ```scala
-package buildinfo
+package hello
 
 object BuildInfo {
   val name = "helloworld"
@@ -56,10 +58,8 @@ This generates:
 
 Tasks can be added only if they do not depend on `sourceGenerators`. Otherwise, it will cause an infinite loop.
 
-Here's how to change the generated package and object name:
+Here's how to change the generated the object name:
 
 ```scala
-buildInfoPackage := "foo"
-
 buildInfoObject  := "Info"
 ```
