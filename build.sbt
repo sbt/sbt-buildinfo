@@ -4,7 +4,7 @@ name := "sbt-buildinfo"
 
 organization := "com.eed3si9n"
 
-version := "0.1.0-SNAPSHOT"
+version := "0.1.0"
 
 description := "sbt plugin to generate build info"
 
