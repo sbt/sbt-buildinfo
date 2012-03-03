@@ -1,7 +1,7 @@
 sbt-buildinfo
 =============
 
-* I know this because build.sbt knows this. *
+*I know this because build.sbt knows this.*
 
 sbt-buildinfo generates Scala source from your build definitions.
 
