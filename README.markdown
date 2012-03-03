@@ -64,8 +64,8 @@ Here's how to change the generated the object name:
 buildInfoObject  := "Info"
 ```
 
+
 License
 -------
 
 MIT License
-
