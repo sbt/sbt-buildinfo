@@ -64,6 +64,7 @@ Here's how to change the generated the object name:
 buildInfoObject  := "Info"
 ```
 
+This change to `object Info`. Changing the object name is optional, but to avoid name clash with other jars, package name should be changed.
 
 License
 -------
