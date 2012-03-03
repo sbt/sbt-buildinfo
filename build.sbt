@@ -4,11 +4,17 @@ name := "sbt-buildinfo"
 
 organization := "com.eed3si9n"
 
-version := "0.1.0"
+version := "0.1.1-SNAPSHOT"
 
 description := "sbt plugin to generate build info"
 
 licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
+
+seq(ScriptedPlugin.scriptedSettings: _*)
+
+seq(lsSettings :_*)
+
+LsKeys.tags in LsKeys.lsync := Seq("sbt")
 
 publishArtifact in (Compile, packageBin) := true
 
@@ -17,10 +23,6 @@ publishArtifact in (Test, packageBin) := false
 publishArtifact in (Compile, packageDoc) := false
 
 publishArtifact in (Compile, packageSrc) := false
-
-seq(lsSettings :_*)
-
-LsKeys.tags in LsKeys.lsync := Seq("sbt")
 
 publishMavenStyle := false
 
