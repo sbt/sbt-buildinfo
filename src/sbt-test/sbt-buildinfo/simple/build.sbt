@@ -20,7 +20,7 @@ TaskKey[Unit]("check") <<= (sourceManaged in Compile) map { (dir) =>
          """  val name = "helloworld"""" ::
          """  val version = "0.1"""" ::
          """  val scalaVersion = "2.9.1"""" ::
-         """  val sbtVersion = "0.11.2"""" :: 
+         """  val sbtVersion = "0.12.0-SNAPSHOT"""" :: 
          """}""" :: Nil =>
     case _ => sys.error("unexpeted output: " + lines.toString)
   }

@@ -12,9 +12,9 @@ licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/
 
 seq(ScriptedPlugin.scriptedSettings: _*)
 
-seq(lsSettings :_*)
+// seq(lsSettings :_*)
 
-LsKeys.tags in LsKeys.lsync := Seq("sbt")
+// LsKeys.tags in LsKeys.lsync := Seq("sbt")
 
 publishArtifact in (Compile, packageBin) := true
 
