@@ -1,0 +1,4 @@
+## Bug fixes
+- Fixes code gen for multi project. [#1][1]
+
+  [1]: https://github.com/sbt/sbt-buildinfo/issues/1

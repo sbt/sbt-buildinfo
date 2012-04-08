@@ -1,0 +1,22 @@
+
+{
+ "organization":"com.eed3si9n",
+ "name":"sbt-buildinfo",
+ "version":"0.1.1",
+ "description":"sbt plugin to generate build info",
+ "site":"",
+ "tags":["sbt","codegen"],
+ "docs":"",
+ "licenses": [{
+   "name": "MIT License",
+   "url": "https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"
+  }],
+ "resolvers": ["http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-releases"],
+ "dependencies": [{
+   "organization":"org.scala-tools.sbt",
+   "name": "scripted-sbt_2.9.1",
+   "version": "0.11.2"
+  }],
+ "scalas": ["2.9.1"],
+ "sbt": true
+}
