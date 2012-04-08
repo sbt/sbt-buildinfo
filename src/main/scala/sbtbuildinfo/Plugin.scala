@@ -12,7 +12,7 @@ object Plugin extends sbt.Plugin {
   lazy val buildInfoKeys    = SettingKey[Seq[Scoped]]("buildinfo-keys")
 
   case class BuildInfo(dir: File, obj: String, pkg: String, keys: Seq[Scoped],
-    state0: State) {
+    proj: ProjectRef, state0: State) {
     private var _state: State = state0 
     private def extracted = Project.extract(_state)
 
@@ -30,14 +30,18 @@ object Plugin extends sbt.Plugin {
 
     private def line(key: Scoped): Option[String] =
       value(key) map { x => "  val %s = %s" format (ident(key), quote(x)) }
-    private def value(key: Scoped): Option[Any] =
-      key match {
-        case key: SettingKey[_] => extracted getOpt key
+    private def value(scoped: Scoped): Option[Any] = {
+      val scope = if (scoped.scope.project == This) scoped.scope in (proj)
+                  else scoped.scope
+      scoped match {
+        case key: SettingKey[_] => extracted getOpt (key in scope)
         case key: TaskKey[_]    =>
-          val (s, x) = extracted runTask (key, _state)
+          val (s, x) = extracted runTask (key in scope, _state)
           Some(x)
         case _ => None
-      }
+      }      
+    }
+
     private def ident(key: Scoped): String =
       (key.scope.config.toOption match {
         case None => ""
@@ -68,9 +72,9 @@ object Plugin extends sbt.Plugin {
 
   lazy val buildInfoSettings: Seq[Project.Setting[_]] = Seq(
     buildInfo <<= (sourceManaged in Compile,
-        buildInfoObject, buildInfoPackage, buildInfoKeys, state) map {
-      (dir, obj, pkg, keys, state) =>
-      Seq(BuildInfo(dir, obj, pkg, keys, state).file)
+        buildInfoObject, buildInfoPackage, buildInfoKeys, thisProjectRef, state) map {
+      (dir, obj, pkg, keys, ref, state) =>
+      Seq(BuildInfo(dir, obj, pkg, keys, ref, state).file)
     },
     buildInfoObject  := "BuildInfo",
     buildInfoPackage := "buildinfo",
