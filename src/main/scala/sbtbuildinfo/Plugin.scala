@@ -10,6 +10,7 @@ object Plugin extends sbt.Plugin {
   lazy val buildInfoObject  = SettingKey[String]("buildinfo-object")
   lazy val buildInfoPackage = SettingKey[String]("buildinfo-package") 
   lazy val buildInfoKeys    = SettingKey[Seq[Scoped]]("buildinfo-keys")
+  lazy val buildInfoBuildNumber = TaskKey[Int]("buildinfo-buildnumber")
 
   case class BuildInfo(dir: File, obj: String, pkg: String, keys: Seq[Scoped],
     proj: ProjectRef, state0: State) {
@@ -70,6 +71,24 @@ object Plugin extends sbt.Plugin {
     }
   }
 
+  private[this] def buildNumberTask(dir: File): Int = {
+    val file: File = dir / "buildinfo.properties"
+    val prop = new java.util.Properties
+
+    def readProp: Int = {  
+      prop.load(new java.io.FileInputStream(file))
+      prop.getProperty("buildnumber", "0").toInt
+    }
+    def writeProp(value: Int) {
+      prop.setProperty("buildnumber", value.toString)
+      prop.store(new java.io.FileOutputStream(file), null)
+    }
+    val current = if (file.exists) readProp
+                  else 0
+    writeProp(current + 1)
+    current
+  }
+
   lazy val buildInfoSettings: Seq[Project.Setting[_]] = Seq(
     buildInfo <<= (sourceManaged in Compile,
         buildInfoObject, buildInfoPackage, buildInfoKeys, thisProjectRef, state) map {
@@ -78,6 +97,7 @@ object Plugin extends sbt.Plugin {
     },
     buildInfoObject  := "BuildInfo",
     buildInfoPackage := "buildinfo",
-    buildInfoKeys    := Seq[Scoped](name, version, scalaVersion, sbtVersion)
+    buildInfoKeys    := Seq[Scoped](name, version, scalaVersion, sbtVersion),
+    buildInfoBuildNumber <<= (baseDirectory) map { (dir) => buildNumberTask(dir) }
   )
 }
