@@ -4,20 +4,13 @@ name := "sbt-buildinfo"
 
 organization := "com.eed3si9n"
 
-version := "0.1.1-SNAPSHOT"
+version := "0.1.2"
 
 description := "sbt plugin to generate build info"
 
 licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
 
 ScriptedPlugin.scriptedSettings
-
-lsSettings
-
-LsKeys.tags in LsKeys.lsync := Seq("sbt", "codegen")
-
-(externalResolvers in LsKeys.lsync) := Seq(
-  "sbt-plugin-releases" at "http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-releases")
 
 publishArtifact in (Compile, packageBin) := true
 
@@ -37,3 +30,10 @@ publishTo <<= (version) { version: String =>
 }
 
 credentials += Credentials(Path.userHome / ".ivy2" / ".sbtcredentials")
+
+// lsSettings
+
+// LsKeys.tags in LsKeys.lsync := Seq("sbt", "codegen")
+
+// (externalResolvers in LsKeys.lsync) := Seq(
+//   "sbt-plugin-releases" at "http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-releases")

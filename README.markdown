@@ -9,10 +9,7 @@ Latest
 ------
 
 ```scala
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.1.1")
-
-resolvers += Resolver.url("sbt-plugin-releases",
-  new URL("http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-releases/"))(Resolver.ivyStylePatterns)
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.1.2")
 ```
 
 Usage
@@ -21,7 +18,7 @@ Usage
 Add the following in your `build.sbt`:
 
 ```scala
-seq(buildInfoSettings: _*)
+buildInfoSettings
 
 sourceGenerators in Compile <+= buildInfo
 
@@ -65,6 +62,14 @@ buildInfoObject  := "Info"
 ```
 
 This change to `object Info`. Changing the object name is optional, but to avoid name clash with other jars, package name should be changed.
+
+### build number
+
+A build number can be generated as follows. Note that cross building against multiple Scala would each generate new number.
+
+```scala
+buildInfoKeys += buildInfoBuildNumber
+```
 
 License
 -------

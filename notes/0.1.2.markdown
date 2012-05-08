@@ -1,0 +1,5 @@
+## Minor enhancements
+- sbt 0.11.3
+- Adds `buildInfoBuildNumber`. [#2][2]
+
+  [2]: https://github.com/sbt/sbt-buildinfo/issues/2
