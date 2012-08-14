@@ -8,10 +8,19 @@ object Plugin extends sbt.Plugin {
   lazy val buildInfo        = TaskKey[Seq[File]]("buildinfo")
   lazy val buildInfoObject  = SettingKey[String]("buildinfo-object")
   lazy val buildInfoPackage = SettingKey[String]("buildinfo-package") 
-  lazy val buildInfoKeys    = SettingKey[Seq[Scoped]]("buildinfo-keys")
+  lazy val buildInfoKeys    = SettingKey[Seq[BuildInfo]]("buildinfo-keys")
   lazy val buildInfoBuildNumber = TaskKey[Int]("buildinfo-buildnumber")
 
-  private case class BuildInfoTask(dir: File, obj: String, pkg: String, keys: Seq[Scoped],
+  object BuildInfo {
+    implicit def scoped(s: Scoped): BuildInfo = ScopedImpl(s)
+
+    private final case class ScopedImpl(scoped: Scoped) extends BuildInfo {
+      def label = scoped.key.label
+    }
+  }
+  sealed trait BuildInfo { def scoped: Scoped; def label: String }
+
+  private case class BuildInfoTask(dir: File, obj: String, pkg: String, keys: Seq[BuildInfo],
     proj: ProjectRef, state: State) {
     private def extracted = Project.extract(state)
 
@@ -27,13 +36,14 @@ object Plugin extends sbt.Plugin {
       f
     }
 
-    private def line(key: Scoped): Option[String] =
-      value(key) map { x => "  val %s%s = %s" format (ident(key),
-        getType(key) map { ": " + _ } getOrElse {""}, quote(x)) }
-    private def value(scoped: Scoped): Option[Any] = {
-      val scope = if (scoped.scope.project == This) scoped.scope in (proj)
-                  else scoped.scope
-      scoped match {
+    private def line(info: BuildInfo): Option[String] =
+      value(info) map { x => "  val %s%s = %s" format (ident(info),
+        getType(info) map { ": " + _ } getOrElse {""}, quote(x)) }
+
+    private def value(info: BuildInfo): Option[Any] = {
+      val scope0 = info.scoped.scope
+      val scope = if (scope0 == This) scope0 in (proj) else scope0
+      info match {
         case key: SettingKey[_] => extracted getOpt (key in scope)
         case key: TaskKey[_]    =>
           val (_, x) = extracted runTask (key in scope, state)
@@ -42,22 +52,25 @@ object Plugin extends sbt.Plugin {
       }      
     }
 
-    private def ident(scoped: Scoped): String =
-      (scoped.scope.config.toOption match {
+    private def ident(info: BuildInfo): String = {
+      val scope = info.scoped.scope
+      (scope.config.toOption match {
         case None => ""
         case Some(ConfigKey("compile")) => ""
         case Some(ConfigKey(x)) => x + "_"
-      }) + 
-      (scoped.scope.task.toOption match {
+      }) +
+      (scope.task.toOption match {
         case None => ""
         case Some(x) => x.label + "_"
-      }) + 
-      (scoped.key.label.split("-").toList match {
+      }) +
+      (info.label.split("-").toList match {
         case Nil => ""
         case x :: xs => x + (xs map {_.capitalize}).mkString("")
       })
-    private def getType(scoped: Scoped): Option[String] = {
-      val key = scoped.key
+    }
+
+    private def getType(info: BuildInfo): Option[String] = {
+      val key = info.scoped.key
       lazy val clazz = key.manifest.erasure
       lazy val firstType = key.manifest.typeArguments.headOption
       lazy val typeName =
@@ -73,6 +86,7 @@ object Plugin extends sbt.Plugin {
         case _ => None
       }
     }
+
     private def quote(v: Any): String = v match {
       case x: Int => x.toString
       case x: Long => x.toString + "L"
@@ -114,7 +128,7 @@ object Plugin extends sbt.Plugin {
     },
     buildInfoObject  := "BuildInfo",
     buildInfoPackage := "buildinfo",
-    buildInfoKeys    := Seq[Scoped](name, version, scalaVersion, sbtVersion),
+    buildInfoKeys    := Seq[BuildInfo](name, version, scalaVersion, sbtVersion),
     buildInfoBuildNumber <<= (baseDirectory) map { (dir) => buildNumberTask(dir) }
   )
 }
