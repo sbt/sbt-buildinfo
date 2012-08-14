@@ -6,7 +6,7 @@ seq(buildInfoSettings: _*)
 
 sourceGenerators in Compile <+= buildInfo
 
-buildInfoKeys := Seq(name, BuildInfo.setting(version).mapInfo { case (n, v) => "projectVersion" -> v.toDouble }, scalaVersion, sbtVersion, homepage, licenses, isSnapshot)
+buildInfoKeys := Seq(name, BuildInfo.map(version) { case (n, v) => "projectVersion" -> v.toDouble }, scalaVersion, sbtVersion, homepage, licenses, isSnapshot)
 
 buildInfoPackage := "hello"
 

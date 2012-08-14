@@ -15,6 +15,10 @@ object Plugin extends sbt.Plugin {
     implicit def setting[A](key: SettingKey[A]): BuildInfo[A] = Setting(key)
     implicit def task[A](key: TaskKey[A]): BuildInfo[A] = Task(key)
 
+    def apply[A](key: SettingKey[A]): BuildInfo[A] = Setting(key)
+    def apply[A](key: TaskKey[A]): BuildInfo[A] = Task(key)
+    def map[A, B: Manifest](from: BuildInfo[A])(fun: ((String, A)) => (String, B)): BuildInfo[B] = from mapInfo fun
+
     private[Plugin] final case class Setting[A](scoped: SettingKey[A]) extends Source[A] {
       def manifest = scoped.key.manifest
     }
