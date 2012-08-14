@@ -70,7 +70,8 @@ object Plugin extends sbt.Plugin {
 
     private def scope(scoped: Scoped) = {
       val scope0 = scoped.scope
-      if (scope0 == This) scope0 in (proj) else scope0
+      if (scope0.project == This) scope0 in (proj)
+      else scope0
     }
 
     private def ident(scoped: Scoped) : String = {
