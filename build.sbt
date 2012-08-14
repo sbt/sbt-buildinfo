@@ -4,9 +4,7 @@ name := "sbt-buildinfo"
 
 organization := "com.eed3si9n"
 
-version := "0.1.2"
-
-CrossBuilding.crossSbtVersions := Seq("0.11.3", "0.11.2" ,"0.12.0-Beta2")
+version := "0.1.3-SNAPSHOT"
 
 description := "sbt plugin to generate build info"
 
@@ -31,12 +29,14 @@ publishTo <<= (version) { version: String =>
 
 credentials += Credentials(Path.userHome / ".ivy2" / ".sbtcredentials")
 
-lsSettings
+// lsSettings
 
-LsKeys.tags in LsKeys.lsync := Seq("sbt", "codegen")
+// LsKeys.tags in LsKeys.lsync := Seq("sbt", "codegen")
 
-(externalResolvers in LsKeys.lsync) := Seq(
-  "sbt-plugin-releases" at "http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-releases")
+// (externalResolvers in LsKeys.lsync) := Seq(
+//   "sbt-plugin-releases" at "http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-releases")
 
-// ScriptedPlugin.scriptedSettings
+// CrossBuilding.crossSbtVersions := Seq("0.11.3", "0.11.2" ,"0.12.0-Beta2")
+
+ScriptedPlugin.scriptedSettings
 // CrossBuilding.scriptedSettings

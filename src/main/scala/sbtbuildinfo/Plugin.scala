@@ -30,7 +30,8 @@ object Plugin extends sbt.Plugin {
     }
 
     private def line(key: Scoped): Option[String] =
-      value(key) map { x => "  val %s = %s" format (ident(key), quote(x)) }
+      value(key) map { x => "  val %s%s = %s" format (ident(key),
+        getType(key) map { ": " + _ } getOrElse {""}, quote(x)) }
     private def value(scoped: Scoped): Option[Any] = {
       val scope = if (scoped.scope.project == This) scoped.scope in (proj)
                   else scoped.scope
@@ -43,20 +44,38 @@ object Plugin extends sbt.Plugin {
       }      
     }
 
-    private def ident(key: Scoped): String =
-      (key.scope.config.toOption match {
+    private def ident(scoped: Scoped): String =
+      (scoped.scope.config.toOption match {
         case None => ""
         case Some(ConfigKey("compile")) => ""
         case Some(ConfigKey(x)) => x + "_"
       }) + 
-      (key.scope.task.toOption match {
+      (scoped.scope.task.toOption match {
         case None => ""
         case Some(x) => x.label + "_"
       }) + 
-      (key.key.label.split("-").toList match {
+      (scoped.key.label.split("-").toList match {
         case Nil => ""
         case x :: xs => x + (xs map {_.capitalize}).mkString("")
       })
+    private def getType(scoped: Scoped): Option[String] = {
+      val key = scoped.key
+      val scope = scoped.scope  
+      lazy val clazz = key.manifest.erasure
+      lazy val firstType = key.manifest.typeArguments.headOption
+      lazy val typeName =
+        if(clazz == classOf[Task[_]]) firstType.toString
+        else if(clazz == classOf[InputTask[_]]) firstType.toString
+        else key.manifest.toString
+      typeName match {
+        case "scala.Option[java.lang.String]" => Some("Option[String]")
+        case "scala.Option[Int]" => Some("Option[Int]")
+        case "scala.Option[Double]" => Some("Option[Double]")
+        case "scala.Option[Boolean]" => Some("Option[Boolean]")
+        case "scala.Option[java.net.URL]" => Some("Option[java.net.URL]")
+        case _ => None
+      }
+    }
     private def quote(v: Any): String = v match {
       case x: Int => x.toString
       case x: Long => x.toString + "L"
@@ -67,6 +86,7 @@ object Plugin extends sbt.Plugin {
       case mp: Map[_, _] => mp.toList.map(quote(_)).mkString("Map(", ", ", ")")
       case seq: Seq[_]   => seq.map(quote(_)).mkString("Seq(", ", ", ")")
       case op: Option[_] => op map { x => "Some(" + quote(x) + ")" } getOrElse {"None"}
+      case url: java.net.URL => "new java.net.URL(\"%s\")" format url.toString
       case s => "\"%s\"" format s.toString
     }
   }

@@ -6,9 +6,13 @@ seq(buildInfoSettings: _*)
 
 sourceGenerators in Compile <+= buildInfo
 
-buildInfoKeys := Seq[Scoped](name, version, scalaVersion, sbtVersion)
+buildInfoKeys := Seq[Scoped](name, version, scalaVersion, sbtVersion, homepage, licenses, isSnapshot)
 
 buildInfoPackage := "hello"
+
+homepage := Some(url("http://example.com"))
+
+licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
 
 TaskKey[Unit]("check") <<= (sourceManaged in Compile) map { (dir) =>
   val f = dir / ("%s.scala" format "BuildInfo")
@@ -19,8 +23,11 @@ TaskKey[Unit]("check") <<= (sourceManaged in Compile) map { (dir) =>
          """object BuildInfo {""" ::
          """  val name = "helloworld"""" ::
          """  val version = "0.1"""" ::
-         """  val scalaVersion = "2.9.1"""" ::
-         """  val sbtVersion = "0.11.2"""" :: 
+         """  val scalaVersion = "2.9.2"""" ::
+         """  val sbtVersion = "0.12.0"""" ::
+         """  val homepage: Option[java.net.URL] = Some(new java.net.URL("http://example.com"))""" ::
+         """  val licenses = Seq(("MIT License" -> new java.net.URL("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")))""" ::
+         """  val isSnapshot = false""" ::
          """}""" :: Nil =>
     case _ => sys.error("unexpeted output: " + lines.toString)
   }

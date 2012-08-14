@@ -30,8 +30,8 @@ object Build extends sbt.Build {
              """  val name = "sbt-buildinfo-example-app"""" ::
              """  val projectId = "root:root:0.1-SNAPSHOT"""" ::
              """  val version = "0.1"""" ::
-             """  val scalaVersion = "2.9.1"""" ::
-             """  val sbtVersion = "0.11.2"""" :: 
+             """  val scalaVersion = "2.9.2"""" ::
+             """  val sbtVersion = "0.12.0"""" :: 
              """}""" :: Nil =>
         case _ => sys.error("unexpeted output: " + lines.toString)
       }
