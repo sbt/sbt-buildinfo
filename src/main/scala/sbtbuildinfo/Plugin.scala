@@ -14,23 +14,26 @@ object Plugin extends sbt.Plugin {
   object BuildInfo {
     implicit def setting[A](key: SettingKey[A]): BuildInfo[A] = Setting(key)
     implicit def task[A](key: TaskKey[A]): BuildInfo[A] = Task(key)
+    implicit def constant[A: Manifest](tuple: (String, A)): BuildInfo[A] = Constant(tuple)
 
     def apply[A](key: SettingKey[A]): BuildInfo[A] = Setting(key)
     def apply[A](key: TaskKey[A]): BuildInfo[A] = Task(key)
+    def apply[A: Manifest](tuple: (String, A)): BuildInfo[A] = Constant(tuple)
     def map[A, B: Manifest](from: BuildInfo[A])(fun: ((String, A)) => (String, B)): BuildInfo[B] = from mapInfo fun
 
-    private[Plugin] final case class Setting[A](scoped: SettingKey[A]) extends Source[A] {
+    private[Plugin] final case class Setting[A](scoped: SettingKey[A]) extends BuildInfo[A] {
       def manifest = scoped.key.manifest
     }
-    private[Plugin] final case class Task[A](scoped: TaskKey[A]) extends Source[A] {
+    private[Plugin] final case class Task[A](scoped: TaskKey[A]) extends BuildInfo[A] {
       def manifest = scoped.key.manifest.typeArguments.head.asInstanceOf[Manifest[A]]
     }
+
+    private[Plugin] final case class Constant[A](tuple: (String, A))(implicit val manifest: Manifest[A])
+    extends BuildInfo[A]
 
     private[Plugin] final case class Mapped[A, B](from: BuildInfo[A], fun: ((String, A)) => (String, B))
                                                  (implicit val manifest: Manifest[B])
     extends BuildInfo[B]
-
-    private[Plugin] sealed trait Source[A] extends BuildInfo[A]
   }
   sealed trait BuildInfo[A] {
     private[Plugin] def manifest: Manifest[A]
@@ -60,7 +63,8 @@ object Plugin extends sbt.Plugin {
 
     private def entry[A](info: BuildInfo[A]): Option[(String, A)] = info match {
       case BuildInfo.Setting(key)       => extracted getOpt (key in scope(key)) map { ident(key) -> _ }
-      case BuildInfo.Task(key)          => Some( ident(key) -> extracted.runTask(key in scope(key), state)._2 )
+      case BuildInfo.Task(key)          => Some(ident(key) -> extracted.runTask(key in scope(key), state)._2)
+      case BuildInfo.Constant(tuple)    => Some(tuple)
       case BuildInfo.Mapped(from, fun)  => entry(from) map fun
     }
 
