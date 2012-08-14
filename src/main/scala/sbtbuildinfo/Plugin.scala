@@ -12,9 +12,48 @@ object Plugin extends sbt.Plugin {
   lazy val buildInfoBuildNumber = TaskKey[Int]("buildinfo-buildnumber")
 
   object BuildInfo {
-    implicit def scoped(s: Scoped): BuildInfo[Any] = ScopedImpl(s)
+//    implicit def input[A](key: InputKey[A]): BuildInfo[A] = InputTaskInfo(key)
+    implicit def setting[A](key: SettingKey[A]): BuildInfo[A] = SettingTaskInfo(key)
 
-    private final case class ScopedImpl(scoped: Scoped) extends BuildInfo[Any] {
+//    private final case class InputTaskInfo[A](scoped: InputKey[A]) extends ScopedLike[A] {
+//      def entry(proj: ProjectRef, extracted: Extracted) = {
+//        val (_, x) = extracted runTask (scoped in scope(proj), state)
+//        Some(ident -> x.asInstanceOf[A])
+//      }
+//    }
+    private final case class SettingTaskInfo[A](scoped: SettingKey[A]) extends ScopedLike[A] {
+      def entry(proj: ProjectRef, extracted: Extracted) = {
+        val valOpt = extracted getOpt (scoped in scope(proj))
+        valOpt.map(ident -> _)
+      }
+
+//      val scope0 = info.scoped.scope
+//      val scope = if (scope0 == This) scope0 in (proj) else scope0
+//      info match {
+//        case key: SettingKey[_] => extracted getOpt (key in scope)
+//        case key: TaskKey[_]    =>
+//          val (_, x) = extracted runTask (key in scope, state)
+//          Some(x)
+//        case _ => None
+//      }
+    }
+
+    private final class Mapped[A, B](from: BuildInfo[A], fun: ((String, A)) => (String, B))
+    extends Basic[B] {
+      def scoped = from.scoped
+      def entry(proj: ProjectRef, extracted: Extracted) = from.entry(proj, extracted) map fun
+    }
+
+    private trait Basic[A] extends BuildInfo[A] {
+      def map[B](fun: ((String, A)) => (String, B)): BuildInfo[B] = new Mapped(this, fun)
+    }
+
+    private trait ScopedLike[A] extends Basic[A] {
+      def scope(proj: ProjectRef) = {
+        val scope0 = scoped.scope
+        if (scope0 == This) scope0 in (proj) else scope0
+      }
+
       def ident : String = {
         val scope = scoped.scope
         (scope.config.toOption match {
@@ -31,14 +70,12 @@ object Plugin extends sbt.Plugin {
           case x :: xs => x + (xs map {_.capitalize}).mkString("")
         })
       }
-
-      def map[B](fun: (String, Any) => (String, B)): BuildInfo[B] = sys.error("TODO")
     }
   }
   sealed trait BuildInfo[A] {
     def scoped: Scoped
-    def ident: String
-    def map[B](fun: (String, A) => (String, B)): BuildInfo[B]
+    def entry(proj: ProjectRef, extracted: Extracted): Option[(String, A)]
+    def map[B](fun: ((String, A)) => (String, B)): BuildInfo[B]
   }
 
   private case class BuildInfoTask(dir: File, obj: String, pkg: String, keys: Seq[BuildInfo[_]],
@@ -57,20 +94,9 @@ object Plugin extends sbt.Plugin {
       f
     }
 
-    private def line(info: BuildInfo[_]): Option[String] =
-      value(info) map { x => "  val %s%s = %s" format (info.ident,
-        getType(info) map { ": " + _ } getOrElse {""}, quote(x)) }
-
-    private def value(info: BuildInfo[_]): Option[Any] = {
-      val scope0 = info.scoped.scope
-      val scope = if (scope0 == This) scope0 in (proj) else scope0
-      info match {
-        case key: SettingKey[_] => extracted getOpt (key in scope)
-        case key: TaskKey[_]    =>
-          val (_, x) = extracted runTask (key in scope, state)
-          Some(x)
-        case _ => None
-      }      
+    private def line(info: BuildInfo[_]): Option[String] = info.entry(proj, extracted).map {
+      case (ident, value) => "  val %s%s = %s" format
+        (ident, getType(info) map { ": " + _ } getOrElse {""}, quote(value))
     }
 
     private def getType(info: BuildInfo[_]): Option[String] = {
