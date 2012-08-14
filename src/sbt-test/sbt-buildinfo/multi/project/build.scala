@@ -10,7 +10,8 @@ object Build extends sbt.Build {
  
   lazy val buildSettings = Defaults.defaultSettings ++ Seq(
     version := "0.1",
-    organization := "com.example"
+    organization := "com.example",
+    homepage := Some(url("http://www.example.com"))
   )
   
   lazy val check = TaskKey[Unit]("check")
@@ -18,7 +19,12 @@ object Build extends sbt.Build {
   lazy val appSettings = buildSettings ++ buildInfoSettings ++ Seq(
     name := "sbt-buildinfo-example-app",
     sourceGenerators in Compile <+= buildInfo,
-    buildInfoKeys := Seq[Scoped](name, projectID in "root", version, scalaVersion, sbtVersion),
+    buildInfoKeys := Seq(name,
+                         projectID in "root",
+                         version,
+                         BuildInfo(homepage).mapInfo { case (n, opt) => n -> opt.get },
+                         scalaVersion,
+                         sbtVersion),
     buildInfoPackage := "hello",
     check <<= (sourceManaged in Compile) map { (dir) =>
       val f = dir / ("%s.scala" format "BuildInfo")
@@ -30,10 +36,11 @@ object Build extends sbt.Build {
              """  val name = "sbt-buildinfo-example-app"""" ::
              """  val projectId = "root:root:0.1-SNAPSHOT"""" ::
              """  val version = "0.1"""" ::
+             """  val homepage = new java.net.URL("http://www.example.com")""" ::
              """  val scalaVersion = "2.9.2"""" ::
              """  val sbtVersion = "0.12.0"""" :: 
              """}""" :: Nil =>
-        case _ => sys.error("unexpeted output: " + lines.toString)
+        case _ => sys.error("unexpected output: " + lines.mkString("\n"))
       }
       ()
     }
