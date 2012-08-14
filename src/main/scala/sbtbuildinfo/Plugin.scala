@@ -12,70 +12,28 @@ object Plugin extends sbt.Plugin {
   lazy val buildInfoBuildNumber = TaskKey[Int]("buildinfo-buildnumber")
 
   object BuildInfo {
-//    implicit def input[A](key: InputKey[A]): BuildInfo[A] = InputTaskInfo(key)
-    implicit def setting[A](key: SettingKey[A]): BuildInfo[A] = SettingTaskInfo(key)
+//    implicit def input[A](key: InputKey[A]): BuildInfo[A] = InputKeyInfo(key)
+    implicit def setting[A](key: SettingKey[A]): BuildInfo[A] = Setting(key)
+    implicit def task[A](key: TaskKey[A]): BuildInfo[A] = Task(key)
 
-//    private final case class InputTaskInfo[A](scoped: InputKey[A]) extends ScopedLike[A] {
-//      def entry(proj: ProjectRef, extracted: Extracted) = {
-//        val (_, x) = extracted runTask (scoped in scope(proj), state)
-//        Some(ident -> x.asInstanceOf[A])
-//      }
-//    }
-    private final case class SettingTaskInfo[A](scoped: SettingKey[A]) extends ScopedLike[A] {
-      def entry(proj: ProjectRef, extracted: Extracted) = {
-        val valOpt = extracted getOpt (scoped in scope(proj))
-        valOpt.map(ident -> _)
-      }
+    private[Plugin] final case class Setting[A](scoped: SettingKey[A]) extends ScopedLike[A]
+    private[Plugin] final case class Task[A](scoped: TaskKey[A]) extends ScopedLike[A]
 
-//      val scope0 = info.scoped.scope
-//      val scope = if (scope0 == This) scope0 in (proj) else scope0
-//      info match {
-//        case key: SettingKey[_] => extracted getOpt (key in scope)
-//        case key: TaskKey[_]    =>
-//          val (_, x) = extracted runTask (key in scope, state)
-//          Some(x)
-//        case _ => None
-//      }
-    }
-
-    private final class Mapped[A, B](from: BuildInfo[A], fun: ((String, A)) => (String, B))
-    extends Basic[B] {
+    private[Plugin] final case class Mapped[A, B](from: BuildInfo[A], fun: ((String, A)) => (String, B))
+    extends BuildInfo[B] {
       def scoped = from.scoped
-      def entry(proj: ProjectRef, extracted: Extracted) = from.entry(proj, extracted) map fun
     }
 
-    private trait Basic[A] extends BuildInfo[A] {
-      def map[B](fun: ((String, A)) => (String, B)): BuildInfo[B] = new Mapped(this, fun)
-    }
-
-    private trait ScopedLike[A] extends Basic[A] {
+    private[Plugin] sealed trait ScopedLike[A] extends BuildInfo[A] {
       def scope(proj: ProjectRef) = {
         val scope0 = scoped.scope
         if (scope0 == This) scope0 in (proj) else scope0
-      }
-
-      def ident : String = {
-        val scope = scoped.scope
-        (scope.config.toOption match {
-          case None => ""
-          case Some(ConfigKey("compile")) => ""
-          case Some(ConfigKey(x)) => x + "_"
-        }) +
-        (scope.task.toOption match {
-          case None => ""
-          case Some(x) => x.label + "_"
-        }) +
-        (scoped.key.label.split("-").toList match {
-          case Nil => ""
-          case x :: xs => x + (xs map {_.capitalize}).mkString("")
-        })
       }
     }
   }
   sealed trait BuildInfo[A] {
     def scoped: Scoped
-    def entry(proj: ProjectRef, extracted: Extracted): Option[(String, A)]
-    def map[B](fun: ((String, A)) => (String, B)): BuildInfo[B]
+    final def mapInfo[B](fun: ((String, A)) => (String, B)): BuildInfo[B] = BuildInfo.Mapped(this, fun)
   }
 
   private case class BuildInfoTask(dir: File, obj: String, pkg: String, keys: Seq[BuildInfo[_]],
@@ -94,9 +52,38 @@ object Plugin extends sbt.Plugin {
       f
     }
 
-    private def line(info: BuildInfo[_]): Option[String] = info.entry(proj, extracted).map {
+    private def line(info: BuildInfo[_]): Option[String] = entry(info).map {
       case (ident, value) => "  val %s%s = %s" format
         (ident, getType(info) map { ": " + _ } getOrElse {""}, quote(value))
+    }
+
+    private def entry[A](info: BuildInfo[A]): Option[(String, A)] = info match {
+      case BuildInfo.Setting(key)       => extracted getOpt (key in scope(info)) map { ident(info) -> _ }
+      case BuildInfo.Task(key)          => Some( ident(info) -> extracted.runTask(key in scope(info), state)._2 )
+      case BuildInfo.Mapped(from, fun)  => entry(from) map fun
+    }
+
+    private def scope(info: BuildInfo[_]) = {
+      val scope0 = info.scoped.scope
+      if (scope0 == This) scope0 in (proj) else scope0
+    }
+
+    private def ident(info: BuildInfo[_]) : String = {
+      val scoped  = info.scoped
+      val scope   = scoped.scope
+      (scope.config.toOption match {
+        case None => ""
+        case Some(ConfigKey("compile")) => ""
+        case Some(ConfigKey(x)) => x + "_"
+      }) +
+      (scope.task.toOption match {
+        case None => ""
+        case Some(x) => x.label + "_"
+      }) +
+      (scoped.key.label.split("-").toList match {
+        case Nil => ""
+        case x :: xs => x + (xs map {_.capitalize}).mkString("")
+      })
     }
 
     private def getType(info: BuildInfo[_]): Option[String] = {
