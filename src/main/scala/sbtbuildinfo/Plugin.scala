@@ -12,10 +12,9 @@ object Plugin extends sbt.Plugin {
   lazy val buildInfoKeys    = SettingKey[Seq[Scoped]]("buildinfo-keys")
   lazy val buildInfoBuildNumber = TaskKey[Int]("buildinfo-buildnumber")
 
-  case class BuildInfo(dir: File, obj: String, pkg: String, keys: Seq[Scoped],
-    proj: ProjectRef, state0: State) {
-    private var _state: State = state0 
-    private def extracted = Project.extract(_state)
+  private case class BuildInfo(dir: File, obj: String, pkg: String, keys: Seq[Scoped],
+    proj: ProjectRef, state: State) {
+    private def extracted = Project.extract(state)
 
     def file: File = {
       val f = dir / ("%s.scala" format obj)
@@ -38,7 +37,7 @@ object Plugin extends sbt.Plugin {
       scoped match {
         case key: SettingKey[_] => extracted getOpt (key in scope)
         case key: TaskKey[_]    =>
-          val (s, x) = extracted runTask (key in scope, _state)
+          val (s, x) = extracted runTask (key in scope, state)
           Some(x)
         case _ => None
       }      
