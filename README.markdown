@@ -22,7 +22,7 @@ buildInfoSettings
 
 sourceGenerators in Compile <+= buildInfo
 
-buildInfoKeys := Seq[Scoped](name, version, scalaVersion, sbtVersion)
+buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion)
 
 buildInfoPackage := "hello"
 ```
@@ -35,15 +35,21 @@ package hello
 object BuildInfo {
   val name = "helloworld"
   val version = "0.1-SNAPSHOT"
-  val scalaVersion = "2.9.1"
-  val sbtVersion = "0.11.2"
+  val scalaVersion = "2.9.2"
+  val sbtVersion = "0.12.0"
 }
 ```
 
-Customize `buildInfoKeys` by adding whatever keys.
+Customize `buildInfoKeys` by adding whatever keys. You can use `BuildInfo.map` to change the generated field
+name and value, or add new fields with tuples:
 
 ```scala
-buildInfoKeys ++= Seq[Scoped](resolvers, libraryDependencies in Test)
+buildInfoKeys ++= Seq(
+  resolvers,
+  libraryDependencies in Test,
+  "custom" -> 1234,
+  BuildInfo.map(name) { case (k, v) => "project" + k.capitalize -> v.capitalize }
+)
 ```
 
 This generates:
@@ -51,6 +57,8 @@ This generates:
 ```scala
   val resolvers = Seq("Sonatype Public: https://oss.sonatype.org/content/groups/public")
   val test_libraryDependencies = Seq("org.scala-lang:scala-library:2.9.1", ...)
+  val custom = 1234
+  val projectName = "Helloworld"
 ```
 
 Tasks can be added only if they do not depend on `sourceGenerators`. Otherwise, it will cause an infinite loop.

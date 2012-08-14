@@ -4,18 +4,45 @@ import sbt._
 
 object Plugin extends sbt.Plugin {
   import Keys._
-  import Project.Initialize
 
   lazy val buildInfo        = TaskKey[Seq[File]]("buildinfo")
   lazy val buildInfoObject  = SettingKey[String]("buildinfo-object")
   lazy val buildInfoPackage = SettingKey[String]("buildinfo-package") 
-  lazy val buildInfoKeys    = SettingKey[Seq[Scoped]]("buildinfo-keys")
+  lazy val buildInfoKeys    = SettingKey[Seq[BuildInfo[_]]]("buildinfo-keys")
   lazy val buildInfoBuildNumber = TaskKey[Int]("buildinfo-buildnumber")
 
-  case class BuildInfo(dir: File, obj: String, pkg: String, keys: Seq[Scoped],
-    proj: ProjectRef, state0: State) {
-    private var _state: State = state0 
-    private def extracted = Project.extract(_state)
+  object BuildInfo {
+    implicit def setting[A](key: SettingKey[A]): BuildInfo[A] = Setting(key)
+    implicit def task[A](key: TaskKey[A]): BuildInfo[A] = Task(key)
+    implicit def constant[A: Manifest](tuple: (String, A)): BuildInfo[A] = Constant(tuple)
+
+    def apply[A](key: SettingKey[A]): BuildInfo[A] = Setting(key)
+    def apply[A](key: TaskKey[A]): BuildInfo[A] = Task(key)
+    def apply[A: Manifest](tuple: (String, A)): BuildInfo[A] = Constant(tuple)
+    def map[A, B: Manifest](from: BuildInfo[A])(fun: ((String, A)) => (String, B)): BuildInfo[B] = from mapInfo fun
+
+    private[Plugin] final case class Setting[A](scoped: SettingKey[A]) extends BuildInfo[A] {
+      def manifest = scoped.key.manifest
+    }
+    private[Plugin] final case class Task[A](scoped: TaskKey[A]) extends BuildInfo[A] {
+      def manifest = scoped.key.manifest.typeArguments.head.asInstanceOf[Manifest[A]]
+    }
+
+    private[Plugin] final case class Constant[A](tuple: (String, A))(implicit val manifest: Manifest[A])
+    extends BuildInfo[A]
+
+    private[Plugin] final case class Mapped[A, B](from: BuildInfo[A], fun: ((String, A)) => (String, B))
+                                                 (implicit val manifest: Manifest[B])
+    extends BuildInfo[B]
+  }
+  sealed trait BuildInfo[A] {
+    private[Plugin] def manifest: Manifest[A]
+    final def mapInfo[B: Manifest](fun: ((String, A)) => (String, B)): BuildInfo[B] = BuildInfo.Mapped(this, fun)
+  }
+
+  private case class BuildInfoTask(dir: File, obj: String, pkg: String, keys: Seq[BuildInfo[_]],
+    proj: ProjectRef, state: State) {
+    private def extracted = Project.extract(state)
 
     def file: File = {
       val f = dir / ("%s.scala" format obj)
@@ -29,60 +56,55 @@ object Plugin extends sbt.Plugin {
       f
     }
 
-    private def line(key: Scoped): Option[String] =
-      value(key) map { x => "  val %s%s = %s" format (ident(key),
-        getType(key) map { ": " + _ } getOrElse {""}, quote(x)) }
-    private def value(scoped: Scoped): Option[Any] = {
-      val scope = if (scoped.scope.project == This) scoped.scope in (proj)
-                  else scoped.scope
-      scoped match {
-        case key: SettingKey[_] => extracted getOpt (key in scope)
-        case key: TaskKey[_]    =>
-          val (s, x) = extracted runTask (key in scope, _state)
-          Some(x)
-        case _ => None
-      }      
+    private def line(info: BuildInfo[_]): Option[String] = entry(info).map {
+      case (ident, value) => "  val %s%s = %s" format
+        (ident, getType(info) map { ": " + _ } getOrElse {""}, quote(value))
     }
 
-    private def ident(scoped: Scoped): String =
-      (scoped.scope.config.toOption match {
+    private def entry[A](info: BuildInfo[A]): Option[(String, A)] = info match {
+      case BuildInfo.Setting(key)       => extracted getOpt (key in scope(key)) map { ident(key) -> _ }
+      case BuildInfo.Task(key)          => Some(ident(key) -> extracted.runTask(key in scope(key), state)._2)
+      case BuildInfo.Constant(tuple)    => Some(tuple)
+      case BuildInfo.Mapped(from, fun)  => entry(from) map fun
+    }
+
+    private def scope(scoped: Scoped) = {
+      val scope0 = scoped.scope
+      if (scope0 == This) scope0 in (proj) else scope0
+    }
+
+    private def ident(scoped: Scoped) : String = {
+      val scope = scoped.scope
+      (scope.config.toOption match {
         case None => ""
         case Some(ConfigKey("compile")) => ""
         case Some(ConfigKey(x)) => x + "_"
-      }) + 
-      (scoped.scope.task.toOption match {
+      }) +
+      (scope.task.toOption match {
         case None => ""
         case Some(x) => x.label + "_"
-      }) + 
+      }) +
       (scoped.key.label.split("-").toList match {
         case Nil => ""
         case x :: xs => x + (xs map {_.capitalize}).mkString("")
       })
-    private def getType(scoped: Scoped): Option[String] = {
-      val key = scoped.key
-      val scope = scoped.scope  
-      lazy val clazz = key.manifest.erasure
-      lazy val firstType = key.manifest.typeArguments.headOption
-      lazy val typeName =
-        if(clazz == classOf[Task[_]]) firstType.toString
-        else if(clazz == classOf[InputTask[_]]) firstType.toString
-        else key.manifest.toString
-      typeName match {
-        case "scala.Option[java.lang.String]" => Some("Option[String]")
-        case "scala.Option[Int]" => Some("Option[Int]")
-        case "scala.Option[Double]" => Some("Option[Double]")
-        case "scala.Option[Boolean]" => Some("Option[Boolean]")
-        case "scala.Option[java.net.URL]" => Some("Option[java.net.URL]")
-        case _ => None
-      }
     }
+
+    private def getType(info: BuildInfo[_]): Option[String] = {
+      val mf = info.manifest
+      if(mf.erasure == classOf[Option[_]]) {
+        val s = mf.toString
+        Some(if( s.startsWith("scala.")) s.substring(6) else s)
+      } else None
+    }
+
     private def quote(v: Any): String = v match {
       case x: Int => x.toString
       case x: Long => x.toString + "L"
       case x: Double => x.toString
       case x: Boolean => x.toString
       case node: scala.xml.NodeSeq => node.toString
-      case (k, v) => "(%s -> %s)" format(quote(k), quote(v))
+      case (k, _v) => "(%s -> %s)" format(quote(k), quote(_v))
       case mp: Map[_, _] => mp.toList.map(quote(_)).mkString("Map(", ", ", ")")
       case seq: Seq[_]   => seq.map(quote(_)).mkString("Seq(", ", ", ")")
       case op: Option[_] => op map { x => "Some(" + quote(x) + ")" } getOrElse {"None"}
@@ -113,11 +135,11 @@ object Plugin extends sbt.Plugin {
     buildInfo <<= (sourceManaged in Compile,
         buildInfoObject, buildInfoPackage, buildInfoKeys, thisProjectRef, state) map {
       (dir, obj, pkg, keys, ref, state) =>
-      Seq(BuildInfo(dir, obj, pkg, keys, ref, state).file)
+      Seq(BuildInfoTask(dir, obj, pkg, keys, ref, state).file)
     },
     buildInfoObject  := "BuildInfo",
     buildInfoPackage := "buildinfo",
-    buildInfoKeys    := Seq[Scoped](name, version, scalaVersion, sbtVersion),
+    buildInfoKeys    := Seq(name, version, scalaVersion, sbtVersion),
     buildInfoBuildNumber <<= (baseDirectory) map { (dir) => buildNumberTask(dir) }
   )
 }
