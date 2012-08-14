@@ -12,7 +12,6 @@ object Plugin extends sbt.Plugin {
   lazy val buildInfoBuildNumber = TaskKey[Int]("buildinfo-buildnumber")
 
   object BuildInfo {
-//    implicit def input[A](key: InputKey[A]): BuildInfo[A] = InputKeyInfo(key)
     implicit def setting[A](key: SettingKey[A]): BuildInfo[A] = Setting(key)
     implicit def task[A](key: TaskKey[A]): BuildInfo[A] = Task(key)
 
