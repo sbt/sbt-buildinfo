@@ -16,24 +16,22 @@ object Plugin extends sbt.Plugin {
     implicit def setting[A](key: SettingKey[A]): BuildInfo[A] = Setting(key)
     implicit def task[A](key: TaskKey[A]): BuildInfo[A] = Task(key)
 
-    private[Plugin] final case class Setting[A](scoped: SettingKey[A]) extends ScopedLike[A]
-    private[Plugin] final case class Task[A](scoped: TaskKey[A]) extends ScopedLike[A]
+    private[Plugin] final case class Setting[A](scoped: SettingKey[A]) extends Source[A] {
+      def manifest = scoped.key.manifest
+    }
+    private[Plugin] final case class Task[A](scoped: TaskKey[A]) extends Source[A] {
+      def manifest = scoped.key.manifest.typeArguments.head.asInstanceOf[Manifest[A]]
+    }
 
     private[Plugin] final case class Mapped[A, B](from: BuildInfo[A], fun: ((String, A)) => (String, B))
-    extends BuildInfo[B] {
-      def scoped = from.scoped
-    }
+                                                 (implicit val manifest: Manifest[B])
+    extends BuildInfo[B]
 
-    private[Plugin] sealed trait ScopedLike[A] extends BuildInfo[A] {
-      def scope(proj: ProjectRef) = {
-        val scope0 = scoped.scope
-        if (scope0 == This) scope0 in (proj) else scope0
-      }
-    }
+    private[Plugin] sealed trait Source[A] extends BuildInfo[A]
   }
   sealed trait BuildInfo[A] {
-    def scoped: Scoped
-    final def mapInfo[B](fun: ((String, A)) => (String, B)): BuildInfo[B] = BuildInfo.Mapped(this, fun)
+    private[Plugin] def manifest: Manifest[A]
+    final def mapInfo[B: Manifest](fun: ((String, A)) => (String, B)): BuildInfo[B] = BuildInfo.Mapped(this, fun)
   }
 
   private case class BuildInfoTask(dir: File, obj: String, pkg: String, keys: Seq[BuildInfo[_]],
@@ -58,19 +56,18 @@ object Plugin extends sbt.Plugin {
     }
 
     private def entry[A](info: BuildInfo[A]): Option[(String, A)] = info match {
-      case BuildInfo.Setting(key)       => extracted getOpt (key in scope(info)) map { ident(info) -> _ }
-      case BuildInfo.Task(key)          => Some( ident(info) -> extracted.runTask(key in scope(info), state)._2 )
+      case BuildInfo.Setting(key)       => extracted getOpt (key in scope(key)) map { ident(key) -> _ }
+      case BuildInfo.Task(key)          => Some( ident(key) -> extracted.runTask(key in scope(key), state)._2 )
       case BuildInfo.Mapped(from, fun)  => entry(from) map fun
     }
 
-    private def scope(info: BuildInfo[_]) = {
-      val scope0 = info.scoped.scope
+    private def scope(scoped: Scoped) = {
+      val scope0 = scoped.scope
       if (scope0 == This) scope0 in (proj) else scope0
     }
 
-    private def ident(info: BuildInfo[_]) : String = {
-      val scoped  = info.scoped
-      val scope   = scoped.scope
+    private def ident(scoped: Scoped) : String = {
+      val scope = scoped.scope
       (scope.config.toOption match {
         case None => ""
         case Some(ConfigKey("compile")) => ""
@@ -87,21 +84,11 @@ object Plugin extends sbt.Plugin {
     }
 
     private def getType(info: BuildInfo[_]): Option[String] = {
-      val key = info.scoped.key
-      lazy val clazz = key.manifest.erasure
-      lazy val firstType = key.manifest.typeArguments.headOption
-      lazy val typeName =
-        if(clazz == classOf[Task[_]]) firstType.toString
-        else if(clazz == classOf[InputTask[_]]) firstType.toString
-        else key.manifest.toString
-      typeName match {
-        case "scala.Option[java.lang.String]" => Some("Option[String]")
-        case "scala.Option[Int]" => Some("Option[Int]")
-        case "scala.Option[Double]" => Some("Option[Double]")
-        case "scala.Option[Boolean]" => Some("Option[Boolean]")
-        case "scala.Option[java.net.URL]" => Some("Option[java.net.URL]")
-        case _ => None
-      }
+      val mf = info.manifest
+      if(mf.erasure == classOf[Option[_]]) {
+        val s = mf.toString
+        Some(if( s.startsWith("scala.")) s.substring(6) else s)
+      } else None
     }
 
     private def quote(v: Any): String = v match {
