@@ -4,7 +4,6 @@ import sbt._
 
 object Plugin extends sbt.Plugin {
   import Keys._
-  import Project.Initialize
 
   lazy val buildInfo        = TaskKey[Seq[File]]("buildinfo")
   lazy val buildInfoObject  = SettingKey[String]("buildinfo-object")
@@ -12,7 +11,7 @@ object Plugin extends sbt.Plugin {
   lazy val buildInfoKeys    = SettingKey[Seq[Scoped]]("buildinfo-keys")
   lazy val buildInfoBuildNumber = TaskKey[Int]("buildinfo-buildnumber")
 
-  private case class BuildInfo(dir: File, obj: String, pkg: String, keys: Seq[Scoped],
+  private case class BuildInfoTask(dir: File, obj: String, pkg: String, keys: Seq[Scoped],
     proj: ProjectRef, state: State) {
     private def extracted = Project.extract(state)
 
@@ -37,7 +36,7 @@ object Plugin extends sbt.Plugin {
       scoped match {
         case key: SettingKey[_] => extracted getOpt (key in scope)
         case key: TaskKey[_]    =>
-          val (s, x) = extracted runTask (key in scope, state)
+          val (_, x) = extracted runTask (key in scope, state)
           Some(x)
         case _ => None
       }      
@@ -59,7 +58,6 @@ object Plugin extends sbt.Plugin {
       })
     private def getType(scoped: Scoped): Option[String] = {
       val key = scoped.key
-      val scope = scoped.scope  
       lazy val clazz = key.manifest.erasure
       lazy val firstType = key.manifest.typeArguments.headOption
       lazy val typeName =
@@ -81,7 +79,7 @@ object Plugin extends sbt.Plugin {
       case x: Double => x.toString
       case x: Boolean => x.toString
       case node: scala.xml.NodeSeq => node.toString
-      case (k, v) => "(%s -> %s)" format(quote(k), quote(v))
+      case (k, _v) => "(%s -> %s)" format(quote(k), quote(_v))
       case mp: Map[_, _] => mp.toList.map(quote(_)).mkString("Map(", ", ", ")")
       case seq: Seq[_]   => seq.map(quote(_)).mkString("Seq(", ", ", ")")
       case op: Option[_] => op map { x => "Some(" + quote(x) + ")" } getOrElse {"None"}
@@ -112,7 +110,7 @@ object Plugin extends sbt.Plugin {
     buildInfo <<= (sourceManaged in Compile,
         buildInfoObject, buildInfoPackage, buildInfoKeys, thisProjectRef, state) map {
       (dir, obj, pkg, keys, ref, state) =>
-      Seq(BuildInfo(dir, obj, pkg, keys, ref, state).file)
+      Seq(BuildInfoTask(dir, obj, pkg, keys, ref, state).file)
     },
     buildInfoObject  := "BuildInfo",
     buildInfoPackage := "buildinfo",
