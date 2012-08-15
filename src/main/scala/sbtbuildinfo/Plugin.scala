@@ -8,39 +8,42 @@ object Plugin extends sbt.Plugin {
   lazy val buildInfo        = TaskKey[Seq[File]]("buildinfo")
   lazy val buildInfoObject  = SettingKey[String]("buildinfo-object")
   lazy val buildInfoPackage = SettingKey[String]("buildinfo-package") 
-  lazy val buildInfoKeys    = SettingKey[Seq[BuildInfo[_]]]("buildinfo-keys")
+  lazy val buildInfoKeys    = SettingKey[Seq[BuildInfo.Entry[_]]]("buildinfo-keys")
   lazy val buildInfoBuildNumber = TaskKey[Int]("buildinfo-buildnumber")
 
   object BuildInfo {
-    implicit def setting[A](key: SettingKey[A]): BuildInfo[A] = Setting(key)
-    implicit def task[A](key: TaskKey[A]): BuildInfo[A] = Task(key)
-    implicit def constant[A: Manifest](tuple: (String, A)): BuildInfo[A] = Constant(tuple)
+    implicit def setting[A](key: SettingKey[A]): Entry[A] = Setting(key)
+    implicit def task[A](key: TaskKey[A]): Entry[A] = Task(key)
+    implicit def constant[A: Manifest](tuple: (String, A)): Entry[A] = Constant(tuple)
 
-    def apply[A](key: SettingKey[A]): BuildInfo[A] = Setting(key)
-    def apply[A](key: TaskKey[A]): BuildInfo[A] = Task(key)
-    def apply[A: Manifest](tuple: (String, A)): BuildInfo[A] = Constant(tuple)
-    def map[A, B: Manifest](from: BuildInfo[A])(fun: ((String, A)) => (String, B)): BuildInfo[B] = from mapInfo fun
+    def apply[A](key: SettingKey[A]): Entry[A] = Setting(key)
+    def apply[A](key: TaskKey[A]): Entry[A] = Task(key)
+    def apply[A: Manifest](tuple: (String, A)): Entry[A] = Constant(tuple)
+    def map[A, B: Manifest](from: Entry[A])(fun: ((String, A)) => (String, B)): Entry[B] =
+      BuildInfo.Mapped(from, fun)
 
-    private[Plugin] final case class Setting[A](scoped: SettingKey[A]) extends BuildInfo[A] {
+    private[Plugin] final case class Setting[A](scoped: SettingKey[A]) extends Entry[A] {
       def manifest = scoped.key.manifest
     }
-    private[Plugin] final case class Task[A](scoped: TaskKey[A]) extends BuildInfo[A] {
+    private[Plugin] final case class Task[A](scoped: TaskKey[A]) extends Entry[A] {
       def manifest = scoped.key.manifest.typeArguments.head.asInstanceOf[Manifest[A]]
     }
 
     private[Plugin] final case class Constant[A](tuple: (String, A))(implicit val manifest: Manifest[A])
-    extends BuildInfo[A]
+    extends Entry[A]
 
-    private[Plugin] final case class Mapped[A, B](from: BuildInfo[A], fun: ((String, A)) => (String, B))
+    private[Plugin] final case class Mapped[A, B](from: Entry[A], fun: ((String, A)) => (String, B))
                                                  (implicit val manifest: Manifest[B])
-    extends BuildInfo[B]
-  }
-  sealed trait BuildInfo[A] {
-    private[Plugin] def manifest: Manifest[A]
-    final def mapInfo[B: Manifest](fun: ((String, A)) => (String, B)): BuildInfo[B] = BuildInfo.Mapped(this, fun)
+    extends Entry[B]
+
+    sealed trait Entry[A] {
+      private[Plugin] def manifest: Manifest[A]
+    }
   }
 
-  private case class BuildInfoTask(dir: File, obj: String, pkg: String, keys: Seq[BuildInfo[_]],
+  type BuildInfo = BuildInfo.Entry[_]
+
+  private case class BuildInfoTask(dir: File, obj: String, pkg: String, keys: Seq[BuildInfo],
     proj: ProjectRef, state: State) {
     private def extracted = Project.extract(state)
 
@@ -56,12 +59,12 @@ object Plugin extends sbt.Plugin {
       f
     }
 
-    private def line(info: BuildInfo[_]): Option[String] = entry(info).map {
+    private def line(info: BuildInfo): Option[String] = entry(info).map {
       case (ident, value) => "  val %s%s = %s" format
         (ident, getType(info) map { ": " + _ } getOrElse {""}, quote(value))
     }
 
-    private def entry[A](info: BuildInfo[A]): Option[(String, A)] = info match {
+    private def entry[A](info: BuildInfo.Entry[A]): Option[(String, A)] = info match {
       case BuildInfo.Setting(key)       => extracted getOpt (key in scope(key)) map { ident(key) -> _ }
       case BuildInfo.Task(key)          => Some(ident(key) -> extracted.runTask(key in scope(key), state)._2)
       case BuildInfo.Constant(tuple)    => Some(tuple)
@@ -91,7 +94,7 @@ object Plugin extends sbt.Plugin {
       })
     }
 
-    private def getType(info: BuildInfo[_]): Option[String] = {
+    private def getType(info: BuildInfo): Option[String] = {
       val mf = info.manifest
       if(mf.erasure == classOf[Option[_]]) {
         val s = mf.toString
