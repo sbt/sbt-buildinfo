@@ -9,14 +9,7 @@ Latest Stable
 -------------
 
 ```scala
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.1.2")
-```
-
-Latest Snapshot
----------------
-
-```scala
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.2.0-SNAPSHOT")
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.2.0")
 ```
 
 Usage
@@ -29,7 +22,7 @@ buildInfoSettings
 
 sourceGenerators in Compile <+= buildInfo
 
-buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion)
+buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
 
 buildInfoPackage := "hello"
 ```
@@ -47,11 +40,11 @@ object BuildInfo {
 }
 ```
 
-Customize `buildInfoKeys` by adding whatever keys. You can use `BuildInfo.map` to change the generated field
+Customize `buildInfoKeys` by adding whatever keys. You can use `BuildInfoKey.map` to change the generated field
 name and value, or add new fields with tuples:
 
 ```scala
-buildInfoKeys ++= Seq[BuildInfo](
+buildInfoKeys ++= Seq[BuildInfoKey](
   resolvers,
   libraryDependencies in Test,
   "custom" -> 1234,
@@ -59,7 +52,7 @@ buildInfoKeys ++= Seq[BuildInfo](
 )
 ```
 
-(__Note__: in version 0.1.2, you need to use `Seq[Scoped]` instead)
+(__Note__: in version 0.1.2, this was `Seq[Scoped]` instead)
 
 This generates:
 

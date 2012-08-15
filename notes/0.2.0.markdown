@@ -1,0 +1,35 @@
+  [Sciss]: https://github.com/Sciss
+  [4]: https://github.com/sbt/sbt-buildinfo/pull/4
+  [5]: https://github.com/sbt/sbt-buildinfo/pull/5
+
+## breaking change `BuildInfoKey`
+
+Starting 0.2.0 `buildInfoKeys` are changed from `Seq[Scoped]` to `Seq[BuildInfoKey]. This requires you to change build.sbt as:
+
+    buildInfoSettings
+
+    sourceGenerators in Compile <+= buildInfo
+
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
+
+    buildInfoPackage := "hello"
+
+In addition to normal keys, you can now map exiting value using `BuildInfoKey.map` or add new fields using tuples:
+
+
+    buildInfoKeys ++= Seq[BuildInfoKey](
+      "custom" -> 1234,
+      BuildInfo.map(name) { case (k, v) => "project" + k.capitalize -> v.capitalize }
+    )
+
+This generates:
+
+    val custom = 1234
+    val projectName = "Helloworld"
+
+This feature was contributed by [Sciss][Sciss] ([#4][4] and [#5][5]).
+
+## minor enhancements and bug fixes
+
+- `java.net.URL` values are supported, instead of falling back to `String`
+- `Option[A]` values are typed as options, instead of `Some[A]`
