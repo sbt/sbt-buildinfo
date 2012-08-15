@@ -22,7 +22,7 @@ object Build extends sbt.Build {
     buildInfoKeys := Seq(name,
                          projectID in "root",
                          version,
-                         BuildInfo(homepage).mapInfo { case (n, opt) => n -> opt.get },
+                         BuildInfo.map(homepage) { case (n, opt) => n -> opt.get },
                          scalaVersion,
                          sbtVersion),
     buildInfoPackage := "hello",
