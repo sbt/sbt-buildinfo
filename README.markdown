@@ -5,11 +5,18 @@ sbt-buildinfo
 
 sbt-buildinfo generates Scala source from your build definitions.
 
-Latest
-------
+Latest Stable
+-------------
 
 ```scala
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.1.2")
+```
+
+Latest Snapshot
+---------------
+
+```scala
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.2.1-SNAPSHOT")
 ```
 
 Usage
@@ -44,13 +51,15 @@ Customize `buildInfoKeys` by adding whatever keys. You can use `BuildInfo.map` t
 name and value, or add new fields with tuples:
 
 ```scala
-buildInfoKeys ++= Seq(
+buildInfoKeys ++= Seq[BuildInfo](
   resolvers,
   libraryDependencies in Test,
   "custom" -> 1234,
   BuildInfo.map(name) { case (k, v) => "project" + k.capitalize -> v.capitalize }
 )
 ```
+
+(__Note__: in version 0.1.2, you need to use `Seq[Scoped]` instead)
 
 This generates:
 
@@ -66,14 +75,14 @@ Tasks can be added only if they do not depend on `sourceGenerators`. Otherwise, 
 Here's how to change the generated the object name:
 
 ```scala
-buildInfoObject  := "Info"
+buildInfoObject := "Info"
 ```
 
-This change to `object Info`. Changing the object name is optional, but to avoid name clash with other jars, package name should be changed.
+This changes the generated object to `object Info`. Changing the object name is optional, but to avoid name clash with other jars, package name should be unique.
 
 ### build number
 
-A build number can be generated as follows. Note that cross building against multiple Scala would each generate new number.
+A build number can be generated as follows. Note that cross building against multiple Scala would each generate a new number.
 
 ```scala
 buildInfoKeys += buildInfoBuildNumber
