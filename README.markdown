@@ -27,6 +27,8 @@ buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
 buildInfoPackage := "hello"
 ```
 
+(__Note__: in version 0.1.2, this was `Seq[Scoped]` instead!)
+
 When you reload the settings and compile, this generates the following:
 
 ```scala
@@ -51,8 +53,6 @@ buildInfoKeys ++= Seq[BuildInfoKey](
   BuildInfo.map(name) { case (k, v) => "project" + k.capitalize -> v.capitalize }
 )
 ```
-
-(__Note__: in version 0.1.2, this was `Seq[Scoped]` instead)
 
 This generates:
 
