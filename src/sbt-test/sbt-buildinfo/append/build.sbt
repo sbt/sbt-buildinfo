@@ -8,10 +8,10 @@ buildInfoSettings
 
 sourceGenerators in Compile <+= buildInfo
 
-buildInfoKeys ++= Seq[BuildInfo](name, organization, version, scalaVersion,
+buildInfoKeys ++= Seq[BuildInfoKey](name, organization, version, scalaVersion,
   libraryDependencies, libraryDependencies in Test)
 
-buildInfoKeys += BuildInfo(resolvers)
+buildInfoKeys += BuildInfoKey(resolvers)
 
 buildInfoPackage := "hello"
 

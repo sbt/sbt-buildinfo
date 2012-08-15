@@ -8,7 +8,7 @@ sourceGenerators in Compile <+= buildInfo
 
 buildInfoKeys := Seq(
   name,
-  BuildInfo.map(version) { case (n, v) => "projectVersion" -> v.toDouble },
+  BuildInfoKey.map(version) { case (n, v) => "projectVersion" -> v.toDouble },
   scalaVersion,
   sbtVersion,
   homepage,

@@ -8,10 +8,10 @@ object Plugin extends sbt.Plugin {
   lazy val buildInfo        = TaskKey[Seq[File]]("buildinfo")
   lazy val buildInfoObject  = SettingKey[String]("buildinfo-object")
   lazy val buildInfoPackage = SettingKey[String]("buildinfo-package") 
-  lazy val buildInfoKeys    = SettingKey[Seq[BuildInfo.Entry[_]]]("buildinfo-keys")
+  lazy val buildInfoKeys    = SettingKey[Seq[BuildInfoKey.Entry[_]]]("buildinfo-keys")
   lazy val buildInfoBuildNumber = TaskKey[Int]("buildinfo-buildnumber")
 
-  object BuildInfo {
+  object BuildInfoKey {
     implicit def setting[A](key: SettingKey[A]): Entry[A] = Setting(key)
     implicit def task[A](key: TaskKey[A]): Entry[A] = Task(key)
     implicit def constant[A: Manifest](tuple: (String, A)): Entry[A] = Constant(tuple)
@@ -20,7 +20,7 @@ object Plugin extends sbt.Plugin {
     def apply[A](key: TaskKey[A]): Entry[A] = Task(key)
     def apply[A: Manifest](tuple: (String, A)): Entry[A] = Constant(tuple)
     def map[A, B: Manifest](from: Entry[A])(fun: ((String, A)) => (String, B)): Entry[B] =
-      BuildInfo.Mapped(from, fun)
+      BuildInfoKey.Mapped(from, fun)
 
     private[Plugin] final case class Setting[A](scoped: SettingKey[A]) extends Entry[A] {
       def manifest = scoped.key.manifest
@@ -41,9 +41,9 @@ object Plugin extends sbt.Plugin {
     }
   }
 
-  type BuildInfo = BuildInfo.Entry[_]
+  type BuildInfoKey = BuildInfoKey.Entry[_]
 
-  private case class BuildInfoTask(dir: File, obj: String, pkg: String, keys: Seq[BuildInfo],
+  private case class BuildInfoTask(dir: File, obj: String, pkg: String, keys: Seq[BuildInfoKey],
     proj: ProjectRef, state: State) {
     private def extracted = Project.extract(state)
 
@@ -59,16 +59,16 @@ object Plugin extends sbt.Plugin {
       f
     }
 
-    private def line(info: BuildInfo): Option[String] = entry(info).map {
+    private def line(info: BuildInfoKey): Option[String] = entry(info).map {
       case (ident, value) => "  val %s%s = %s" format
         (ident, getType(info) map { ": " + _ } getOrElse {""}, quote(value))
     }
 
-    private def entry[A](info: BuildInfo.Entry[A]): Option[(String, A)] = info match {
-      case BuildInfo.Setting(key)       => extracted getOpt (key in scope(key)) map { ident(key) -> _ }
-      case BuildInfo.Task(key)          => Some(ident(key) -> extracted.runTask(key in scope(key), state)._2)
-      case BuildInfo.Constant(tuple)    => Some(tuple)
-      case BuildInfo.Mapped(from, fun)  => entry(from) map fun
+    private def entry[A](info: BuildInfoKey.Entry[A]): Option[(String, A)] = info match {
+      case BuildInfoKey.Setting(key)       => extracted getOpt (key in scope(key)) map { ident(key) -> _ }
+      case BuildInfoKey.Task(key)          => Some(ident(key) -> extracted.runTask(key in scope(key), state)._2)
+      case BuildInfoKey.Constant(tuple)    => Some(tuple)
+      case BuildInfoKey.Mapped(from, fun)  => entry(from) map fun
     }
 
     private def scope(scoped: Scoped) = {
@@ -94,7 +94,7 @@ object Plugin extends sbt.Plugin {
       })
     }
 
-    private def getType(info: BuildInfo): Option[String] = {
+    private def getType(info: BuildInfoKey): Option[String] = {
       val mf = info.manifest
       if(mf.erasure == classOf[Option[_]]) {
         val s = mf.toString
