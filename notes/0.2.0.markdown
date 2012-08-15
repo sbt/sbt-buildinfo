@@ -4,7 +4,7 @@
 
 ## breaking change `BuildInfoKey`
 
-Starting 0.2.0 `buildInfoKeys` are changed from `Seq[Scoped]` to `Seq[BuildInfoKey]. This requires you to change build.sbt as:
+Starting sbt-buildinfo 0.2.0, `buildInfoKeys` is changed from `Seq[Scoped]` to `Seq[BuildInfoKey]`. This requires you to change build.sbt as:
 
     buildInfoSettings
 
@@ -14,7 +14,18 @@ Starting 0.2.0 `buildInfoKeys` are changed from `Seq[Scoped]` to `Seq[BuildInfoK
 
     buildInfoPackage := "hello"
 
-In addition to normal keys, you can now map exiting value using `BuildInfoKey.map` or add new fields using tuples:
+This generates the following as before:
+
+    package hello
+
+    object BuildInfo {
+      val name = "helloworld"
+      val version = "0.1-SNAPSHOT"
+      val scalaVersion = "2.9.2"
+      val sbtVersion = "0.12.0"
+    }
+
+In addition to normal keys, you can now map existing value using `BuildInfoKey.map` or add new fields using tuples:
 
 
     buildInfoKeys ++= Seq[BuildInfoKey](
