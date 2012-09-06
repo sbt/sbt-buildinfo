@@ -49,9 +49,9 @@ name and value, add new fields with tuples, or add new fields with values comput
 buildInfoKeys ++= Seq[BuildInfoKey](
   resolvers,
   libraryDependencies in Test,
-  "custom" -> 1234,
   BuildInfo.map(name) { case (k, v) => "project" + k.capitalize -> v.capitalize },
-  "buildTime" -> (() -> System.currentTimeMillis) // re-computed at build-time
+  "custom" -> 1234, // computed at project load time
+  "buildTime" -> {() -> System.currentTimeMillis} // re-computed each time at compile
 )
 ```
 
@@ -60,8 +60,8 @@ This generates:
 ```scala
   val resolvers = Seq("Sonatype Public: https://oss.sonatype.org/content/groups/public")
   val test_libraryDependencies = Seq("org.scala-lang:scala-library:2.9.1", ...)
-  val custom = 1234
   val projectName = "Helloworld"
+  val custom = 1234
   val buildTime = 1346906092160L
 ```
 
