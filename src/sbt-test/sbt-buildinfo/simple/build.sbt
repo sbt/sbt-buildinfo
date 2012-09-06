@@ -14,7 +14,8 @@ buildInfoKeys := Seq(
   homepage,
   licenses,
   isSnapshot,
-  "year" -> 2012
+  "year" -> 2012,
+  "buildTime" -> (() => 1234L)
 )
 
 buildInfoPackage := "hello"
@@ -38,6 +39,7 @@ TaskKey[Unit]("check") <<= (sourceManaged in Compile) map { (dir) =>
          """  val licenses = Seq(("MIT License" -> new java.net.URL("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")))""" ::
          """  val isSnapshot = false""" ::
          """  val year = 2012""" ::
+         """  val buildTime = 1234L""" ::
          """}""" :: Nil =>
     case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
   }
