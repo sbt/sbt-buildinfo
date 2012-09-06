@@ -43,14 +43,15 @@ object BuildInfo {
 ```
 
 Customize `buildInfoKeys` by adding whatever keys. You can use `BuildInfoKey.map` to change the generated field
-name and value, or add new fields with tuples:
+name and value, add new fields with tuples, or add new fields with values computed at build-time:
 
 ```scala
 buildInfoKeys ++= Seq[BuildInfoKey](
   resolvers,
   libraryDependencies in Test,
   "custom" -> 1234,
-  BuildInfo.map(name) { case (k, v) => "project" + k.capitalize -> v.capitalize }
+  BuildInfo.map(name) { case (k, v) => "project" + k.capitalize -> v.capitalize },
+  "buildTime" -> () -> System.currentTimeMillis
 )
 ```
 
@@ -61,6 +62,7 @@ This generates:
   val test_libraryDependencies = Seq("org.scala-lang:scala-library:2.9.1", ...)
   val custom = 1234
   val projectName = "Helloworld"
+  val buildTime = 1346906092160L
 ```
 
 Tasks can be added only if they do not depend on `sourceGenerators`. Otherwise, it will cause an infinite loop.
