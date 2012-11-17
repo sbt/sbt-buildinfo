@@ -51,7 +51,7 @@ buildInfoKeys ++= Seq[BuildInfoKey](
   libraryDependencies in Test,
   BuildInfo.map(name) { case (k, v) => "project" + k.capitalize -> v.capitalize },
   "custom" -> 1234, // computed at project load time
-  "buildTime" -> {() -> System.currentTimeMillis} // re-computed each time at compile
+  "buildTime" -> {() => System.currentTimeMillis} // re-computed each time at compile
 )
 ```
 
