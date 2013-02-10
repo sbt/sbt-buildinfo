@@ -56,7 +56,7 @@ object Plugin extends sbt.Plugin {
       val lines =
         List("package %s" format pkg,
           "",
-          "object %s {" format obj) :::
+          "case object %s {" format obj) :::
         (keys.toList.distinct map { line(_) }).flatten :::
         List("}")
       IO.write(f, lines.mkString("\n"))

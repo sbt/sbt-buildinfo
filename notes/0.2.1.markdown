@@ -1,0 +1,3 @@
+## Minor enhancement
+
+`BuildInfo` object is now a case object.
