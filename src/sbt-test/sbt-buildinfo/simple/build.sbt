@@ -15,7 +15,7 @@ buildInfoKeys := Seq(
   licenses,
   isSnapshot,
   "year" -> 2012,
-  "buildTime" -> (() => 1234L)
+  BuildInfoKey.action("buildTime") { 1234L }
 )
 
 buildInfoPackage := "hello"
