@@ -1,0 +1,32 @@
+## Actions
+
+In addition to the usual settings, tasks, and custom fields, sbt-buildinfo 0.2.2 intoduces support for actions.
+
+    buildInfoKeys ++= Seq[BuildInfoKey](
+      name, version, scalaVersion,
+      "custom" -> 1234
+      BuildInfoKey.action("buildTime") {
+        System.currentTimeMillis
+      }
+    )
+
+The code block in the action would be re-computed each time at compile.
+
+    package buildinfo
+
+    case object BuildInfo {
+      val name = "helloworld"
+      val version = "0.1-SNAPSHOT"
+      val scalaVersion = "2.10.0"
+      val custom = 1234
+      val buildTime = 1346906092160L
+    }
+
+This feature was originally contributed by [@Rogach](https://github.com/sbt/sbt-buildinfo/pull/7) and was later tweaked by [@eed3si9n](https://github.com/sbt/sbt-buildinfo/commit/b1691ff39249848aa65eaddd28c712da4c35c334).
+
+## Minor enhancement
+
+`BuildInfo` object is now a case object. [#9][9]
+
+  [@Rogach]: 
+  [9]: https://github.com/sbt/sbt-buildinfo/issues/9
