@@ -32,7 +32,7 @@ object Build extends sbt.Build {
       lines match {
         case """package hello""" ::
              """""" ::
-             """object BuildInfo {""" ::
+             """case object BuildInfo {""" ::
              """  val name = "sbt-buildinfo-example-app"""" ::
              """  val projectId = "root:root:0.1-SNAPSHOT"""" ::
              """  val version = "0.1"""" ::

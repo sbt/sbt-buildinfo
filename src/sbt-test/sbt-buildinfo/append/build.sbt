@@ -27,7 +27,7 @@ TaskKey[Unit]("check") <<= (sourceManaged in Compile) map { (dir) =>
   lines match {
     case """package hello""" ::
          """""" ::
-         """object BuildInfo {""" ::
+         """case object BuildInfo {""" ::
          """  val name = "helloworld"""" ::
          """  val version = "0.1"""" ::
          """  val scalaVersion = "2.9.2"""" ::
