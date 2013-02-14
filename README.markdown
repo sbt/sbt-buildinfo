@@ -49,7 +49,7 @@ name and value, add new fields with tuples, or add new fields with values comput
 buildInfoKeys ++= Seq[BuildInfoKey](
   resolvers,
   libraryDependencies in Test,
-  BuildInfo.map(name) { case (k, v) => "project" + k.capitalize -> v.capitalize },
+  BuildInfoKey.map(name) { case (k, v) => "project" + k.capitalize -> v.capitalize },
   "custom" -> 1234, // computed at project load time
   "buildTime" -> {() => System.currentTimeMillis} // re-computed each time at compile
 )
