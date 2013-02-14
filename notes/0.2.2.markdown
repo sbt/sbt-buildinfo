@@ -28,5 +28,4 @@ This feature was originally contributed by [@Rogach](https://github.com/sbt/sbt-
 
 `BuildInfo` object is now a case object. [#9][9]
 
-  [@Rogach]: 
   [9]: https://github.com/sbt/sbt-buildinfo/issues/9
