@@ -122,7 +122,7 @@ object Plugin extends sbt.Plugin {
     }
   }
 
-  private[this] def buildNumberTask(dir: File): Int = {
+  def buildNumberTask(dir: File, increment: Int): Int = {
     val file: File = dir / "buildinfo.properties"
     val prop = new java.util.Properties
 
@@ -136,7 +136,7 @@ object Plugin extends sbt.Plugin {
     }
     val current = if (file.exists) readProp
                   else 0
-    writeProp(current + 1)
+    writeProp(current + increment)
     current
   }
 
@@ -149,6 +149,6 @@ object Plugin extends sbt.Plugin {
     buildInfoObject  := "BuildInfo",
     buildInfoPackage := "buildinfo",
     buildInfoKeys    := Seq(name, version, scalaVersion, sbtVersion),
-    buildInfoBuildNumber <<= (baseDirectory) map { (dir) => buildNumberTask(dir) }
+    buildInfoBuildNumber <<= (baseDirectory) map { (dir) => buildNumberTask(dir, 1) }
   )
 }
