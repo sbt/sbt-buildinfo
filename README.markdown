@@ -29,6 +29,23 @@ buildInfoPackage := "hello"
 
 (__Note__: in version 0.1.2, this was `Seq[Scoped]` instead!)
 
+Alternatively, if you are using `Build.scala`, add the import `import sbtbuildinfo.Plugin._` to it and add the module's setting through something like:
+
+```scala
+lazy val myProject = Project(
+    id = "myProjectName",
+    base = file("."),
+    settings = Defaults.defaultSettings ++
+      buildInfoSettings ++
+      Seq(
+          sourceGenerators in Compile <+= buildInfo,
+          buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion),
+          buildInfoPackage := "org.myorg.myapp"
+      ) ++
+      …
+)
+```
+
 When you reload the settings and compile, this generates the following:
 
 ```scala
@@ -84,6 +101,19 @@ A build number can be generated as follows. Note that cross building against mul
 ```scala
 buildInfoKeys += buildInfoBuildNumber
 ```
+
+Eclipse support
+---------------
+
+If you use the [sbteclipse plugin](https://github.com/typesafehub/sbteclipse) to generate projects for Eclipse, you need to tell `sbteclipse` that the generated `BuildInfo.scala` is a _managed source_, i.e., a generated source file.
+
+To do so, you can configure `sbteclipse` as follows:
+
+```scala
+EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Managed
+```
+
+This is explained in more detail in the [`sbtecliipse` documentation](https://github.com/typesafehub/sbteclipse/wiki/Using-sbteclipse).
 
 License
 -------
