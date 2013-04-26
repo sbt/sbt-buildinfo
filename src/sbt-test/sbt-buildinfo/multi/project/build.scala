@@ -27,7 +27,7 @@ object Build extends sbt.Build {
                          sbtVersion),
     buildInfoPackage := "hello",
     check <<= (sourceManaged in Compile) map { (dir) =>
-      val f = dir / ("%s.scala" format "BuildInfo")
+      val f = dir / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
       lines match {
         case """package hello""" ::

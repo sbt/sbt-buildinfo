@@ -144,7 +144,7 @@ object Plugin extends sbt.Plugin {
     buildInfo <<= (sourceManaged in Compile,
         buildInfoObject, buildInfoPackage, buildInfoKeys, thisProjectRef, state) map {
       (dir, obj, pkg, keys, ref, state) =>
-      Seq(BuildInfoTask(dir, obj, pkg, keys, ref, state).file)
+      Seq(BuildInfoTask(dir / "sbt-buildinfo", obj, pkg, keys, ref, state).file)
     },
     buildInfoObject  := "BuildInfo",
     buildInfoPackage := "buildinfo",

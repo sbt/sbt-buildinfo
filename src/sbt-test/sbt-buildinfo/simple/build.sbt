@@ -25,7 +25,7 @@ homepage := Some(url("http://example.com"))
 licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
 
 TaskKey[Unit]("check") <<= (sourceManaged in Compile) map { (dir) =>
-  val f = dir / ("%s.scala" format "BuildInfo")
+  val f = dir / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
   val lines = scala.io.Source.fromFile(f).getLines.toList
   lines match {
     case """package hello""" ::

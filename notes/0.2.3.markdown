@@ -1,0 +1,6 @@
+## bug fixes and minor enhancements
+
+- Generates code in a subdirectory. [#14][14] reported by [@analytically][@analytically]
+
+  [14]: https://github.com/sbt/sbt-buildinfo/issues/14
+  [@analytically]: https://github.com/analytically
