@@ -1,4 +1,4 @@
-## bug fixes and minor enhancements
+## minor enhancement
 
 - Caches the output using the content hash so it won't trigger unnecessary actions (such as Play! compilation). [#17][17] reported by [@mbablok][@mbablok]
 
