@@ -47,78 +47,104 @@ object Plugin extends sbt.Plugin {
 
   type BuildInfoKey = BuildInfoKey.Entry[_]
 
-  private case class BuildInfoTask(dir: File, obj: String, pkg: String, keys: Seq[BuildInfoKey],
-    proj: ProjectRef, state: State) {
-    private def extracted = Project.extract(state)
+  object BuildInfo {
+    def apply(dir: File, obj: String, pkg: String, keys: Seq[BuildInfoKey],
+        proj: ProjectRef, state: State, cacheDir: File): File =
+      BuildInfoTask(dir, obj, pkg, keys, proj, state, cacheDir).file
 
-    def file: File = {
-      val f = dir / ("%s.scala" format obj)
-      val lines =
-        List("package %s" format pkg,
-          "",
-          "case object %s {" format obj) :::
-        (keys.toList.distinct map { line(_) }).flatten :::
-        List("}")
-      IO.write(f, lines.mkString("\n"))
-      f
-    }
+    private case class BuildInfoTask(dir: File, obj: String, pkg: String, keys: Seq[BuildInfoKey],
+        proj: ProjectRef, state: State, cacheDir: File) {
+      import FileInfo.hash
+      import Tracked.inputChanged
 
-    private def line(info: BuildInfoKey): Option[String] = entry(info).map {
-      case (ident, value) => "  val %s%s = %s" format
-        (ident, getType(info) map { ": " + _ } getOrElse {""}, quote(value))
-    }
+      def extracted = Project.extract(state)
+      val tempFile = cacheDir / "sbtbuildinfo" / ("%s.scala" format obj)
+      val outFile = dir / ("%s.scala" format obj)
 
-    private def entry[A](info: BuildInfoKey.Entry[A]): Option[(String, A)] = info match {
-      case BuildInfoKey.Setting(key)      => extracted getOpt (key in scope(key)) map { ident(key) -> _ }
-      case BuildInfoKey.Task(key)         => Some(ident(key) -> extracted.runTask(key in scope(key), state)._2)
-      case BuildInfoKey.Constant(tuple)   => Some(tuple)
-      case BuildInfoKey.Action(name, fun) => Some(name -> fun.apply)
-      case BuildInfoKey.Mapped(from, fun) => entry(from) map fun
-    }
+      // 1. make the file under cache/sbtbuildinfo.
+      // 2. compare its SHA1 against cache/sbtbuildinfo-inputs
+      def file: File = {
+        makeFile(tempFile)
+        cachedCopyFile { hash(tempFile) }
+        outFile
+      }
 
-    private def scope(scoped: Scoped) = {
-      val scope0 = scoped.scope
-      if (scope0.project == This) scope0 in (proj)
-      else scope0
-    }
+      val cachedCopyFile =
+        inputChanged(cacheDir / "sbtbuildinfo-inputs") { (inChanged, input: HashFileInfo) =>
+          if (inChanged || !outFile.exists) {
+            println("input changed")
+            IO.copyFile(tempFile, outFile, true)
+          } // if
+        }
 
-    private def ident(scoped: Scoped) : String = {
-      val scope = scoped.scope
-      (scope.config.toOption match {
-        case None => ""
-        case Some(ConfigKey("compile")) => ""
-        case Some(ConfigKey(x)) => x + "_"
-      }) +
-      (scope.task.toOption match {
-        case None => ""
-        case Some(x) => x.label + "_"
-      }) +
-      (scoped.key.label.split("-").toList match {
-        case Nil => ""
-        case x :: xs => x + (xs map {_.capitalize}).mkString("")
-      })
-    }
+      def makeFile(file: File): File = {
+        val lines =
+          List("package %s" format pkg,
+            "",
+            "case object %s {" format obj) :::
+          (keys.toList.distinct map { line(_) }).flatten :::
+          List("}")
+        IO.write(file, lines.mkString("\n"))
+        file
+      }
 
-    private def getType(info: BuildInfoKey): Option[String] = {
-      val mf = info.manifest
-      if(mf.erasure == classOf[Option[_]]) {
-        val s = mf.toString
-        Some(if( s.startsWith("scala.")) s.substring(6) else s)
-      } else None
-    }
+      def line(info: BuildInfoKey): Option[String] = entry(info).map {
+        case (ident, value) => "  val %s%s = %s" format
+          (ident, getType(info) map { ": " + _ } getOrElse {""}, quote(value))
+      }
 
-    private def quote(v: Any): String = v match {
-      case x: Int => x.toString
-      case x: Long => x.toString + "L"
-      case x: Double => x.toString
-      case x: Boolean => x.toString
-      case node: scala.xml.NodeSeq => node.toString
-      case (k, _v) => "(%s -> %s)" format(quote(k), quote(_v))
-      case mp: Map[_, _] => mp.toList.map(quote(_)).mkString("Map(", ", ", ")")
-      case seq: Seq[_]   => seq.map(quote(_)).mkString("Seq(", ", ", ")")
-      case op: Option[_] => op map { x => "Some(" + quote(x) + ")" } getOrElse {"None"}
-      case url: java.net.URL => "new java.net.URL(\"%s\")" format url.toString
-      case s => "\"%s\"" format s.toString
+      def entry[A](info: BuildInfoKey.Entry[A]): Option[(String, A)] = info match {
+        case BuildInfoKey.Setting(key)      => extracted getOpt (key in scope(key)) map { ident(key) -> _ }
+        case BuildInfoKey.Task(key)         => Some(ident(key) -> extracted.runTask(key in scope(key), state)._2)
+        case BuildInfoKey.Constant(tuple)   => Some(tuple)
+        case BuildInfoKey.Action(name, fun) => Some(name -> fun.apply)
+        case BuildInfoKey.Mapped(from, fun) => entry(from) map fun
+      }
+
+      def scope(scoped: Scoped) = {
+        val scope0 = scoped.scope
+        if (scope0.project == This) scope0 in (proj)
+        else scope0
+      }
+
+      def ident(scoped: Scoped) : String = {
+        val scope = scoped.scope
+        (scope.config.toOption match {
+          case None => ""
+          case Some(ConfigKey("compile")) => ""
+          case Some(ConfigKey(x)) => x + "_"
+        }) +
+        (scope.task.toOption match {
+          case None => ""
+          case Some(x) => x.label + "_"
+        }) +
+        (scoped.key.label.split("-").toList match {
+          case Nil => ""
+          case x :: xs => x + (xs map {_.capitalize}).mkString("")
+        })
+      }
+
+      def getType(info: BuildInfoKey): Option[String] = {
+        val mf = info.manifest
+        if(mf.erasure == classOf[Option[_]]) {
+          val s = mf.toString
+          Some(if( s.startsWith("scala.")) s.substring(6) else s)
+        } else None
+      }
+
+      def quote(v: Any): String = v match {
+        case x: Int => x.toString
+        case x: Long => x.toString + "L"
+        case x: Double => x.toString
+        case x: Boolean => x.toString
+        case node: scala.xml.NodeSeq => node.toString
+        case (k, _v) => "(%s -> %s)" format(quote(k), quote(_v))
+        case mp: Map[_, _] => mp.toList.map(quote(_)).mkString("Map(", ", ", ")")
+        case seq: Seq[_]   => seq.map(quote(_)).mkString("Seq(", ", ", ")")
+        case op: Option[_] => op map { x => "Some(" + quote(x) + ")" } getOrElse {"None"}
+        case url: java.net.URL => "new java.net.URL(\"%s\")" format url.toString
+        case s => "\"%s\"" format s.toString
+      }
     }
   }
 
@@ -142,9 +168,9 @@ object Plugin extends sbt.Plugin {
 
   lazy val buildInfoSettings: Seq[Project.Setting[_]] = Seq(
     buildInfo <<= (sourceManaged in Compile,
-        buildInfoObject, buildInfoPackage, buildInfoKeys, thisProjectRef, state) map {
-      (dir, obj, pkg, keys, ref, state) =>
-      Seq(BuildInfoTask(dir / "sbt-buildinfo", obj, pkg, keys, ref, state).file)
+        buildInfoObject, buildInfoPackage, buildInfoKeys, thisProjectRef, state, cacheDirectory) map {
+      (dir, obj, pkg, keys, ref, state, cacheDir) =>
+      Seq(BuildInfo(dir / "sbt-buildinfo", obj, pkg, keys, ref, state, cacheDir))
     },
     buildInfoObject  := "BuildInfo",
     buildInfoPackage := "buildinfo",

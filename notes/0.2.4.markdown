@@ -1,0 +1,6 @@
+## bug fixes and minor enhancements
+
+- Caches the output using the content hash so it won't trigger unnecessary actions (such as Play! compilation). [#17][17] reported by [@mbablok][@mbablok]
+
+  [17]: https://github.com/sbt/sbt-buildinfo/issues/17
+  [@mbablok]: https://github.com/mbablok
