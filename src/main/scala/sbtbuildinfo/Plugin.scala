@@ -72,7 +72,6 @@ object Plugin extends sbt.Plugin {
       val cachedCopyFile =
         inputChanged(cacheDir / "sbtbuildinfo-inputs") { (inChanged, input: HashFileInfo) =>
           if (inChanged || !outFile.exists) {
-            println("input changed")
             IO.copyFile(tempFile, outFile, true)
           } // if
         }

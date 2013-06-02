@@ -1,0 +1,5 @@
+## minor bug fix
+- Removes `println("input changed")` left from debugging. [#18][18] reported by [@Sciss][@Sciss]
+
+  [18]: https://github.com/sbt/sbt-buildinfo/issues/18
+  [@Sciss]: https://github.com/Sciss
