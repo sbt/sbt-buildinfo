@@ -1,1 +1,1 @@
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.2.4-+")
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.2.5-+")
