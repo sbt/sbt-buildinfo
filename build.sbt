@@ -37,3 +37,7 @@ LsKeys.tags in LsKeys.lsync := Seq("sbt", "codegen")
 
 ScriptedPlugin.scriptedSettings
 // CrossBuilding.scriptedSettings
+
+sbtVersion in Global := "0.13.0-Beta2" 
+
+scalaVersion in Global := "2.10.2-RC2" 
