@@ -2,7 +2,9 @@ name := "helloworld"
 
 version := "0.1"
 
-seq(buildInfoSettings: _*)
+scalaVersion := "2.10.2"
+
+buildInfoSettings
 
 sourceGenerators in Compile <+= buildInfo
 

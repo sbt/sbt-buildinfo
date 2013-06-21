@@ -1,4 +1,4 @@
 > compile
-$ exists target/scala-2.9.2/src_managed/main/sbt-buildinfo/BuildInfo.scala
+$ exists target/scala-2.10/src_managed/main/sbt-buildinfo/BuildInfo.scala
 
 > check

@@ -4,7 +4,7 @@ name := "sbt-buildinfo"
 
 organization := "com.eed3si9n"
 
-version := "0.2.5"
+version := "0.2.5-SNAPSHOT"
 
 description := "sbt plugin to generate build info"
 
@@ -37,6 +37,8 @@ LsKeys.tags in LsKeys.lsync := Seq("sbt", "codegen")
 
 ScriptedPlugin.scriptedSettings
 // CrossBuilding.scriptedSettings
+
+scriptedLaunchOpts ++= Seq("-Xmx1024M", "-XX:MaxPermSize=256M")
 
 sbtVersion in Global := "0.13.0-Beta2" 
 

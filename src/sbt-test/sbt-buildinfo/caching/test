@@ -1,6 +1,6 @@
 > compile
-$ exists target/scala-2.9.2/src_managed/main/sbt-buildinfo/BuildInfo.scala
+$ exists target/scala-2.10/src_managed/main/sbt-buildinfo/BuildInfo.scala
 > check
-$ copy-file target/scala-2.9.2/src_managed/main/sbt-buildinfo/BuildInfo.scala target/BuildInfo.scala
+$ copy-file target/scala-2.10/src_managed/main/sbt-buildinfo/BuildInfo.scala target/BuildInfo.scala
 > compile
-$ newer target/BuildInfo.scala target/scala-2.9.2/src_managed/main/sbt-buildinfo/BuildInfo.scala 
+$ newer target/BuildInfo.scala target/scala-2.10/src_managed/main/sbt-buildinfo/BuildInfo.scala 

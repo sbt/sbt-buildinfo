@@ -2,7 +2,9 @@ name := "helloworld"
 
 version := "0.1"
 
-seq(buildInfoSettings: _*)
+scalaVersion := "2.10.2"
+
+buildInfoSettings
 
 sourceGenerators in Compile <+= buildInfo
 
@@ -33,8 +35,8 @@ TaskKey[Unit]("check") <<= (sourceManaged in Compile) map { (dir) =>
          """case object BuildInfo {""" ::
          """  val name = "helloworld"""" ::
          """  val projectVersion = 0.1""" ::
-         """  val scalaVersion = "2.9.2"""" ::
-         """  val sbtVersion = "0.12.3"""" ::
+         """  val scalaVersion = "2.10.2"""" ::
+         """  val sbtVersion = "0.13.0-Beta2"""" ::
          """  val homepage: Option[java.net.URL] = Some(new java.net.URL("http://example.com"))""" ::
          """  val licenses = Seq(("MIT License" -> new java.net.URL("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")))""" ::
          """  val isSnapshot = false""" ::
