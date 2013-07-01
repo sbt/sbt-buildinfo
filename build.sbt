@@ -4,7 +4,11 @@ name := "sbt-buildinfo"
 
 organization := "com.eed3si9n"
 
-version := "0.2.5-SNAPSHOT"
+version := "0.2.5"
+
+sbtVersion in Global := "0.13.0-RC1" 
+
+scalaVersion in Global := "2.10.2"
 
 description := "sbt plugin to generate build info"
 
@@ -39,7 +43,3 @@ ScriptedPlugin.scriptedSettings
 // CrossBuilding.scriptedSettings
 
 scriptedLaunchOpts ++= Seq("-Xmx1024M", "-XX:MaxPermSize=256M")
-
-sbtVersion in Global := "0.13.0-Beta2" 
-
-scalaVersion in Global := "2.10.2-RC2" 
