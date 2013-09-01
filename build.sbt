@@ -4,9 +4,9 @@ name := "sbt-buildinfo"
 
 organization := "com.eed3si9n"
 
-version := "0.2.5"
+version := "0.2.6-SNAPSHOT"
 
-sbtVersion in Global := "0.13.0-RC1" 
+sbtVersion in Global := "0.13.0"
 
 scalaVersion in Global := "2.10.2"
 
