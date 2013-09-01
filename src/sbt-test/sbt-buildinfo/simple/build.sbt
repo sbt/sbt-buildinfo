@@ -13,6 +13,7 @@ buildInfoKeys := Seq(
   BuildInfoKey.map(version) { case (n, v) => "projectVersion" -> v.toDouble },
   scalaVersion,
   sbtVersion,
+  ivyXML,
   homepage,
   licenses,
   isSnapshot,
@@ -37,6 +38,7 @@ TaskKey[Unit]("check") <<= (sourceManaged in Compile) map { (dir) =>
          """  val projectVersion = 0.1""" ::
          """  val scalaVersion = "2.10.2"""" ::
          """  val sbtVersion = "0.13.0"""" ::
+         """  val ivyXml = Seq()""" ::
          """  val homepage: Option[java.net.URL] = Some(new java.net.URL("http://example.com"))""" ::
          """  val licenses = Seq(("MIT License" -> new java.net.URL("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")))""" ::
          """  val isSnapshot = false""" ::

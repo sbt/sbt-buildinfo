@@ -136,7 +136,7 @@ object Plugin extends sbt.Plugin {
         case x: Long => x.toString + "L"
         case x: Double => x.toString
         case x: Boolean => x.toString
-        case node: scala.xml.NodeSeq => node.toString
+        case node: scala.xml.NodeSeq if node.toString.trim.nonEmpty => node.toString
         case (k, _v) => "(%s -> %s)" format(quote(k), quote(_v))
         case mp: Map[_, _] => mp.toList.map(quote(_)).mkString("Map(", ", ", ")")
         case seq: Seq[_]   => seq.map(quote(_)).mkString("Seq(", ", ", ")")
