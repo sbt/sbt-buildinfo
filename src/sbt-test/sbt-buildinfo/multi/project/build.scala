@@ -6,7 +6,7 @@ object Build extends sbt.Build {
  
   lazy val root = Project("root", file("."), settings = Defaults.defaultSettings,
     aggregate = Seq(app))
-  lazy val app = Project("app", file("."), settings = appSettings)
+  lazy val app = Project("app", file("app"), settings = appSettings)
  
   lazy val buildSettings = Defaults.defaultSettings ++ Seq(
     version := "0.1",
@@ -39,7 +39,7 @@ object Build extends sbt.Build {
              """  val version = "0.1"""" ::
              """  val homepage = new java.net.URL("http://example.com")""" ::
              """  val scalaVersion = "2.10.2"""" ::
-             """  val sbtVersion = "0.13.0-Beta2"""" :: 
+             """  val sbtVersion = "0.13.0"""" ::
              """}""" :: Nil =>
         case _ => sys.error("unexpected output: " + lines.mkString("\n"))
       }
