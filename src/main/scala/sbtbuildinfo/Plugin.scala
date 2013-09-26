@@ -125,7 +125,7 @@ object Plugin extends sbt.Plugin {
 
       def getType(info: BuildInfoKey): Option[String] = {
         val mf = info.manifest
-        if(mf.erasure == classOf[Option[_]]) {
+        if(mf.runtimeClass == classOf[Option[_]]) {
           val s = mf.toString
           Some(if( s.startsWith("scala.")) s.substring(6) else s)
         } else None
@@ -165,11 +165,11 @@ object Plugin extends sbt.Plugin {
     current
   }
 
-  lazy val buildInfoSettings: Seq[Project.Setting[_]] = Seq(
+  lazy val buildInfoSettings: Seq[Def.Setting[_]] = Seq(
     buildInfo <<= (sourceManaged in Compile,
-        buildInfoObject, buildInfoPackage, buildInfoKeys, thisProjectRef, state, cacheDirectory) map {
-      (dir, obj, pkg, keys, ref, state, cacheDir) =>
-      Seq(BuildInfo(dir / "sbt-buildinfo", obj, pkg, keys, ref, state, cacheDir))
+        buildInfoObject, buildInfoPackage, buildInfoKeys, thisProjectRef, state, streams) map {
+      (dir, obj, pkg, keys, ref, state, taskStreams) =>
+      Seq(BuildInfo(dir / "sbt-buildinfo", obj, pkg, keys, ref, state, taskStreams.cacheDirectory))
     },
     buildInfoObject  := "BuildInfo",
     buildInfoPackage := "buildinfo",

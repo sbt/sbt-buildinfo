@@ -10,6 +10,8 @@ sbtVersion in Global := "0.13.0"
 
 scalaVersion in Global := "2.10.2"
 
+scalacOptions := Seq("-unchecked", "-deprecation")
+
 description := "sbt plugin to generate build info"
 
 licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
