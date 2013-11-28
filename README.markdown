@@ -9,8 +9,10 @@ Latest Stable
 -------------
 
 ```scala
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.2.5")
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.3.0")
 ```
+
+For sbt 0.12, see [0.2.5](https://github.com/sbt/sbt-buildinfo/tree/0.2.5).
 
 Usage
 -----

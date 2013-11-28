@@ -4,7 +4,7 @@ name := "sbt-buildinfo"
 
 organization := "com.eed3si9n"
 
-version := "0.3.0-SNAPSHOT"
+version := "0.3.0"
 
 sbtVersion in Global := "0.13.0" 
 
