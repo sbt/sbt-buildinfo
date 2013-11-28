@@ -4,9 +4,9 @@ name := "sbt-buildinfo"
 
 organization := "com.eed3si9n"
 
-version := "0.2.6-SNAPSHOT"
+version := "0.3.0-SNAPSHOT"
 
-sbtVersion in Global := "0.13.0"
+sbtVersion in Global := "0.13.0" 
 
 scalaVersion in Global := "2.10.2"
 
@@ -38,10 +38,3 @@ credentials += Credentials(Path.userHome / ".ivy2" / ".sbtcredentials")
 lsSettings
 
 LsKeys.tags in LsKeys.lsync := Seq("sbt", "codegen")
-
-// CrossBuilding.crossSbtVersions := Seq("0.11.3", "0.11.2" ,"0.12.0-Beta2")
-
-ScriptedPlugin.scriptedSettings
-// CrossBuilding.scriptedSettings
-
-scriptedLaunchOpts ++= Seq("-Xmx1024M", "-XX:MaxPermSize=256M")

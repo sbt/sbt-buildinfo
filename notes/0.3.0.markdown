@@ -1,0 +1,10 @@
+  [@samir-chouaieb]: https://github.com/samir-chouaieb
+  [24]: https://github.com/sbt/sbt-buildinfo/pull/24
+
+## breaking change `java.io.File` support
+
+Starting sbt-buildinfo 0.3.0, `File` keys generate `java.io.File` values.
+
+## String literal escaping
+
+0.3.0 also fixes `String` literal escaping such as `\`. [#24][24] contributed by [@samir-chouaieb][@samir-chouaieb]

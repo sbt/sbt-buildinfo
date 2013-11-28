@@ -132,18 +132,18 @@ object Plugin extends sbt.Plugin {
       }
 
       def quote(v: Any): String = v match {
-        case x: Int => x.toString
-        case x: Long => x.toString + "L"
-        case x: Double => x.toString
-        case x: Boolean => x.toString
+        case x: Int             => x.toString
+        case x: Long            => x.toString + "L"
+        case x: Double          => x.toString
+        case x: Boolean         => x.toString
         case node: scala.xml.NodeSeq if node.toString.trim.nonEmpty => node.toString
-        case (k, _v) => "(%s -> %s)" format(quote(k), quote(_v))
-        case mp: Map[_, _] => mp.toList.map(quote(_)).mkString("Map(", ", ", ")")
-        case seq: Seq[_]   => seq.map(quote(_)).mkString("Seq(", ", ", ")")
-        case op: Option[_] => op map { x => "Some(" + quote(x) + ")" } getOrElse {"None"}
-        case url: java.net.URL => "new java.net.URL(\"%s\")" format quote(url.toString)
-        case file: File => "new java.io.File(\"%s\")" format quote(file.toString)
-        case s => "\"%s\"" format encodeStringLiteral(s.toString)
+        case (k, _v)            => "(%s -> %s)" format(quote(k), quote(_v))
+        case mp: Map[_, _]      => mp.toList.map(quote(_)).mkString("Map(", ", ", ")")
+        case seq: Seq[_]        => seq.map(quote(_)).mkString("Seq(", ", ", ")")
+        case op: Option[_]      => op map { x => "Some(" + quote(x) + ")" } getOrElse {"None"}
+        case url: java.net.URL  => "new java.net.URL(%s)" format quote(url.toString)
+        case file: java.io.File => "new java.io.File(%s)" format quote(file.toString)
+        case s                  => "\"%s\"" format encodeStringLiteral(s.toString)
       }
 
       def encodeStringLiteral(str: String): String =

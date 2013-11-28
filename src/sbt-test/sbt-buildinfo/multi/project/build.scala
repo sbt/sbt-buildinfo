@@ -39,7 +39,7 @@ object Build extends sbt.Build {
              """  val version = "0.1"""" ::
              """  val homepage = new java.net.URL("http://example.com")""" ::
              """  val scalaVersion = "2.10.2"""" ::
-             """  val sbtVersion = "0.13.0"""" ::
+             """  val sbtVersion = "0.13.0"""" :: 
              """}""" :: Nil =>
         case _ => sys.error("unexpected output: " + lines.mkString("\n"))
       }

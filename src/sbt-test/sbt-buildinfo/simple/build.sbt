@@ -18,7 +18,8 @@ buildInfoKeys := Seq(
   licenses,
   isSnapshot,
   "year" -> 2012,
-  BuildInfoKey.action("buildTime") { 1234L }
+  BuildInfoKey.action("buildTime") { 1234L },
+  target
 )
 
 buildInfoPackage := "hello"
@@ -27,8 +28,10 @@ homepage := Some(url("http://example.com"))
 
 licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
 
-TaskKey[Unit]("check") <<= (sourceManaged in Compile) map { (dir) =>
-  val f = dir / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
+val check = taskKey[Unit]("checks this plugin")
+
+check := {
+  val f = (sourceManaged in Compile).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
   val lines = scala.io.Source.fromFile(f).getLines.toList
   lines match {
     case """package hello""" ::
@@ -44,7 +47,8 @@ TaskKey[Unit]("check") <<= (sourceManaged in Compile) map { (dir) =>
          """  val isSnapshot = false""" ::
          """  val year = 2012""" ::
          """  val buildTime = 1234L""" ::
-         """}""" :: Nil =>
+         targetInfo :: // """
+         """}""" :: Nil if (targetInfo contains "val target = new java.io.File(") =>
     case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
   }
   ()
