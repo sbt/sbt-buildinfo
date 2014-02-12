@@ -132,7 +132,7 @@ object Plugin extends sbt.Plugin {
       }
 
       def quote(v: Any): String = v match {
-        case x @ ( _ : Int | _: Double | _ : Boolean | _: Symbol) => x.toString
+        case x @ ( _: Int | _: Double | _: Boolean | _: Symbol) => x.toString
         case x: Long            => x.toString + "L"
         case node: scala.xml.NodeSeq if node.toString.trim.nonEmpty => node.toString
         case (k, _v)            => "(%s -> %s)" format(quote(k), quote(_v))
