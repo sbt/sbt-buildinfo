@@ -33,7 +33,7 @@ TaskKey[Unit]("check") <<= (sourceManaged in Compile) map { (dir) =>
          """  val name = "helloworld"""" ::
          """  val version = "0.1"""" ::
          """  val scalaVersion = "2.10.2"""" ::
-         """  val sbtVersion = "0.13.0"""" ::
+         """  val sbtVersion = "0.13.1"""" ::
          """  val organization = "com.eed3si9n"""" ::
          """  val libraryDependencies = Seq("org.scala-lang:scala-library:2.10.2")""" ::
          """  val test_libraryDependencies = Seq("org.scala-lang:scala-library:2.10.2")""" ::

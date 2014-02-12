@@ -1,0 +1,6 @@
+  [27]: https://github.com/sbt/sbt-buildinfo/pull/27
+  [@mmynsted]: https://github.com/mmynsted
+
+### `Symbol` support
+
+Starting sbt-buildinfo 0.3.1, `Symbol` keys generate `Symbol` values. [#27][27] contributed by [@mmynsted][@mmynsted]

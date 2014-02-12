@@ -4,11 +4,11 @@ name := "sbt-buildinfo"
 
 organization := "com.eed3si9n"
 
-version := "0.3.0"
+version := "0.3.1-SNAPSHOT"
 
-sbtVersion in Global := "0.13.0" 
+// sbtVersion in Global := "0.13.0" 
 
-scalaVersion in Global := "2.10.2"
+// scalaVersion in Global := "2.10.2"
 
 scalacOptions := Seq("-unchecked", "-deprecation")
 

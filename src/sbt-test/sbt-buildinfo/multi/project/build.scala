@@ -24,8 +24,7 @@ object Build extends sbt.Build {
                          projectID in "root",
                          version,
                          BuildInfoKey.map(homepage) { case (n, opt) => n -> opt.get },
-                         scalaVersion,
-                         sbtVersion),
+                         scalaVersion),
     buildInfoPackage := "hello",
     check <<= (sourceManaged in Compile) map { (dir) =>
       val f = dir / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
@@ -39,7 +38,6 @@ object Build extends sbt.Build {
              """  val version = "0.1"""" ::
              """  val homepage = new java.net.URL("http://example.com")""" ::
              """  val scalaVersion = "2.10.2"""" ::
-             """  val sbtVersion = "0.13.0"""" :: 
              """}""" :: Nil =>
         case _ => sys.error("unexpected output: " + lines.mkString("\n"))
       }
