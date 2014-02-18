@@ -53,7 +53,7 @@ When you reload the settings and compile, this generates the following:
 ```scala
 package hello
 
-object BuildInfo {
+case object BuildInfo {
   val name = "helloworld"
   val version = "0.1-SNAPSHOT"
   val scalaVersion = "2.9.2"
