@@ -25,6 +25,7 @@ TaskKey[Unit]("check") <<= (sourceManaged in Compile) map { (dir) =>
          """case object BuildInfo {""" ::
          """  val name = "helloworld"""" ::
          """  val version = "0.1"""" ::
+         """  override val toString = "name: %s, version: %s" format (name, version)""" ::
          """}""" :: Nil =>
     case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
   }
