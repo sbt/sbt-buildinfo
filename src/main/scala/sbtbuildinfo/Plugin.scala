@@ -77,12 +77,13 @@ object Plugin extends sbt.Plugin {
         }
 
       def makeFile(file: File): File = {
+        val distinctKeys = keys.toList.distinct
         val lines =
           List("package %s" format pkg,
             "",
             "case object %s {" format obj) :::
-          (keys.toList.distinct map { line(_) }).flatten :::
-          List("}")
+          (distinctKeys map { line(_) }).flatten :::
+          List(toStringLine(distinctKeys), "}")
         IO.write(file, lines.mkString("\n"))
         file
       }
@@ -90,6 +91,13 @@ object Plugin extends sbt.Plugin {
       def line(info: BuildInfoKey): Option[String] = entry(info).map {
         case (ident, value) => "  val %s%s = %s" format
           (ident, getType(info) map { ": " + _ } getOrElse {""}, quote(value))
+      }
+
+      def toStringLine(keys: Seq[BuildInfoKey]): String = {
+        val idents = keys.map(entry(_)).flatten.map(_._1)
+        val fmt = idents.map("%s: %%s" format _).mkString(", ")
+        val vars = idents.mkString(", ")
+        """  override val toString = "%s" format (%s)""" format (fmt, vars)
       }
 
       def entry[A](info: BuildInfoKey.Entry[A]): Option[(String, A)] = info match {
