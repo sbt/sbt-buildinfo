@@ -39,6 +39,13 @@ object Build extends sbt.Build {
              """  val homepage = new java.net.URL("http://example.com")""" ::
              """  val scalaVersion = "2.10.2"""" ::
              """  override val toString = "name: %s, projectId: %s, version: %s, homepage: %s, scalaVersion: %s" format (name, projectId, version, homepage, scalaVersion)""" ::
+             "" ::
+             """  val toMap = Map[String, Any](""" ::
+             """    "name" -> name,""" ::
+             """    "projectId" -> projectId,""" ::
+             """    "version" -> version,""" ::
+             """    "homepage" -> homepage,""" ::
+             """    "scalaVersion" -> scalaVersion)""" ::
              """}""" :: Nil =>
         case _ => sys.error("unexpected output: " + lines.mkString("\n"))
       }
