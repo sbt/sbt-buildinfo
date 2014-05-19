@@ -26,6 +26,10 @@ TaskKey[Unit]("check") <<= (sourceManaged in Compile) map { (dir) =>
          """  val name = "helloworld"""" ::
          """  val version = "0.1"""" ::
          """  override val toString = "name: %s, version: %s" format (name, version)""" ::
+         "" ::
+         """  val toMap = Map[String, Any](""" ::
+         """    "name" -> name,""" ::
+         """    "version" -> version)""" ::
          """}""" :: Nil =>
     case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
   }

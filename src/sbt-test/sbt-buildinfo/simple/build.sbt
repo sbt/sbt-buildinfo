@@ -49,6 +49,19 @@ check := {
          """  val buildTime = 1234L""" ::
          targetInfo :: // """
          """  override val toString = "name: %s, projectVersion: %s, scalaVersion: %s, ivyXml: %s, homepage: %s, licenses: %s, isSnapshot: %s, year: %s, sym: %s, buildTime: %s, target: %s" format (name, projectVersion, scalaVersion, ivyXml, homepage, licenses, isSnapshot, year, sym, buildTime, target)""" ::
+         "" ::
+         """  val toMap = Map[String, Any](""" ::
+         """    "name" -> name,""" ::
+         """    "projectVersion" -> projectVersion,""" ::
+         """    "scalaVersion" -> scalaVersion,""" ::
+         """    "ivyXml" -> ivyXml,""" ::
+         """    "homepage" -> homepage,""" ::
+         """    "licenses" -> licenses,""" ::
+         """    "isSnapshot" -> isSnapshot,""" ::
+         """    "year" -> year,""" ::
+         """    "sym" -> sym,""" ::
+         """    "buildTime" -> buildTime,""" ::
+         """    "target" -> target)""" ::
          """}""" :: Nil if (targetInfo contains "val target = new java.io.File(") =>
     case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
   }

@@ -83,7 +83,8 @@ object Plugin extends sbt.Plugin {
             "",
             "case object %s {" format obj) :::
           (distinctKeys map { line(_) }).flatten :::
-          List(toStringLine(distinctKeys), "}")
+          List(toStringLine(distinctKeys), "") :::
+          makeToMapMethod(distinctKeys) ::: List("}")
         IO.write(file, lines.mkString("\n"))
         file
       }
@@ -99,6 +100,11 @@ object Plugin extends sbt.Plugin {
         val vars = idents.mkString(", ")
         """  override val toString = "%s" format (%s)""" format (fmt, vars)
       }
+
+      def makeToMapMethod(distinctKeys: List[BuildInfoKey]): List[String] =
+        distinctKeys.map { key => entry(key) }.flatten.map {
+          case (ident, _) => "    \"%s\" -> %s".format(ident, ident)
+        }.mkString("  val toMap = Map[String, Any](\n", ",\n", ")").split("\n").toList
 
       def entry[A](info: BuildInfoKey.Entry[A]): Option[(String, A)] = info match {
         case BuildInfoKey.Setting(key)      => extracted getOpt (key in scope(key)) map { ident(key) -> _ }
