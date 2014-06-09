@@ -2,6 +2,4 @@
 
 // resolvers += Resolver.url("Typesafe snapshot repository", new java.net.URL("http://typesafe.artifactoryonline.com/typesafe/ivy-snapshots/"))(Resolver.defaultIvyPatterns)
 
-libraryDependencies <+= (sbtVersion) { sv =>
-  "org.scala-sbt" % "scripted-plugin" % sv
-}
+libraryDependencies += "org.scala-sbt" % "scripted-plugin" % sbtVersion.value

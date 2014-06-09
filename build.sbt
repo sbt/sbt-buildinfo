@@ -27,8 +27,8 @@ publishArtifact in (Compile, packageSrc) := true
 publishMavenStyle := false
 
 publishTo := {
-  if (version.value contains "-SNAPSHOT") Some(Resolver.sbtPluginRepo("snapshots"))
-  else Some(Resolver.sbtPluginRepo("releases"))
+  val repoId = if (isSnapshot.value) "snapshots" else "releases"
+  Some(Resolver.sbtPluginRepo(repoId))
 }
 
 credentials += Credentials(Path.userHome / ".ivy2" / ".sbtcredentials")
