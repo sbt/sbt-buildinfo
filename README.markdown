@@ -31,9 +31,13 @@ buildInfoPackage := "hello"
 
 (__Note__: in version 0.1.2, this was `Seq[Scoped]` instead!)
 
-Alternatively, if you are using `Build.scala`, add the import `import sbtbuildinfo.Plugin._` to it and add the module's setting through something like:
+Alternatively, if you are using `Build.scala`, add the plugin to your build as follows:
 
 ```scala
+import sbtbuildinfo.Plugin._
+
+// ...more code here
+
 lazy val myProject = Project(
     id = "myProjectName",
     base = file("."),
@@ -41,10 +45,10 @@ lazy val myProject = Project(
       buildInfoSettings ++
       Seq(
           sourceGenerators in Compile <+= buildInfo,
-          buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion),
-          buildInfoPackage := "org.myorg.myapp"
+          buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+          buildInfoPackage := "hello"
       ) ++
-      …
+      ...
 )
 ```
 
@@ -66,8 +70,7 @@ case object BuildInfo {
 }
 ```
 
-Customize `buildInfoKeys` by adding whatever keys. You can use `BuildInfoKey.map` to change the generated field
-name and value, add new fields with tuples, or add new fields with values computed at build-time:
+Customize `buildInfoKeys` by adding whatever keys you want to have in `BuildInfo`. You can use `BuildInfoKey.map` to change the generated field name and value, add new fields with tuples, or add new fields with values computed at build-time:
 
 ```scala
 buildInfoKeys ++= Seq[BuildInfoKey](
@@ -98,13 +101,17 @@ This generates:
 
 Tasks can be added only if they do not depend on `sourceGenerators`. Otherwise, it will cause an infinite loop.
 
-Here's how to change the generated the object name:
+Here's how to change the generated object name:
 
 ```scala
 buildInfoObject := "Info"
 ```
 
-This changes the generated object to `object Info`. Changing the object name is optional, but to avoid name clash with other jars, package name should be unique.
+This changes the generated object name to `object Info`. Changing the object name is optional, but to avoid name clash with other jars, package name should be unique. Use `buildInfoPackage` key for this.
+
+```scala
+buildInfoPackage := "hello"
+```
 
 ### build number
 
