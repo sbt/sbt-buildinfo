@@ -46,7 +46,7 @@ object Build extends sbt.Build {
              """  val scalaVersion = "2.10.2"""" ::
              """  override val toString = "name: %s, projectId: %s, version: %s, homepage: %s, scalaVersion: %s" format (name, projectId, version, homepage, scalaVersion)""" ::
              "" ::
-             """  val toMap = Map[String, Any](""" ::
+             """  val toMap: Map[String, Any] = Map[String, Any](""" ::
              """    "name" -> name,""" ::
              """    "projectId" -> projectId,""" ::
              """    "version" -> version,""" ::
