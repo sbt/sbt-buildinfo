@@ -39,9 +39,9 @@ import sbtbuildinfo.Plugin._
 // ...more code here
 
 lazy val myProject = Project(
-    id = "myProjectName",
-    base = file("."),
-    settings = Defaults.defaultSettings ++
+    id = "helloworld",
+    base = file(".")
+  ).settings(
       buildInfoSettings ++
       Seq(
           sourceGenerators in Compile <+= buildInfo,
@@ -63,10 +63,17 @@ case object BuildInfo {
   val name = "helloworld"
   /** The value is "0.1-SNAPSHOT". */
   val version = "0.1-SNAPSHOT"
-  /** The value is "2.9.2". */
-  val scalaVersion = "2.9.2"
-  /** The value is "0.12.0". */
-  val sbtVersion = "0.12.0"
+  /** The value is "2.10.3". */
+  val scalaVersion = "2.10.3"
+  /** The value is "0.13.2". */
+  val sbtVersion = "0.13.2"
+  override val toString = "name: %s, version: %s, scalaVersion: %s, sbtVersion: %s" format (name, version, scalaVersion, sbtVersion)
+
+  val toMap = Map[String, Any](
+    "name" -> name,
+    "version" -> version,
+    "scalaVersion" -> scalaVersion,
+    "sbtVersion" -> sbtVersion)
 }
 ```
 
