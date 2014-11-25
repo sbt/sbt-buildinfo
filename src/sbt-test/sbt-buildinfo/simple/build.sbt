@@ -62,7 +62,7 @@ check := {
          targetInfo :: // """
          """  override val toString = "name: %s, projectVersion: %s, scalaVersion: %s, ivyXml: %s, homepage: %s, licenses: %s, isSnapshot: %s, year: %s, sym: %s, buildTime: %s, target: %s" format (name, projectVersion, scalaVersion, ivyXml, homepage, licenses, isSnapshot, year, sym, buildTime, target)""" ::
          "" ::
-         """  val toMap = Map[String, Any](""" ::
+         """  val toMap: Map[String, Any] = Map[String, Any](""" ::
          """    "name" -> name,""" ::
          """    "projectVersion" -> projectVersion,""" ::
          """    "scalaVersion" -> scalaVersion,""" ::

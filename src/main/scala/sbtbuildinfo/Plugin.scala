@@ -109,7 +109,7 @@ object Plugin extends sbt.Plugin {
       def makeToMapMethod(distinctKeys: List[BuildInfoKey]): List[String] =
         distinctKeys.map { key => entry(key) }.flatten.map {
           case (ident, _) => "    \"%s\" -> %s".format(ident, ident)
-        }.mkString("  val toMap = Map[String, Any](\n", ",\n", ")").split("\n").toList
+        }.mkString("  val toMap: Map[String, Any] = Map[String, Any](\n", ",\n", ")").split("\n").toList
 
       def entry[A](info: BuildInfoKey.Entry[A]): Option[(String, A)] = info match {
         case BuildInfoKey.Setting(key)      => extracted getOpt (key in scope(key)) map { ident(key) -> _ }

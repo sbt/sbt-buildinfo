@@ -30,7 +30,7 @@ TaskKey[Unit]("check") <<= (sourceManaged in Compile) map { (dir) =>
          """  val version = "0.1"""" ::
          """  override val toString = "name: %s, version: %s" format (name, version)""" ::
          "" ::
-         """  val toMap = Map[String, Any](""" ::
+         """  val toMap: Map[String, Any] = Map[String, Any](""" ::
          """    "name" -> name,""" ::
          """    "version" -> version)""" ::
          """}""" :: Nil =>
