@@ -85,7 +85,8 @@ object Plugin extends sbt.Plugin {
             s"""case object $obj {""") :::
           (distinctKeys flatMap { line(_) }) :::
           List(toStringLine(distinctKeys), "") :::
-          makeToMapMethod(distinctKeys) ::: List("}")
+          makeToMapMethod(distinctKeys) ::: List("") ::: 
+          List(toJsonLine()) ::: List("}")
         IO.write(file, lines.mkString("\n"))
         file
       }
@@ -104,6 +105,10 @@ object Plugin extends sbt.Plugin {
         val fmt = idents.map("%s: %%s" format _).mkString(", ")
         val vars = idents.mkString(", ")
         s"""  override val toString = "$fmt" format ($vars)"""
+      }
+
+      def toJsonLine(): String = {
+        """  val toJson = toMap.map(i => "\""+i._1+"\":\""+i._2+"\"").mkString("{",", ","}")"""
       }
 
       def makeToMapMethod(distinctKeys: List[BuildInfoKey]): List[String] =

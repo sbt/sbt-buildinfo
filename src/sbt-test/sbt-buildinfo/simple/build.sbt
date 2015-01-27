@@ -74,6 +74,8 @@ check := {
          """    "sym" -> sym,""" ::
          """    "buildTime" -> buildTime,""" ::
          """    "target" -> target)""" ::
+         "" ::
+         """  val toJson = toMap.map(i => "\""+i._1+"\":\""+i._2+"\"").mkString("{",", ","}")""" ::
          """}""" :: Nil if (targetInfo contains "val target = new java.io.File(") =>
     case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
   }

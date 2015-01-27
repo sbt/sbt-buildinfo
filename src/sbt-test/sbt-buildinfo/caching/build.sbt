@@ -33,6 +33,8 @@ TaskKey[Unit]("check") <<= (sourceManaged in Compile) map { (dir) =>
          """  val toMap: Map[String, Any] = Map[String, Any](""" ::
          """    "name" -> name,""" ::
          """    "version" -> version)""" ::
+         "" ::
+         """  val toJson = toMap.map(i => "\""+i._1+"\":\""+i._2+"\"").mkString("{",", ","}")""" ::
          """}""" :: Nil =>
     case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
   }
