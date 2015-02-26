@@ -58,6 +58,8 @@ TaskKey[Unit]("check") <<= (sourceManaged in Compile) map { (dir) =>
          """    "libraryDependencies" -> libraryDependencies,""" ::
          """    "test_libraryDependencies" -> test_libraryDependencies,""" ::
          """    "resolvers" -> resolvers)""" ::
+         "" ::
+         """  val toJson = toMap.map(i => "\""+i._1+"\":\""+i._2+"\"").mkString("{",", ","}")""" ::
          """}""" :: Nil =>
     case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
   }

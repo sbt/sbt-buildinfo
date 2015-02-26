@@ -52,6 +52,8 @@ object Build extends sbt.Build {
              """    "version" -> version,""" ::
              """    "homepage" -> homepage,""" ::
              """    "scalaVersion" -> scalaVersion)""" ::
+             "" ::
+             """  val toJson = toMap.map(i => "\""+i._1+"\":\""+i._2+"\"").mkString("{",", ","}")""" ::
              """}""" :: Nil =>
         case _ => sys.error("unexpected output: " + lines.mkString("\n"))
       }
