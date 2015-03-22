@@ -1,7 +1,10 @@
   [38]: https://github.com/sbt/sbt-buildinfo/issues/38
 
+### auto plugin
 
-### Auto plugin
+Starting sbt-buildinfo 0.4.0, this plugin is an auto plugin that requires sbt 0.13.5+.
+See [migration guide](https://github.com/sbt/sbt-buildinfo/blob/master/Migration.md) for details.
 
 ### minor enhancement
+
 - Tries to get more return type annotation. [#38][38]
