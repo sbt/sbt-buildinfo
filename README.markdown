@@ -8,9 +8,14 @@ sbt-buildinfo generates Scala source from your build definitions.
 Latest Stable
 -------------
 
+For sbt 0.13.6+ add sbt-buildinfo as a dependency in `project/plugins.sbt`:
+
+
 ```scala
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.3.2")
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.4.0")
 ```
+
+For sbt 0.13.(x < 6), see [0.3.2](https://github.com/sbt/sbt-buildinfo/tree/0.3.2).
 
 For sbt 0.12, see [0.2.5](https://github.com/sbt/sbt-buildinfo/tree/0.2.5).
 
@@ -20,36 +25,12 @@ Usage
 Add the following in your `build.sbt`:
 
 ```scala
-buildInfoSettings
-
-sourceGenerators in Compile <+= buildInfo
-
-buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
-
-buildInfoPackage := "hello"
-```
-
-(__Note__: in version 0.1.2, this was `Seq[Scoped]` instead!)
-
-Alternatively, if you are using `Build.scala`, add the plugin to your build as follows:
-
-```scala
-import sbtbuildinfo.Plugin._
-
-// ...more code here
-
-lazy val myProject = Project(
-    id = "helloworld",
-    base = file(".")
-  ).settings(
-      buildInfoSettings ++
-      Seq(
-          sourceGenerators in Compile <+= buildInfo,
-          buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
-          buildInfoPackage := "hello"
-      ) ++
-      ...
-)
+lazy val root = (project in file(".")).
+  enablePlugins(BuildInfoPlugin).
+  settings(
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoPackage := "hello"
+  )
 ```
 
 When you reload the settings and compile, this generates the following:

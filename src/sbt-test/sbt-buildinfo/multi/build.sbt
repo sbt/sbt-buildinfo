@@ -1,25 +1,21 @@
-import sbt._
- 
-object Build extends sbt.Build {
-  import Keys._
-  import sbtbuildinfo.Plugin._
- 
-  lazy val root = Project("root", file("."), settings = Defaults.defaultSettings,
-    aggregate = Seq(app))
-  lazy val app = Project("app", file("app"), settings = appSettings)
- 
-  lazy val buildSettings = Defaults.defaultSettings ++ Seq(
-    version := "0.1",
-    organization := "com.example",
-    homepage := Some(url("http://example.com")),
-    scalaVersion := "2.10.2"
-  )
-  
-  lazy val check = TaskKey[Unit]("check")
+lazy val check = taskKey[Unit]("check")
 
-  lazy val appSettings = buildSettings ++ buildInfoSettings ++ Seq(
+lazy val commonSettings = Seq(
+  version := "0.1",
+  organization := "com.example",
+  homepage := Some(url("http://example.com")),
+  scalaVersion := "2.10.2"
+)
+
+lazy val root = (project in file(".")).
+  aggregate(app).
+  settings(commonSettings: _*)
+
+lazy val app = (project in file("app")).
+  enablePlugins(BuildInfoPlugin).
+  settings(commonSettings: _*).
+  settings(
     name := "sbt-buildinfo-example-app",
-    sourceGenerators in Compile <+= buildInfo,
     buildInfoKeys := Seq(name,
                          projectID in "root",
                          version,
@@ -36,8 +32,8 @@ object Build extends sbt.Build {
              """case object BuildInfo {""" ::
              """  /** The value is "sbt-buildinfo-example-app". */""" ::
              """  val name = "sbt-buildinfo-example-app"""" ::
-             """  /** The value is "root:root:0.1-SNAPSHOT". */""" ::
-             """  val projectId = "root:root:0.1-SNAPSHOT"""" ::
+             """  /** The value is "com.example:root:0.1". */""" ::
+             """  val projectId = "com.example:root:0.1"""" ::
              """  /** The value is "0.1". */""" ::
              """  val version = "0.1"""" ::
              """  /** The value is new java.net.URL("http://example.com"). */""" ::
@@ -60,4 +56,4 @@ object Build extends sbt.Build {
       ()
     }
   )
-}
+
