@@ -1,4 +1,6 @@
   [38]: https://github.com/sbt/sbt-buildinfo/issues/38
+  [45]: https://github.com/sbt/sbt-buildinfo/pull/45
+  [@enginyoyen]: https://github.com/enginyoyen
 
 ### auto plugin
 
@@ -11,6 +13,8 @@ sbt-buildinfo 0.4.0 adds an option to `toJson` method that encodes build info to
 Here's how to enable it:
 
     buildInfoOptions += BuildInfoOption.ToJson
+
+[#45][45] by [@enginyoyen][@enginyoyen]
 
 ### minor fixes and enhancements
 

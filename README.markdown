@@ -52,12 +52,6 @@ case object BuildInfo {
   /** The value is "0.13.2". */
   val sbtVersion: String = "0.13.2"
   override val toString: String = "name: %s, version: %s, scalaVersion: %s, sbtVersion: %s" format (name, version, scalaVersion, sbtVersion)
-
-  val toMap = Map[String, Any](
-    "name" -> name,
-    "version" -> version,
-    "scalaVersion" -> scalaVersion,
-    "sbtVersion" -> sbtVersion)
 }
 ```
 
@@ -111,6 +105,34 @@ A build number can be generated as follows. Note that cross building against mul
 ```scala
 buildInfoKeys += buildInfoBuildNumber
 ```
+
+### toMap
+
+Add the following option
+
+```scala
+buildInfoOptions += BuildInfoOption.ToMap
+```
+
+to generate `toMap` method:
+
+```scala
+val toMap = Map[String, Any](
+  "name" -> name,
+  "version" -> version,
+  "scalaVersion" -> scalaVersion,
+  "sbtVersion" -> sbtVersion)
+```
+
+### toJson
+
+Add the following option
+
+```scala
+buildInfoOptions += BuildInfoOption.ToJson
+```
+
+to generate `toJson` method.
 
 Eclipse support
 ---------------
