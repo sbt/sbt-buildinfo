@@ -79,9 +79,9 @@ This generates:
 
 ```scala
   /** The value is Seq("Sonatype Public: https://oss.sonatype.org/content/groups/public"). */
-  val resolvers = Seq("Sonatype Public: https://oss.sonatype.org/content/groups/public")
+  val resolvers: Seq[String] = Seq("Sonatype Public: https://oss.sonatype.org/content/groups/public")
   /** The value is Seq("org.scala-lang:scala-library:2.9.1", ...). */
-  val test_libraryDependencies = Seq("org.scala-lang:scala-library:2.9.1", ...)
+  val test_libraryDependencies: Seq[String] = Seq("org.scala-lang:scala-library:2.9.1", ...)
   /** The value is "Helloworld". */
   val projectName = "Helloworld"
   /** The value is 1234. */
