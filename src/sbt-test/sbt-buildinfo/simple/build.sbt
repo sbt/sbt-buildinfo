@@ -59,22 +59,6 @@ lazy val root = (project in file(".")).
              targetInfoComment ::
              targetInfo :: // """
              """  override val toString: String = "name: %s, projectVersion: %s, scalaVersion: %s, ivyXml: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, buildTime: %s, target: %s" format (name, projectVersion, scalaVersion, ivyXml, homepage, licenses, apiMappings, isSnapshot, year, sym, buildTime, target)""" ::
-             "" ::
-             """  val toMap: Map[String, Any] = Map[String, Any](""" ::
-             """    "name" -> name,""" ::
-             """    "projectVersion" -> projectVersion,""" ::
-             """    "scalaVersion" -> scalaVersion,""" ::
-             """    "ivyXml" -> ivyXml,""" ::
-             """    "homepage" -> homepage,""" ::
-             """    "licenses" -> licenses,""" ::
-             """    "apiMappings" -> apiMappings,""" ::
-             """    "isSnapshot" -> isSnapshot,""" ::
-             """    "year" -> year,""" ::
-             """    "sym" -> sym,""" ::
-             """    "buildTime" -> buildTime,""" ::
-             """    "target" -> target)""" ::
-             "" ::
-             """  val toJson: String = toMap.map(i => "\"" + i._1 + "\":\"" + i._2 + "\"").mkString("{", ", ", "}")""" ::
              """}""" :: Nil if (targetInfo contains "val target: File = new File(") =>
         case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
       }

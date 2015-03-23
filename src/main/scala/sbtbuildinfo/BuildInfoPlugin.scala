@@ -12,6 +12,8 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
   object autoImport extends BuildInfoKeys {
     val BuildInfoKey = sbtbuildinfo.BuildInfoKey
     type BuildInfoKey = sbtbuildinfo.BuildInfoKey
+    val BuildInfoOption = sbtbuildinfo.BuildInfoOption
+    type BuildInfoOption = sbtbuildinfo.BuildInfoOption
   }
   import autoImport._
 
@@ -34,15 +36,22 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
   }
 
   lazy val buildInfoSettings: Seq[Def.Setting[_]] = Seq(
-    buildInfo <<= (sourceManaged in Compile,
-        buildInfoObject, buildInfoPackage, buildInfoKeys, thisProjectRef, state, streams) map {
-      (dir, obj, pkg, keys, ref, state, taskStreams) =>
-      Seq(BuildInfo(dir / "sbt-buildinfo", obj, pkg, keys, ref, state, taskStreams.cacheDirectory))
+    buildInfo := {
+      val dir = (sourceManaged in Compile).value
+      Seq(BuildInfo(dir / "sbt-buildinfo",
+        buildInfoObject.value,
+        buildInfoPackage.value,
+        buildInfoKeys.value,
+        buildInfoOptions.value,
+        thisProjectRef.value,
+        state.value,
+        streams.value.cacheDirectory))
     },
     sourceGenerators in Compile <+= buildInfo,
     buildInfoObject  := "BuildInfo",
     buildInfoPackage := "buildinfo",
     buildInfoKeys    := Seq(name, version, scalaVersion, sbtVersion),
-    buildInfoBuildNumber <<= (baseDirectory) map { (dir) => buildNumberTask(dir, 1) }
+    buildInfoBuildNumber <<= (baseDirectory) map { (dir) => buildNumberTask(dir, 1) },
+    buildInfoOptions := Seq()
   )
 }

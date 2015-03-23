@@ -44,15 +44,6 @@ lazy val app = (project in file("app")).
              """  /** The value is "2.10.2". */""" ::
              """  val scalaVersion: String = "2.10.2"""" ::
              """  override val toString: String = "name: %s, projectId: %s, version: %s, homepage: %s, scalaVersion: %s" format (name, projectId, version, homepage, scalaVersion)""" ::
-             "" ::
-             """  val toMap: Map[String, Any] = Map[String, Any](""" ::
-             """    "name" -> name,""" ::
-             """    "projectId" -> projectId,""" ::
-             """    "version" -> version,""" ::
-             """    "homepage" -> homepage,""" ::
-             """    "scalaVersion" -> scalaVersion)""" ::
-             "" ::
-             """  val toJson: String = toMap.map(i => "\"" + i._1 + "\":\"" + i._2 + "\"").mkString("{", ", ", "}")""" ::
              """}""" :: Nil =>
         case _ => sys.error("unexpected output: " + lines.mkString("\n"))
       }

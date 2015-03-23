@@ -5,6 +5,14 @@
 Starting sbt-buildinfo 0.4.0, this plugin is an auto plugin that requires sbt 0.13.5+.
 See [migration guide](https://github.com/sbt/sbt-buildinfo/blob/master/Migration.md) for details.
 
-### minor enhancement
+### ToJson
 
+sbt-buildinfo 0.4.0 adds an option to `toJson` method that encodes build info to a JSON string.
+Here's how to enable it:
+
+    buildInfoOptions += BuildInfoOption.ToJson
+
+### minor fixes and enhancements
+
+- `toMap` method is no longer gerated by default. Add `BuildInfoOption.ToMap` to `buildInfoOptions`.
 - Tries to get more return type annotation. [#38][38]
