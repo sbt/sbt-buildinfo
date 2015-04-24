@@ -55,6 +55,8 @@ case object BuildInfo {
 }
 ```
 
+to the file `target/scala-2.11/src_managed/main/sbt-buildinfo/BuildInfo.scala` (if you use scala version `2.11.x`).
+
 Customize `buildInfoKeys` by adding whatever keys you want to have in `BuildInfo`. You can use `BuildInfoKey.map` to change the generated field name and value, add new fields with tuples, or add new fields with values computed at build-time:
 
 ```scala
