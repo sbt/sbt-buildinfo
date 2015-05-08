@@ -12,7 +12,6 @@ lazy val root = (project in file(".")).
   settings(commonSettings: _*)
 
 lazy val app = (project in file("app")).
-  enablePlugins(BuildInfoPlugin).
   settings(commonSettings: _*).
   settings(
     name := "sbt-buildinfo-example-app",
@@ -50,4 +49,3 @@ lazy val app = (project in file("app")).
       ()
     }
   )
-

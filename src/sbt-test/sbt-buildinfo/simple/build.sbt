@@ -1,7 +1,6 @@
 lazy val check = taskKey[Unit]("checks this plugin")
 
 lazy val root = (project in file(".")).
-  enablePlugins(BuildInfoPlugin).
   settings(
     name := "helloworld",
     version := "0.1",
