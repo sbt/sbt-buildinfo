@@ -5,6 +5,7 @@ import sbt._, Keys._
 object BuildInfoPlugin extends sbt.AutoPlugin {
   type BuildInfoKey = BuildInfoKey.Entry[_]
 
+  override def trigger = allRequirements
   override def requires = plugins.JvmPlugin
   override def projectSettings: Seq[Def.Setting[_]] =
     buildInfoSettings

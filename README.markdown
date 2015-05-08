@@ -26,7 +26,6 @@ Add the following in your `build.sbt`:
 
 ```scala
 lazy val root = (project in file(".")).
-  enablePlugins(BuildInfoPlugin).
   settings(
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "hello"
