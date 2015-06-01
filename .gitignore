@@ -4,3 +4,4 @@ src_managed/
 project/boot/
 .idea/
 .idea_modules/
+*~

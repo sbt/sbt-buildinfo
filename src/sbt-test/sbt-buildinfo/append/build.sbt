@@ -1,7 +1,6 @@
 lazy val check = taskKey[Unit]("check")
 
 lazy val root = (project in file(".")).
-  enablePlugins(BuildInfoPlugin).
   settings(
     name := "helloworld",
     organization := "com.eed3si9n",
@@ -31,8 +30,8 @@ lazy val root = (project in file(".")).
              """  val version: String = "0.1"""" ::
              """  /** The value is "2.10.2". */""" ::
              """  val scalaVersion: String = "2.10.2"""" ::
-             """  /** The value is "0.13.7". */""" ::
-             """  val sbtVersion: String = "0.13.7"""" ::
+             """  /** The value is "0.13.8". */""" ::
+             """  val sbtVersion: String = "0.13.8"""" ::
              """  /** The value is "com.eed3si9n". */""" ::
              """  val organization: String = "com.eed3si9n"""" ::
              """  /** The value is Seq("org.scala-lang:scala-library:2.10.2"). */""" ::
@@ -48,4 +47,3 @@ lazy val root = (project in file(".")).
       ()
     }
   )
-
