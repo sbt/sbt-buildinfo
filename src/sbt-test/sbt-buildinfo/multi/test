@@ -1,6 +1,12 @@
 > project root
 
 > compile
+$ exists target/scala-2.10/src_managed/main/sbt-buildinfo/BuildInfo.scala
 $ exists app/target/scala-2.10/src_managed/main/sbt-buildinfo/BuildInfo.scala
+$ exists app2/target/scala-2.10/src_managed/main/sbt-buildinfo/BuildInfo.scala
+$ exists app3/target/scala-2.10/src_managed/main/sbt-buildinfo/BuildInfo.scala
 
 > check
+> check2
+> check3
+> assembly
