@@ -7,13 +7,14 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
 
   override def requires = plugins.JvmPlugin
   override def projectSettings: Seq[Def.Setting[_]] =
-    buildInfoSettings
+    buildInfoScopedSettings(Compile) ++ buildInfoDefaultSettings
 
   object autoImport extends BuildInfoKeys {
     val BuildInfoKey = sbtbuildinfo.BuildInfoKey
     type BuildInfoKey = sbtbuildinfo.BuildInfoKey
     val BuildInfoOption = sbtbuildinfo.BuildInfoOption
     type BuildInfoOption = sbtbuildinfo.BuildInfoOption
+    val addBuildInfoToConfig = buildInfoScopedSettings _
   }
   import autoImport._
 
@@ -35,9 +36,9 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
     current
   }
 
-  lazy val buildInfoSettings: Seq[Def.Setting[_]] = Seq(
+  def buildInfoScopedSettings(conf: Configuration): Seq[Def.Setting[_]] = inConfig(conf)(Seq(
     buildInfo := {
-      val dir = (sourceManaged in Compile).value
+      val dir = sourceManaged.value
       Seq(BuildInfo(dir / "sbt-buildinfo",
         buildInfoObject.value,
         buildInfoPackage.value,
@@ -47,7 +48,10 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
         state.value,
         streams.value.cacheDirectory))
     },
-    sourceGenerators in Compile <+= buildInfo,
+    sourceGenerators <+= buildInfo
+  ))
+
+  def buildInfoDefaultSettings: Seq[Setting[_]] = Seq(
     buildInfoObject  := "BuildInfo",
     buildInfoPackage := "buildinfo",
     buildInfoKeys    := Seq(name, version, scalaVersion, sbtVersion),
