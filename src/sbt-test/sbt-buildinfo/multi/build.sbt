@@ -43,7 +43,11 @@ lazy val app = (project in file("app")).
              """  val homepage = new URL("http://example.com")""" ::
              """  /** The value is "2.10.2". */""" ::
              """  val scalaVersion: String = "2.10.2"""" ::
-             """  override val toString: String = "name: %s, projectId: %s, version: %s, homepage: %s, scalaVersion: %s" format (name, projectId, version, homepage, scalaVersion)""" ::
+             """  override val toString: String = {""" ::
+             """    "name: %s, projectId: %s, version: %s, homepage: %s, scalaVersion: %s" format (""" ::
+             """      name, projectId, version, homepage, scalaVersion""" ::
+             """    )""" ::
+             """  }""" ::
              """}""" :: Nil =>
         case _ => sys.error("unexpected output: " + lines.mkString("\n"))
       }

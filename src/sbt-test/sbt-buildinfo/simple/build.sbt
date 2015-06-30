@@ -58,7 +58,11 @@ lazy val root = (project in file(".")).
              """  val buildTime: Long = 1234L""" ::
              targetInfoComment ::
              targetInfo :: // """
-             """  override val toString: String = "name: %s, projectVersion: %s, scalaVersion: %s, ivyXml: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, buildTime: %s, target: %s" format (name, projectVersion, scalaVersion, ivyXml, homepage, licenses, apiMappings, isSnapshot, year, sym, buildTime, target)""" ::
+             """  override val toString: String = {""" ::
+             """    "name: %s, projectVersion: %s, scalaVersion: %s, ivyXml: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, buildTime: %s, target: %s" format (""" ::
+             """      name, projectVersion, scalaVersion, ivyXml, homepage, licenses, apiMappings, isSnapshot, year, sym, buildTime, target""" ::
+             """    )""" ::
+             """  }""" ::
              """}""" :: Nil if (targetInfo contains "val target: File = new File(") =>
         case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
       }
