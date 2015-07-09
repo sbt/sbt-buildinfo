@@ -7,7 +7,7 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
 
   override def requires = plugins.JvmPlugin
   override def projectSettings: Seq[Def.Setting[_]] =
-    buildInfoSettings
+    buildInfoScopedSettings(Compile) ++ buildInfoDefaultSettings
 
   object autoImport extends BuildInfoKeys {
     val BuildInfoKey = sbtbuildinfo.BuildInfoKey
@@ -16,6 +16,7 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
     type BuildInfoOption = sbtbuildinfo.BuildInfoOption
     val BuildInfoType = sbtbuildinfo.BuildInfoType
     type BuildInfoType = sbtbuildinfo.BuildInfoType
+    val addBuildInfoToConfig = buildInfoScopedSettings _
   }
   import autoImport._
 
@@ -23,7 +24,7 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
     val file: File = dir / "buildinfo.properties"
     val prop = new java.util.Properties
 
-    def readProp: Int = {  
+    def readProp: Int = {
       prop.load(new java.io.FileInputStream(file))
       prop.getProperty("buildnumber", "0").toInt
     }
@@ -37,9 +38,9 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
     current
   }
 
-  lazy val buildInfoSettings: Seq[Def.Setting[_]] = Seq(
+  def buildInfoScopedSettings(conf: Configuration): Seq[Def.Setting[_]] = inConfig(conf)(Seq(
     buildInfo := {
-      val dir = (sourceManaged in Compile).value
+      val dir = sourceManaged.value
       Seq(BuildInfo(dir / "sbt-buildinfo",
         buildInfoRenderer.value,
         buildInfoObject.value,
@@ -49,16 +50,20 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
         state.value,
         streams.value.cacheDirectory))
     },
-    sourceGenerators in Compile ++= {
+    sourceGenerators ++= {
       if (buildInfoRenderer.value.isSource) Seq(buildInfo.taskValue) else Nil
     },
-    resourceGenerators in Compile ++= {
+    resourceGenerators ++= {
       if(buildInfoRenderer.value.isResource) Seq(buildInfo.taskValue) else Nil
     },
     buildInfoRenderer := ScalaClassRenderer(
       buildInfoOptions.value,
       buildInfoPackage.value,
-      buildInfoObject.value),
+      buildInfoObject.value)
+    )
+  )
+
+  def buildInfoDefaultSettings: Seq[Setting[_]] = Seq(
     buildInfoObject  := "BuildInfo",
     buildInfoPackage := "buildinfo",
     buildInfoKeys    := Seq(name, version, scalaVersion, sbtVersion),
