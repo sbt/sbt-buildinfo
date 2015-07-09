@@ -33,7 +33,11 @@ lazy val root = (project in file(".")).
              """  val name: String = "helloworld"""" ::
              """  /** The value is "2.10.2". */""" ::
              """  val scalaVersion: String = "2.10.2"""" ::
-             """  override val toString: String = "name: %s, scalaVersion: %s" format (name, scalaVersion)""" ::
+             """  override val toString: String = {""" ::
+             """    "name: %s, scalaVersion: %s" format (""" ::
+             """      name, scalaVersion""" ::
+             """    )""" ::
+             """  }""" ::
              """  val toMap: Map[String, Any] = Map[String, Any](""" ::
              """    "name" -> name,""" ::
              """    "scalaVersion" -> scalaVersion)""" ::

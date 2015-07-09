@@ -26,7 +26,11 @@ lazy val root = (project in file(".")).
              """  val name: String = "helloworld"""" ::
              """  /** The value is "0.1". */""" ::
              """  val version: String = "0.1"""" ::
-             """  override val toString: String = "name: %s, version: %s" format (name, version)""" ::
+             """  override val toString: String = {""" ::
+             """    "name: %s, version: %s" format (""" ::
+             """      name, version""" ::
+             """    )""" ::
+             """  }""" ::
              """}""" :: Nil =>
         case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
       }
