@@ -22,7 +22,7 @@ object BuildInfo {
     import Tracked.inputChanged
 
     def extracted = Project.extract(state)
-    val tempFile = cacheDir / "sbtbuildinfo" / s"$obj.${renderer.extension}"
+    val tempFile = cacheDir / "sbt-buildinfo" / s"$obj.${renderer.extension}"
     val outFile = dir / s"$obj.${renderer.extension}"
 
     // 1. make the file under cache/sbtbuildinfo.
@@ -36,12 +36,30 @@ object BuildInfo {
     val cachedCopyFile =
       inputChanged(cacheDir / "sbtbuildinfo-inputs") { (inChanged, input: HashFileInfo) =>
         if (inChanged || !outFile.exists) {
-          IO.copyFile(tempFile, outFile, true)
+          IO.copyFile(tempFile, outFile, preserveLastModified = true)
         } // if
       }
 
+    def makeKeys : List[BuildInfoKey] = {
+      val extraKeys = {
+        if (options contains BuildInfoOption.BuildTime) {
+          val now = System.currentTimeMillis()
+          val dtf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+          dtf.setTimeZone(java.util.TimeZone.getTimeZone("UTC"))
+          val nowStr = dtf.format(new java.util.Date(now))
+          Seq[BuildInfoKey] (
+            "builtAtString" -> nowStr ,
+            "builtAtMillis" -> now
+          )
+        } else {
+          Seq.empty[BuildInfoKey]
+        }
+      }
+      (keys ++ extraKeys).toList.distinct
+    }
+
     def makeFile(file: File): File = {
-      val distinctKeys = keys.toList.distinct
+      val distinctKeys = makeKeys
       val values = distinctKeys.flatMap(entry(_))
       val lines = renderer.header ++ renderer.renderKeys(values) ++ renderer.footer
       IO.write(file, lines.mkString("\n"))

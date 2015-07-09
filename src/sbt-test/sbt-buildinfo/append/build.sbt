@@ -41,7 +41,11 @@ lazy val root = (project in file(".")).
              """  val test_libraryDependencies: Seq[String] = Seq("org.scala-lang:scala-library:2.10.2")""" ::
              """  /** The value is Seq("Sonatype Public: https://oss.sonatype.org/content/groups/public"). */""" ::
              """  val resolvers: Seq[String] = Seq("Sonatype Public: https://oss.sonatype.org/content/groups/public")""" ::
-             """  override val toString: String = "name: %s, version: %s, scalaVersion: %s, sbtVersion: %s, organization: %s, libraryDependencies: %s, test_libraryDependencies: %s, resolvers: %s" format (name, version, scalaVersion, sbtVersion, organization, libraryDependencies, test_libraryDependencies, resolvers)""" ::
+             """  override val toString: String = {""" ::
+             """    "name: %s, version: %s, scalaVersion: %s, sbtVersion: %s, organization: %s, libraryDependencies: %s, test_libraryDependencies: %s, resolvers: %s" format (""" ::
+             """      name, version, scalaVersion, sbtVersion, organization, libraryDependencies, test_libraryDependencies, resolvers""" ::
+             """    )""" ::
+             """  }""" ::
              """}""" :: Nil =>
         case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
       }
