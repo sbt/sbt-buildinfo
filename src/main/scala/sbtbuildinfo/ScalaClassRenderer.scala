@@ -11,7 +11,7 @@ private[sbtbuildinfo] case class ScalaClassRenderer(options: Seq[BuildInfoOption
     s"package $pkg",
     "",
     "import java.io.File",
-    "import java.lang._",
+    "import java.lang.String",
     "import java.net.URL",
     "import scala._; import Predef._",
     "",
