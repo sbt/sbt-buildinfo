@@ -8,11 +8,11 @@ sbt-buildinfo generates Scala source from your build definitions.
 Latest Stable
 -------------
 
-For sbt 0.13.6+ add sbt-buildinfo as a dependency in `project/plugins.sbt`:
+For sbt 0.13.6+ add sbt-buildinfo as a dependency in `project/buildinfo.sbt`:
 
 
 ```scala
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.4.0")
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.5.0")
 ```
 
 For sbt 0.13.(x < 6), see [0.3.2](https://github.com/sbt/sbt-buildinfo/tree/0.3.2).
@@ -110,7 +110,7 @@ A build number can be generated as follows. Note that cross building against mul
 buildInfoKeys += buildInfoBuildNumber
 ```
 
-### toMap
+### BuildInfoOption.ToMap
 
 Add the following option
 
@@ -128,7 +128,7 @@ val toMap = Map[String, Any](
   "sbtVersion" -> sbtVersion)
 ```
 
-### toJson
+### BuildInfoOption.ToJson
 
 Add the following option
 
@@ -137,6 +137,33 @@ buildInfoOptions += BuildInfoOption.ToJson
 ```
 
 to generate `toJson` method.
+
+### BuildInfoOption.Traits
+
+Add the following option
+
+```scala
+buildInfoOptions += BuildInfoOption.Traits("TestTrait1", "TestTrait2")
+```
+
+to mixin traits to the generated object.
+
+### BuildInfoOption.BuildTime
+
+Add the following option
+
+```scala
+buildInfoOptions += BuildInfoOption.BuildTime
+```
+
+to add timestamp values:
+
+```scala
+/** The value is "2015-07-30 03:30:16.849". */
+val builtAtString: String = "2015-07-30 03:30:16.849"
+/** The value is 1438227016849L. */
+val builtAtMillis: Long = 1438227016849L
+```
 
 Eclipse support
 ---------------
