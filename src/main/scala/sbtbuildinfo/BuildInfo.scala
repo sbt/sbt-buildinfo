@@ -62,7 +62,7 @@ object BuildInfo {
       val distinctKeys = makeKeys
       val values = distinctKeys.flatMap(entry(_))
       val lines = renderer.header ++ renderer.renderKeys(values) ++ renderer.footer
-      IO.write(file, lines.mkString("\n"))
+      IO.write(file, lines.mkString("\n") + "\n")
       file
     }
 
