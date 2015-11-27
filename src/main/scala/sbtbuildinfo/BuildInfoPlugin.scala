@@ -70,6 +70,7 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
   def buildInfoDefaultSettings: Seq[Setting[_]] = Seq(
     buildInfoObject  := "BuildInfo",
     buildInfoPackage := "buildinfo",
+    buildInfoUsePackageAsPath := false,
     buildInfoKeys    := Seq(name, version, scalaVersion, sbtVersion),
     buildInfoBuildNumber := buildNumberTask(baseDirectory.value, 1),
     buildInfoOptions := Seq()
