@@ -1,6 +1,7 @@
 package sbtbuildinfo
 
 import sbt._, Keys._
+import java.io.File
 
 object BuildInfoPlugin extends sbt.AutoPlugin {
   type BuildInfoKey = BuildInfoKey.Entry[_]
@@ -39,17 +40,20 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
   }
 
   def buildInfoScopedSettings(conf: Configuration): Seq[Def.Setting[_]] = inConfig(conf)(Seq(
-    buildInfo := {
-      val dir = sourceManaged.value
-      Seq(BuildInfo(dir / "sbt-buildinfo",
+    buildInfo := Seq(BuildInfo({
+          if (buildInfoUsePackageAsPath.value)
+            new File(sourceManaged.value, buildInfoPackage.value.split('.').mkString("/"))
+          else
+            sourceManaged.value / "sbt-buildinfo"
+        },
         buildInfoRenderer.value,
         buildInfoObject.value,
         buildInfoKeys.value,
         buildInfoOptions.value,
         thisProjectRef.value,
         state.value,
-        streams.value.cacheDirectory))
-    },
+        streams.value.cacheDirectory
+    )),
     sourceGenerators ++= {
       if (buildInfoRenderer.value.isSource) Seq(buildInfo.taskValue) else Nil
     },
