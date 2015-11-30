@@ -1,0 +1,4 @@
+> compile
+$ exists target/scala-2.10/src_managed/main/foo/bar/baz/BuildInfo.scala
+
+> check
