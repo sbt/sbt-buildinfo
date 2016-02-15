@@ -1,0 +1,6 @@
+  [@eed3si9n]: https://github.com/eed3si9n
+  [76]: https://github.com/sbt/sbt-buildinfo/issues/76
+
+### minor fixes
+
+- Explicitly specify UTF-8 to write the file. [#76][76] by [@eed3si9n][@eed3si9n]
