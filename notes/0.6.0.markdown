@@ -1,6 +1,18 @@
   [@eed3si9n]: https://github.com/eed3si9n
-  [76]: https://github.com/sbt/sbt-buildinfo/issues/76
+  [@mallman]: https://github.com/mallman
+  [@peter-fu]: https://github.com/peter-fu
+  [70]: https://github.com/sbt/sbt-buildinfo/pull/70
+  [75]: https://github.com/sbt/sbt-buildinfo/pull/75
+  [77]: https://github.com/sbt/sbt-buildinfo/pull/77
+
+### buildInfoUsePackageAsPath
+
+sbt-buildinfo 0.6.0 adds a new settting called `buildInfoUsePackageAsPath`.
+When set to `true`, the generated file will be placed in the directory structure matching the package name, for instance `target/scala-2.10/src_managed/main/x/y/z/BuildInfo.scala` for the package `x.y.z`. This is aimed to work around the IDEs that demand the file position to match the package namespace.
+
+This feature was contributed as [#75][75] by [@peter-fu][@peter-fu].
 
 ### minor fixes
 
-- Explicitly specify UTF-8 to write the file. [#76][76] by [@eed3si9n][@eed3si9n]
+- Explicitly specifies UTF-8 to write the file. [#77][77] by [@eed3si9n][@eed3si9n]
+- Adds trailing end line to the generated. [#70][70] by [@mallman][@mallman]
