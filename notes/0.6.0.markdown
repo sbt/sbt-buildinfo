@@ -4,6 +4,8 @@
   [70]: https://github.com/sbt/sbt-buildinfo/pull/70
   [75]: https://github.com/sbt/sbt-buildinfo/pull/75
   [77]: https://github.com/sbt/sbt-buildinfo/pull/77
+  [78]: https://github.com/sbt/sbt-buildinfo/pull/78
+  [74]: https://github.com/sbt/sbt-buildinfo/issues/74
 
 ### buildInfoUsePackageAsPath
 
@@ -16,3 +18,4 @@ This feature was contributed as [#75][75] by [@peter-fu][@peter-fu].
 
 - Explicitly specifies UTF-8 to write the file. [#77][77] by [@eed3si9n][@eed3si9n]
 - Adds trailing end line to the generated. [#70][70] by [@mallman][@mallman]
+- Generates fully qualified name for `java.io.File` and `java.net.URL` so we can use `-Ywarn-unused-import`. [#74][74]/[#78][78] by [@eed3si9n][@eed3si9n]
