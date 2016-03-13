@@ -1,0 +1,6 @@
+  [@jedesah]: https://github.com/sbt/sbt-buildinfo/pull/81
+  [81]: https://github.com/sbt/sbt-buildinfo/pull/81
+
+### minor fixes
+
+- Make code generation `-Yno-imports` friendly. [#81][81] by [@jedesah][@jedesah]
