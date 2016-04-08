@@ -30,8 +30,8 @@ lazy val root = (project in file(".")).
              """  val version: String = "0.1"""" ::
              """  /** The value is "2.10.2". */""" ::
              """  val scalaVersion: String = "2.10.2"""" ::
-             """  /** The value is "0.13.7". */""" ::
-             """  val sbtVersion: String = "0.13.7"""" ::
+             """  /** The value is "0.13.11". */""" ::
+             """  val sbtVersion: String = "0.13.11"""" ::
              """  /** The value is "com.eed3si9n". */""" ::
              """  val organization: String = "com.eed3si9n"""" ::
              """  /** The value is scala.collection.Seq("org.scala-lang:scala-library:2.10.2"). */""" ::
