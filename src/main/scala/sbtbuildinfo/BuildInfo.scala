@@ -2,9 +2,7 @@ package sbtbuildinfo
 
 import sbt._, Keys._
 
-case class BuildInfoResult(identifier: String, value: Any, typeExpr: TypeExpression) {
-  def toStringTuple: (String, String) = (identifier, value.toString)
-}
+case class BuildInfoResult(identifier: String, value: Any, typeExpr: TypeExpression)
 
 object BuildInfo {
   def apply(dir: File, renderer: BuildInfoRenderer, obj: String,
