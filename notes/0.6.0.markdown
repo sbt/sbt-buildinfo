@@ -9,7 +9,7 @@
 
 ### buildInfoUsePackageAsPath
 
-sbt-buildinfo 0.6.0 adds a new settting called `buildInfoUsePackageAsPath`.
+sbt-buildinfo 0.6.0 adds a new setting called `buildInfoUsePackageAsPath`.
 When set to `true`, the generated file will be placed in the directory structure matching the package name, for instance `target/scala-2.10/src_managed/main/x/y/z/BuildInfo.scala` for the package `x.y.z`. This is aimed to work around the IDEs that demand the file position to match the package namespace.
 
 This feature was contributed as [#75][75] by [@peter-fu][@peter-fu].
