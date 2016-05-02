@@ -20,9 +20,7 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
     val addBuildInfoToConfig = buildInfoScopedSettings _
 
     val buildInfoValues: TaskKey[Seq[BuildInfoResult]] =
-      taskKey("BuildInfo keys/values for use in the sbt build")
-    val buildInfoStringValues: TaskKey[Seq[(String,String)]] =
-      taskKey("BuildInfo keys/values for use in the sbt build as plain Strings")
+      taskKey("BuildInfo keys/values/types for use in the sbt build")
   }
   import autoImport._
 
@@ -61,9 +59,6 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
     )),
     buildInfoValues :=
       BuildInfo.results(buildInfoKeys.value, buildInfoOptions.value, thisProjectRef.value, state.value),
-
-    buildInfoStringValues :=
-      buildInfoValues.value.map { case BuildInfoResult(id,value,_) => (id,value.toString) },
 
     sourceGenerators ++= {
       if (buildInfoRenderer.value.isSource) Seq(buildInfo.taskValue) else Nil
