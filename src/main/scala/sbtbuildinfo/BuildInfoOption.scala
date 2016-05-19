@@ -1,6 +1,6 @@
 package sbtbuildinfo
 
-import sbt._, Keys._
+import sbt._, syntax._, Keys._
 
 sealed trait BuildInfoOption
 object BuildInfoOption {

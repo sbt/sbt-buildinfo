@@ -1,7 +1,6 @@
 package sbtbuildinfo
 
-import sbt._
-import Keys._
+import sbt._, syntax._, Keys._
 
 trait BuildInfoKeys {
   lazy val buildInfo            = taskKey[Seq[File]]("The task that generates the build info.")

@@ -1,10 +1,11 @@
 lazy val commonSettings: Seq[Setting[_]] = Seq(
-  git.baseVersion in ThisBuild := "0.6.1",
+  version := "0.6.1",
+  // git.baseVersion in ThisBuild := "0.6.1",
   organization in ThisBuild := "com.eed3si9n"
 )
 
 lazy val root = (project in file(".")).
-  enablePlugins(GitVersioning).
+  // enablePlugins(GitVersioning).
   settings(
     commonSettings,
     sbtPlugin := true,
@@ -14,8 +15,4 @@ lazy val root = (project in file(".")).
     scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-language:implicitConversions"),
     description := "sbt plugin to generate build info",
     licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
-  ).
-  settings(lsSettings: _*).
-  settings(
-    LsKeys.tags in LsKeys.lsync := Seq("sbt", "codegen")
   )

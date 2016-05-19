@@ -1,6 +1,6 @@
 package sbtbuildinfo
 
-import sbt._, Keys._
+import sbt._, syntax._, Keys._
 import java.io.File
 
 object BuildInfoPlugin extends sbt.AutoPlugin {
