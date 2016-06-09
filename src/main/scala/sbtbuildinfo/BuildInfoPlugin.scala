@@ -44,10 +44,18 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
 
   def buildInfoScopedSettings(conf: Configuration): Seq[Def.Setting[_]] = inConfig(conf)(Seq(
     buildInfo := Seq(BuildInfo({
+          val parentDir = buildInfoRenderer.value.fileType match {
+            case BuildInfoType.Source => sourceManaged.value
+            case BuildInfoType.Resource => resourceManaged.value
+          }
           if (buildInfoUsePackageAsPath.value)
-            new File(sourceManaged.value, buildInfoPackage.value.split('.').mkString("/"))
+            buildInfoPackage.value match {
+              case "" => parentDir
+              case packageName =>
+                new File(parentDir, packageName.split('.').mkString("/"))
+            }
           else
-            sourceManaged.value / "sbt-buildinfo"
+            parentDir / "sbt-buildinfo"
         },
         buildInfoRenderer.value,
         buildInfoObject.value,
