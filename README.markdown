@@ -90,7 +90,9 @@ This generates:
 
 Tasks can be added only if they do not depend on `sourceGenerators`. Otherwise, it will cause an infinite loop.
 
-**CAVEAT**: Adding tasks in general to `buildInfoKeys` can have bad side-effects due to how sbt-buildinfo uses them. See [#87][] / [scala-js/scala-js#2363][] / [sbt/sbt#2970][] / [sbt/sbt#2156][].
+**CAVEAT**: The tasks added to `buildInfoKeys` are not deduplicated against sbt's task engine.  Therefore,
+calling complex tasks that require locking and/or exclusive access may cause unexpected race condition.  Keep it
+to relatively simple tasks.  See [#87][] / [scala-js/scala-js#2363][] / [sbt/sbt#2970][] / [sbt/sbt#2156][].
 
 [#87]: https://github.com/sbt/sbt-buildinfo/issues/87
 [scala-js/scala-js#2363]: https://github.com/scala-js/scala-js/issues/2363
