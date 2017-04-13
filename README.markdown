@@ -174,19 +174,6 @@ val builtAtString: String = "2015-07-30 03:30:16.849"
 val builtAtMillis: Long = 1438227016849L
 ```
 
-Eclipse support
----------------
-
-If you use the [sbteclipse plugin](https://github.com/typesafehub/sbteclipse) to generate projects for Eclipse, you need to tell `sbteclipse` that the generated `BuildInfo.scala` is a _managed source_, i.e., a generated source file.
-
-To do so, you can configure `sbteclipse` as follows:
-
-```scala
-EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Managed
-```
-
-This is explained in more detail in the [`sbtecliipse` documentation](https://github.com/typesafehub/sbteclipse/wiki/Using-sbteclipse).
-
 License
 -------
 
