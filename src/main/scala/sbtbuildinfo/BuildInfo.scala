@@ -103,7 +103,7 @@ object BuildInfo {
 
     def makeFile(file: File): File = {
       val values = results(keys, options, proj, state)
-      val lines = renderer.header ++ renderer.renderKeys(values) ++ renderer.footer
+      val lines = renderer.renderKeys(values)
       IO.writeLines(file, lines, IO.utf8)
       file
     }

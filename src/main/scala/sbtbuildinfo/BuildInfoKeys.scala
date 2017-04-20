@@ -6,6 +6,7 @@ import Keys._
 trait BuildInfoKeys {
   lazy val buildInfo            = taskKey[Seq[File]]("The task that generates the build info.")
   lazy val buildInfoRenderer    = settingKey[BuildInfoRenderer]("The renderer to use to generate the build info.")
+  lazy val buildInfoRenderFactory = settingKey[BuildInfoRenderer.Factory]("The renderFactory to used to build the renderer.")
   lazy val buildInfoObject      = settingKey[String]("The name for the generated object.")
   lazy val buildInfoPackage     = settingKey[String]("The name for the generated package.")
   lazy val buildInfoUsePackageAsPath = settingKey[Boolean]("If true, the generated object is placed in the folder of the package instead of \"sbt-buildinfo\".")

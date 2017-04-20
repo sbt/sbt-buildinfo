@@ -74,7 +74,7 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
     resourceGenerators ++= {
       if(buildInfoRenderer.value.isResource) Seq(buildInfo.taskValue) else Nil
     },
-    buildInfoRenderer := ScalaClassRenderer(
+    buildInfoRenderer := buildInfoRenderFactory.value.apply(
       buildInfoOptions.value,
       buildInfoPackage.value,
       buildInfoObject.value)
@@ -87,6 +87,7 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
     buildInfoUsePackageAsPath := false,
     buildInfoKeys    := Seq(name, version, scalaVersion, sbtVersion),
     buildInfoBuildNumber := buildNumberTask(baseDirectory.value, 1),
-    buildInfoOptions := Seq()
+    buildInfoOptions := Seq(),
+    buildInfoRenderFactory := ScalaCaseObjectRenderer.apply
   )
 }
