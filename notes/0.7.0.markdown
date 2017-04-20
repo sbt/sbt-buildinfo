@@ -1,0 +1,16 @@
+### fixes
+
+- If generating resources, put them into resourceManaged. #94 by @alexeyr
+
+### buildInfoRenderFactory
+
+One can now use
+
+    buildInfoRenderFactory := ScalaCaseClassRenderer.apply
+
+To switch to another Renderer. Also added a Case Class renderer, which will create a case class AND an object that inherits the class. This makes it easy to use a jsonFormatter with the output. #98 by @axos88
+
+### buildInfoValues
+
+Adds `buildInfoValues` task, which exposes the set of `BuildInfoResult` objects used by sbt-buildinfo to generate BuildInfo files.
+This can be used within the sbt build itself to add the build info to the jar Manifest. #89 by @jastice
