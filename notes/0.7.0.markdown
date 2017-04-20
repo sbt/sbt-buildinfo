@@ -1,3 +1,5 @@
+sbt-buildinfo 0.7.0 is cross published to sbt 0.13.x and sbt 1.0.0-M5.
+
 ### fixes
 
 - If generating resources, put them into resourceManaged. #94 by @alexeyr
