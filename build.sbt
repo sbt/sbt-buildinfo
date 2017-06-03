@@ -14,8 +14,4 @@ lazy val root = (project in file(".")).
     scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-language:implicitConversions"),
     description := "sbt plugin to generate build info",
     licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
-  ).
-  settings(lsSettings: _*).
-  settings(
-    LsKeys.tags in LsKeys.lsync := Seq("sbt", "codegen")
   )
