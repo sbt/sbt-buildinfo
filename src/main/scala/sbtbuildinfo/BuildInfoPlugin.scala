@@ -48,8 +48,10 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
             case BuildInfoType.Source => sourceManaged.value
             case BuildInfoType.Resource => resourceManaged.value
           }
-          if (buildInfoUsePackageAsPath.value)
-            buildInfoPackage.value match {
+          val usePkgAsPath = buildInfoUsePackageAsPath.value
+          val pkg = buildInfoPackage.value 
+          if (usePkgAsPath)
+            pkg match {
               case "" => parentDir
               case packageName =>
                 new File(parentDir, packageName.split('.').mkString("/"))
