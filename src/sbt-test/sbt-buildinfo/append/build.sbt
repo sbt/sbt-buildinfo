@@ -14,8 +14,8 @@ lazy val root = (project in file(".")).
     homepage := Some(url("http://example.com")),
     licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")),
     resolvers ++= Seq("Sonatype Public" at "https://oss.sonatype.org/content/groups/public"),
-    check <<= (sourceManaged in Compile) map { (dir) =>
-      val f = dir / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
+    check := {
+      val f = (sourceManaged in Compile).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
       lines match {
         case """package hello""" ::
