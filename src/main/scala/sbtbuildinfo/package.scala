@@ -1,4 +1,4 @@
-import sbt._, Keys._
+import sbt._
 
 package object sbtbuildinfo {
   type BuildInfoKey = BuildInfoKey.Entry[_]
