@@ -7,7 +7,7 @@ case class BuildInfoResult(identifier: String, value: Any, typeExpr: TypeExpress
 object BuildInfo {
   def apply(dir: File, renderer: BuildInfoRenderer, obj: String,
             keys: Seq[BuildInfoKey], options: Seq[BuildInfoOption],
-            proj: ProjectRef, state: State, cacheDir: File): File =
+            proj: ProjectRef, state: State, cacheDir: File): Task[File] =
     BuildInfoTask(dir, renderer, obj, keys, options, proj, state, cacheDir).file
 
   private def extraKeys(options: Seq[BuildInfoOption]): Seq[BuildInfoKey] =
@@ -24,25 +24,23 @@ object BuildInfo {
         Seq.empty[BuildInfoKey]
       }
 
-  def results(keys: Seq[BuildInfoKey], options: Seq[BuildInfoOption], project: ProjectRef, state: State): Seq[BuildInfoResult] = {
+  def results(keys: Seq[BuildInfoKey], options: Seq[BuildInfoOption], project: ProjectRef, state: State): Task[Seq[BuildInfoResult]] = {
     val distinctKeys = (keys ++ extraKeys(options)).toList.distinct
     val extracted = Project.extract(state)
 
-    def entry[A](info: BuildInfoKey.Entry[A]): Option[BuildInfoResult] = {
+    def entry[A](info: BuildInfoKey.Entry[A]): Option[Task[BuildInfoResult]] = {
       val typeExpr = TypeExpression.parse(info.manifest.toString())._1
       val result = info match {
-        case BuildInfoKey.Setting(key) => extracted getOpt (key in scope(key, project)) map {
-          ident(key) -> _
-        }
-        case BuildInfoKey.Task(key) => Some(ident(key) -> extracted.runTask(key in scope(key, project), state)._2)
-        case BuildInfoKey.Constant(tuple) => Some(tuple)
-        case BuildInfoKey.Action(name, fun) => Some(name -> fun.apply)
-        case BuildInfoKey.Mapped(from, fun) => entry(from).map { r => fun((r.identifier, r.value.asInstanceOf[A])) }
+        case BuildInfoKey.Setting(key)      => extracted getOpt (key in scope(key, project)) map (v => task(ident(key) -> v))
+        case BuildInfoKey.Task(key)         => Some(task(ident(key) -> extracted.runTask(key in scope(key, project), state)._2))
+        case BuildInfoKey.Constant(tuple)   => Some(task(tuple))
+        case BuildInfoKey.Action(name, fun) => Some(task(name -> fun.apply))
+        case BuildInfoKey.Mapped(from, fun) => entry(from) map (_ map (r => fun((r.identifier, r.value.asInstanceOf[A]))))
       }
-      result.map { case (identifier,value) => BuildInfoResult(identifier, value, typeExpr) }
+      result map (_ map { case (identifier, value) => BuildInfoResult(identifier, value, typeExpr) })
     }
 
-    distinctKeys.flatMap(entry(_))
+    distinctKeys.flatMap(entry(_)).join
   }
 
   private def scope(scoped: Scoped, project: ProjectReference) = {
@@ -79,10 +77,11 @@ object BuildInfo {
 
     // 1. make the file under cache/sbtbuildinfo.
     // 2. compare its SHA1 against cache/sbtbuildinfo-inputs
-    def file: File = {
-      makeFile(tempFile)
-      cachedCopyFile(hash(tempFile))
-      outFile
+    def file: Task[File] = {
+      makeFile(tempFile) map { _ =>
+        cachedCopyFile(hash(tempFile))
+        outFile
+      }
     }
 
     val cachedCopyFile =
@@ -92,11 +91,12 @@ object BuildInfo {
         } // if
       }
 
-    def makeFile(file: File): File = {
-      val values = results(keys, options, proj, state)
-      val lines = renderer.renderKeys(values)
-      IO.writeLines(file, lines, IO.utf8)
-      file
+    def makeFile(file: File): Task[File] = {
+      results(keys, options, proj, state) map { values =>
+        val lines = renderer.renderKeys(values)
+        IO.writeLines(file, lines, IO.utf8)
+        file
+      }
     }
 
   }

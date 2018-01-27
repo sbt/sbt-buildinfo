@@ -43,31 +43,56 @@ object BuildInfoPlugin extends AutoPlugin {
     current
   }
 
+  import TupleSyntax._
+
   def buildInfoScopedSettings(conf: Configuration): Seq[Def.Setting[_]] = inConfig(conf)(Seq(
-    buildInfo := Seq(BuildInfo({
-          val parentDir = buildInfoRenderer.value.fileType match {
-            case BuildInfoType.Source => sourceManaged.value
-            case BuildInfoType.Resource => resourceManaged.value
-          }
-          if (buildInfoUsePackageAsPath.value)
-            buildInfoPackage.value match {
-              case "" => parentDir
-              case packageName =>
-                new File(parentDir, packageName.split('.').mkString("/"))
+    buildInfo := (
+        (
+          buildInfoRenderer,
+          sourceManaged,
+          resourceManaged,
+          buildInfoUsePackageAsPath,
+          buildInfoPackage,
+          buildInfoObject,
+          buildInfoKeys,
+          buildInfoOptions,
+          thisProjectRef,
+          state,
+          streams,
+        ) flatMap { (
+            renderer: BuildInfoRenderer,
+            srcDir: File,
+            resDir: File,
+            usePackageAsPath: Boolean,
+            packageName: String,
+            obj: String,
+            keys: Seq[BuildInfoKey],
+            opts: Seq[BuildInfoOption],
+            pr: ProjectRef,
+            s: State,
+            taskStreams: TaskStreams,
+        ) =>
+          val dir = {
+            val parentDir = renderer.fileType match {
+              case BuildInfoType.Source   => srcDir
+              case BuildInfoType.Resource => resDir
             }
-          else
-            parentDir / "sbt-buildinfo"
-        },
-        buildInfoRenderer.value,
-        buildInfoObject.value,
-        buildInfoKeys.value,
-        buildInfoOptions.value,
-        thisProjectRef.value,
-        state.value,
-        streams.value.cacheDirectory
-    )),
-    buildInfoValues :=
-      BuildInfo.results(buildInfoKeys.value, buildInfoOptions.value, thisProjectRef.value, state.value),
+            if (usePackageAsPath)
+              packageName match {
+                case "" => parentDir
+                case _  => parentDir / (packageName split '.' mkString "/")
+              }
+            else
+              parentDir / "sbt-buildinfo"
+          }
+          BuildInfo(dir, renderer, obj, keys, opts, pr, s, taskStreams.cacheDirectory) map (Seq(_))
+        }
+    ).value,
+    buildInfoValues := (
+      (buildInfoKeys, buildInfoOptions, thisProjectRef, state) flatMap ((keys, opts, pr, s) =>
+        BuildInfo.results(keys, opts, pr, s)
+      )
+    ).value,
 
     sourceGenerators ++= (if (buildInfoRenderer.value.isSource) Seq(buildInfo.taskValue) else Nil),
     resourceGenerators ++= (if (buildInfoRenderer.value.isResource) Seq(buildInfo.taskValue) else Nil),
