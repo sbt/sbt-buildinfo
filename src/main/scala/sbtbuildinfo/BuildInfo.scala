@@ -1,6 +1,6 @@
 package sbtbuildinfo
 
-import sbt._
+import sbt._, Keys._
 
 case class BuildInfoResult(identifier: String, value: Any, typeExpr: TypeExpression)
 
@@ -33,6 +33,7 @@ object BuildInfo {
       val result = info match {
         case BuildInfoKey.Setting(key)      => extracted getOpt (key in scope(key, project)) map (v => task(ident(key) -> v))
         case BuildInfoKey.Task(key)         => Some(task(ident(key) -> extracted.runTask(key in scope(key, project), state)._2))
+        case BuildInfoKey.TaskValue(task)   => Some(task.map(x => ident(task) -> x))
         case BuildInfoKey.Constant(tuple)   => Some(task(tuple))
         case BuildInfoKey.Action(name, fun) => Some(task(name -> fun.apply))
         case BuildInfoKey.Mapped(from, fun) => entry(from) map (_ map (r => fun((r.identifier, r.value.asInstanceOf[A]))))
@@ -49,15 +50,24 @@ object BuildInfo {
     else scope0
   }
 
-  private def ident(scoped: Scoped): String = {
-    val config = scoped.scope.config.toOption map (_.name) filter (_ != "compile")
-    val inTask = scoped.scope.task.toOption map (_.label)
-    val key = scoped.key.label.split("-").toList match {
+  private def ident(scoped: Scoped): String = ident(scoped.scope, scoped.key)
+  private def ident(scoped: ScopedKey[_]): String = ident(scoped.scope, scoped.key)
+
+  private def ident(scope: Scope, attrKey: AttributeKey[_]): String = {
+    val config = scope.config.toOption map (_.name) filter (_ != "compile")
+    val inTask = scope.task.toOption map (_.label)
+    val key = attrKey.label.split("-").toList match {
       case Nil     => ""
       case x :: xs => x + (xs map (_.capitalize) mkString "")
     }
     Seq(config, inTask, Some(key)).flatten mkString "_"
   }
+
+  private def ident(task: Task[_]): String = (
+    task.info.name
+      orElse (task.info.attributes get taskDefinitionKey map ident)
+      getOrElse s"<anon-${System identityHashCode task}>"
+  )
 
 
   private case class BuildInfoTask(dir: File,

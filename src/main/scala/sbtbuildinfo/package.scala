@@ -5,6 +5,7 @@ package object sbtbuildinfo {
   object BuildInfoKey {
     implicit def setting[A](key: SettingKey[A]): Entry[A] = Setting(key)
     implicit def task[A](key: TaskKey[A]): Entry[A] = Task(key)
+    implicit def taskValue[A: Manifest](task: sbt.Task[A]): Entry[A] = TaskValue(task)
     implicit def constant[A: Manifest](tuple: (String, A)): Entry[A] = Constant(tuple)
     
     def apply[A](key: SettingKey[A]): Entry[A] = Setting(key)
@@ -20,6 +21,9 @@ package object sbtbuildinfo {
     private[sbtbuildinfo] final case class Task[A](scoped: TaskKey[A]) extends Entry[A] {
       def manifest = scoped.key.manifest.typeArguments.head.asInstanceOf[Manifest[A]]
     }
+
+    private[sbtbuildinfo] final case class TaskValue[A](task: sbt.Task[A])(implicit val manifest: Manifest[A])
+    extends Entry[A]
 
     private[sbtbuildinfo] final case class Constant[A](tuple: (String, A))(implicit val manifest: Manifest[A])
     extends Entry[A]
