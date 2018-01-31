@@ -1,6 +1,6 @@
 package sbtbuildinfo
 
-import sbt._, Keys._
+import sbt._
 
 case class BuildInfoResult(identifier: String, value: Any, typeExpr: TypeExpression)
 
@@ -52,22 +52,13 @@ object BuildInfo {
   }
 
   private def ident(scoped: Scoped): String = {
-    val scope = scoped.scope
-    (scope.config.toOption match {
-      case None => ""
-      case Some(ConfigKey("compile")) => ""
-      case Some(ConfigKey(x)) => x + "_"
-    }) +
-      (scope.task.toOption match {
-        case None => ""
-        case Some(x) => x.label + "_"
-      }) +
-      (scoped.key.label.split("-").toList match {
-        case Nil => ""
-        case x :: xs => x + (xs map {
-          _.capitalize
-        }).mkString("")
-      })
+    val config = scoped.scope.config.toOption map (_.name) filter (_ != "compile")
+    val inTask = scoped.scope.task.toOption map (_.label)
+    val key = scoped.key.label.split("-").toList match {
+      case Nil     => ""
+      case x :: xs => x + (xs map (_.capitalize) mkString "")
+    }
+    Seq(config, inTask, Some(key)).flatten mkString "_"
   }
 
 

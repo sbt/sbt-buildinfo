@@ -3,7 +3,7 @@ package sbtbuildinfo
 import sbt._, Keys._
 import java.io.File
 
-object BuildInfoPlugin extends sbt.AutoPlugin {
+object BuildInfoPlugin extends AutoPlugin {
   type BuildInfoKey = BuildInfoKey.Entry[_]
 
   override def requires = plugins.JvmPlugin
@@ -17,6 +17,7 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
     type BuildInfoOption = sbtbuildinfo.BuildInfoOption
     val BuildInfoType = sbtbuildinfo.BuildInfoType
     type BuildInfoType = sbtbuildinfo.BuildInfoType
+
     val addBuildInfoToConfig = buildInfoScopedSettings _
 
     val buildInfoValues: TaskKey[Seq[BuildInfoResult]] =
@@ -68,12 +69,8 @@ object BuildInfoPlugin extends sbt.AutoPlugin {
     buildInfoValues :=
       BuildInfo.results(buildInfoKeys.value, buildInfoOptions.value, thisProjectRef.value, state.value),
 
-    sourceGenerators ++= {
-      if (buildInfoRenderer.value.isSource) Seq(buildInfo.taskValue) else Nil
-    },
-    resourceGenerators ++= {
-      if(buildInfoRenderer.value.isResource) Seq(buildInfo.taskValue) else Nil
-    },
+    sourceGenerators ++= (if (buildInfoRenderer.value.isSource) Seq(buildInfo.taskValue) else Nil),
+    resourceGenerators ++= (if (buildInfoRenderer.value.isResource) Seq(buildInfo.taskValue) else Nil),
     buildInfoRenderer := buildInfoRenderFactory.value.apply(
       buildInfoOptions.value,
       buildInfoPackage.value,
