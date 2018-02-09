@@ -15,6 +15,9 @@ package object sbtbuildinfo {
       BuildInfoKey.Mapped(from, fun)
     def action[A: Manifest](name: String)(fun: => A): Entry[A] = Action(name, () => fun)
 
+    def of(x: Any): BuildInfoKey = macro BuildInfoKeyMacros.ofImpl
+    def ofN(xs: Any*): Seq[BuildInfoKey] = macro BuildInfoKeyMacros.ofNImpl
+
     private[sbtbuildinfo] final case class Setting[A](scoped: SettingKey[A]) extends Entry[A] {
       def manifest = scoped.key.manifest
     }
@@ -38,5 +41,34 @@ package object sbtbuildinfo {
     sealed trait Entry[A] {
       private[sbtbuildinfo] def manifest: Manifest[A]
     }
+  }
+
+  import scala.reflect.macros.blackbox
+
+  final class BuildInfoKeyMacros(val c: blackbox.Context) {
+    import c.universe._
+
+    val BuildInfoKey = q"_root_.sbtbuildinfo.BuildInfoKey"
+
+    def ofImpl(x: Tree): Tree = {
+      x.tpe match {
+        case tpe if tpe <:< typeOf[SettingKey[_]] =>
+          val A = tpe.typeArgs.head
+          q"$BuildInfoKey.setting[$A]($x)"
+
+        case tpe if tpe <:< typeOf[TaskKey[_]] =>
+          val A = tpe.typeArgs.head
+          q"$BuildInfoKey.taskValue[$A]($x.taskValue)($x.key.manifest.typeArguments.head.asInstanceOf[Manifest[$A]])"
+
+        case tpe if tpe <:< typeOf[(_, _)] =>
+          val A = tpe.typeArgs.tail.head
+          q"$BuildInfoKey.constant[$A]($x)"
+
+        case tpe if tpe <:< typeOf[BuildInfoKey] => x
+      }
+    }
+
+    def ofNImpl(xs: Tree*): Tree = q"_root_.scala.Seq(..${xs map ofImpl})"
+
   }
 }

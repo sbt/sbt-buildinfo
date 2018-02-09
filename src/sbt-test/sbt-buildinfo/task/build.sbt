@@ -19,7 +19,7 @@ val projInTaskGraph1 = project settings (
 val projInTaskGraph2 = project dependsOn projInTaskGraph1 settings (
   BuildInfoPlugin.buildInfoDefaultSettings,
   addBuildInfoToConfig(Test),
-  buildInfoKeys in Test += (fullClasspath in Compile).taskValue
+  buildInfoKeys in Test += BuildInfoKey.of(fullClasspath in Compile)
 )
 
 TaskKey[Unit]("checkOutOfTaskGraph") := {
