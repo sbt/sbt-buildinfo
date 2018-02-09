@@ -6,7 +6,7 @@ lazy val root = (project in file(".")).
     name := "helloworld",
     version := "0.1",
     scalaVersion := "2.10.2",
-    buildInfoKeys := Seq(
+    buildInfoKeys := BuildInfoKey.ofN(
       name,
       BuildInfoKey.map(version) { case (n, v) => "projectVersion" -> v.toDouble },
       scalaVersion,
@@ -37,7 +37,7 @@ lazy val root = (project in file(".")).
              """  /** The value is "helloworld". */"""::
              """  val name: String = "helloworld"""" ::
              """  /** The value is 0.1. */"""::
-             """  val projectVersion = 0.1""" ::
+             """  val projectVersion: scala.Double = 0.1""" ::
              """  /** The value is "2.10.2". */""" ::
              """  val scalaVersion: String = "2.10.2"""" ::
              """  /** The value is scala.collection.Seq(). */""" ::

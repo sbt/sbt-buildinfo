@@ -4,6 +4,9 @@ import sbt._, Keys._
 import BuildInfoPlugin.autoImport._
 
 object BuildInfoKeySpec {
+  // duplicate the out of box implicit so we don't get deprecation warnings in this testing code
+  implicit def task[A](key: TaskKey[A]): BuildInfoKey.Entry[A] = BuildInfoKey.Task(key)
+
   buildInfoKeys  := Seq(name, version)                         // test `:=` works with setting keys
   buildInfoKeys  := Seq(products, fullClasspath)               // test `:=` works with task keys
   buildInfoKeys  := Seq(name, fullClasspath)                   // test `:=` works with setting and task keys

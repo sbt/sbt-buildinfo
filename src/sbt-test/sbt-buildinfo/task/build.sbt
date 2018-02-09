@@ -9,7 +9,7 @@ val projOutOfTaskGraph1 = project settings (
 val projOutOfTaskGraph2 = project dependsOn projOutOfTaskGraph1 settings (
   BuildInfoPlugin.buildInfoDefaultSettings,
   addBuildInfoToConfig(Test),
-  buildInfoKeys in Test += fullClasspath in Compile
+  buildInfoKeys in Test += fullClasspath in Compile // intentionally uses the deprecated implicit conversion
 )
 
 val projInTaskGraph1 = project settings (
