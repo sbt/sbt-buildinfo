@@ -4,13 +4,13 @@ package object sbtbuildinfo {
   type BuildInfoKey = BuildInfoKey.Entry[_]
   object BuildInfoKey {
     implicit def setting[A](key: SettingKey[A]): Entry[A] = Setting(key)
-    @deprecated("Explicitly wrap in BuildInfoKey.of/ofN. Or if out-of-graph execution is required use BuildInfoKey.outOfGraphTaskExecution", "0.7.1")
+    @deprecated("Explicitly wrap in BuildInfoKey.of/ofN. Or if out-of-graph execution is required use BuildInfoKey.outOfGraphUnsafe", "0.7.1")
     implicit def task[A](key: TaskKey[A]): Entry[A] = Task(key)
     implicit def taskValue[A: Manifest](task: sbt.Task[A]): Entry[A] = TaskValue(task)
     implicit def constant[A: Manifest](tuple: (String, A)): Entry[A] = Constant(tuple)
     
     def apply[A](key: SettingKey[A]): Entry[A] = Setting(key)
-    @deprecated("Explicitly wrap in BuildInfoKey.of/ofN. Or if out-of-graph execution is required use BuildInfoKey.outOfGraphTaskExecution", "0.7.1")
+    @deprecated("Explicitly wrap in BuildInfoKey.of/ofN. Or if out-of-graph execution is required use BuildInfoKey.outOfGraphUnsafe", "0.7.1")
     def apply[A](key: TaskKey[A]): Entry[A] = Task(key)
     def apply[A: Manifest](tuple: (String, A)): Entry[A] = Constant(tuple)
     def map[A, B: Manifest](from: Entry[A])(fun: ((String, A)) => (String, B)): Entry[B] =
@@ -20,7 +20,7 @@ package object sbtbuildinfo {
     def of(x: Any): BuildInfoKey = macro BuildInfoKeyMacros.ofImpl
     def ofN(xs: Any*): Seq[BuildInfoKey] = macro BuildInfoKeyMacros.ofNImpl
 
-    def outOfGraphTaskExecution[A](key: TaskKey[A]): Entry[A] = Task(key)
+    def outOfGraphUnsafe[A](key: TaskKey[A]): Entry[A] = Task(key)
 
     private[sbtbuildinfo] final case class Setting[A](scoped: SettingKey[A]) extends Entry[A] {
       def manifest = scoped.key.manifest
