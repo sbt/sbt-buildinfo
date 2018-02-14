@@ -6,7 +6,7 @@ lazy val root = (project in file(".")).
     name := "helloworld",
     version := "0.1",
     scalaVersion := "2.10.2",
-    buildInfoKeys := Seq(
+    buildInfoKeys := BuildInfoKey.ofN(
       name,
       BuildInfoKey.map(version) { case (n, v) => "projectVersion" -> v.toDouble },
       scalaVersion,
@@ -37,11 +37,11 @@ lazy val root = (project in file(".")).
              """  /** The value is "helloworld". */"""::
              """  val name: String = "helloworld"""" ::
              """  /** The value is 0.1. */"""::
-             """  val projectVersion = 0.1""" ::
+             """  val projectVersion: scala.Double = 0.1""" ::
              """  /** The value is "2.10.2". */""" ::
              """  val scalaVersion: String = "2.10.2"""" ::
              """  /** The value is scala.collection.Seq(). */""" ::
-             """  val ivyXml: scala.xml.NodeSeq = scala.collection.Seq()""" ::
+             """  val ivyXML: scala.xml.NodeSeq = scala.collection.Seq()""" ::
              """  /** The value is scala.Some(new java.net.URL("http://example.com")). */""" ::
              """  val homepage: scala.Option[java.net.URL] = scala.Some(new java.net.URL("http://example.com"))""" ::
              """  /** The value is scala.collection.Seq(("MIT License" -> new java.net.URL("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))). */""" ::
@@ -59,8 +59,8 @@ lazy val root = (project in file(".")).
              targetInfoComment ::
              targetInfo :: // """
              """  override val toString: String = {""" ::
-             """    "name: %s, projectVersion: %s, scalaVersion: %s, ivyXml: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, buildTime: %s, target: %s" format (""" ::
-             """      name, projectVersion, scalaVersion, ivyXml, homepage, licenses, apiMappings, isSnapshot, year, sym, buildTime, target""" ::
+             """    "name: %s, projectVersion: %s, scalaVersion: %s, ivyXML: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, buildTime: %s, target: %s" format (""" ::
+             """      name, projectVersion, scalaVersion, ivyXML, homepage, licenses, apiMappings, isSnapshot, year, sym, buildTime, target""" ::
              """    )""" ::
              """  }""" ::
              """}""" :: Nil if (targetInfo contains "val target: java.io.File = new java.io.File(") =>

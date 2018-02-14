@@ -20,6 +20,9 @@ abstract class ScalaRenderer extends BuildInfoRenderer {
         case TypeExpression("sbt.ModuleID", Nil) => Some("String")
         case TypeExpression("sbt.Resolver", Nil) => Some("String")
 
+        case TypeExpression("sbt.librarymanagement.ModuleID", Nil) => Some("String")
+        case TypeExpression("sbt.librarymanagement.Resolver", Nil) => Some("String")
+
         case TypeExpression("scala.Option", Seq(arg)) =>
           tpeToReturnType(arg) map { x => s"scala.Option[$x]" }
         case TypeExpression("scala.collection.Seq", Seq(arg)) =>

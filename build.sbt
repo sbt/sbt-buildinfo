@@ -12,6 +12,10 @@ lazy val root = (project in file(".")).
     // sbtVersion in Global := "0.13.0" 
     // scalaVersion in Global := "2.10.2"
     scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-language:implicitConversions"),
+    scalacOptions += "-language:experimental.macros",
+    libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value % Provided,
     description := "sbt plugin to generate build info",
-    licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
+    licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")),
+    scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Dplugin.version=" + version.value),
+    scriptedBufferLog := false
   )

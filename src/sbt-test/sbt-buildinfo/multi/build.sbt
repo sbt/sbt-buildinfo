@@ -17,13 +17,13 @@ lazy val app = (project in file("app")).
   settings(
     name := "sbt-buildinfo-example-app",
     buildInfoKeys := Seq(name,
-                         projectID in "root",
+                         projectID in LocalProject("root"),
                          version,
                          BuildInfoKey.map(homepage) { case (n, opt) => n -> opt.get },
                          scalaVersion),
     buildInfoPackage := "hello",
-    check <<= (sourceManaged in Compile) map { (dir) =>
-      val f = dir / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
+    check := {
+      val f = (sourceManaged in Compile).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
       lines match {
         case """package hello""" ::
@@ -35,7 +35,7 @@ lazy val app = (project in file("app")).
              """  /** The value is "sbt-buildinfo-example-app". */""" ::
              """  val name: String = "sbt-buildinfo-example-app"""" ::
              """  /** The value is "com.example:root:0.1". */""" ::
-             """  val projectId: String = "com.example:root:0.1"""" ::
+             """  val projectID: String = "com.example:root:0.1"""" ::
              """  /** The value is "0.1". */""" ::
              """  val version: String = "0.1"""" ::
              """  /** The value is new java.net.URL("http://example.com"). */""" ::
@@ -43,8 +43,8 @@ lazy val app = (project in file("app")).
              """  /** The value is "2.10.2". */""" ::
              """  val scalaVersion: String = "2.10.2"""" ::
              """  override val toString: String = {""" ::
-             """    "name: %s, projectId: %s, version: %s, homepage: %s, scalaVersion: %s" format (""" ::
-             """      name, projectId, version, homepage, scalaVersion""" ::
+             """    "name: %s, projectID: %s, version: %s, homepage: %s, scalaVersion: %s" format (""" ::
+             """      name, projectID, version, homepage, scalaVersion""" ::
              """    )""" ::
              """  }""" ::
              """}""" :: Nil =>
