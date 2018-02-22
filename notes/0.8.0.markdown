@@ -1,0 +1,32 @@
+sbt-buildinfo 0.8.0 is published for sbt 1.
+
+### BuildInfoKey.of(...) and BuildInfoKey.ofN(...)
+
+Prior to 0.8.0 when sbt-buildinfo generated the `BuildInfo` object using tasks, it was executing the tasks out-of-graph.
+This would occasionally cause race conditions when used with side-effecty tasks.
+
+To workaround this issue sbt-buildinfo introduces a new `BuildInfokey.of(...)` and `BuildInfoKey.ofN(...)` macro that will safely execute the tasks within the control of the task engine.
+
+#### Before 0.8.0
+
+```scala
+lazy val root = (project in file("."))
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
+    buildInfoKeys := Seq[BuildInfoKey](name, version, someTask),
+    buildInfoPackage := "hello"
+  )
+```
+
+#### After 0.8.0
+
+```scala
+lazy val root = (project in file("."))
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
+    buildInfoKeys := BuildInfoKey.ofN(name, version, someTask),
+    buildInfoPackage := "hello"
+  )
+```
+
+This feature was contributed by @dwijnand as #114
