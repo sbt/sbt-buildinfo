@@ -8,7 +8,7 @@ sbt-buildinfo generates Scala source from your build definitions.
 Latest Stable
 -------------
 
-For sbt 0.13.6+ and sbt 1.x add sbt-buildinfo as a dependency in `project/buildinfo.sbt`:
+For sbt 1.x add sbt-buildinfo as a dependency in `project/plugins.sbt`:
 
 ![Bintray version](https://img.shields.io/bintray/v/eed3si9n/sbt-plugins/sbt-buildinfo.svg)
 
@@ -16,7 +16,8 @@ For sbt 0.13.6+ and sbt 1.x add sbt-buildinfo as a dependency in `project/buildi
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "x.y.z")
 ```
 
-For sbt 0.13.(x < 6), see [0.3.2](https://github.com/sbt/sbt-buildinfo/tree/0.3.2).
+- For sbt 0.13.(x >= 6), see [0.7.0](https://github.com/sbt/sbt-buildinfo/tree/v0.7.0).
+- For sbt 0.13.(x < 6), see [0.3.2](https://github.com/sbt/sbt-buildinfo/tree/0.3.2).
 
 Usage
 -----
@@ -27,7 +28,7 @@ Add the following in your `build.sbt`:
 lazy val root = (project in file(".")).
   enablePlugins(BuildInfoPlugin).
   settings(
-    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoKeys := BuildInfoKey.ofN(name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "hello"
   )
 ```
