@@ -57,7 +57,7 @@ package object sbtbuildinfo {
       q"$BuildInfoKey.taskValue[$A]($key.taskValue)($key.key.manifest.typeArguments.head.asInstanceOf[Manifest[$A]])"
     }
 
-    @deprecated("No longer used", "0.8.1")
+    @deprecated("No longer used", "0.9.0")
     def ofImpl(x: Tree): Tree = {
       x.tpe match {
         case tpe if tpe <:< typeOf[SettingKey[_]] =>
@@ -76,7 +76,7 @@ package object sbtbuildinfo {
       }
     }
 
-    @deprecated("No longer used", "0.8.1")
+    @deprecated("No longer used", "0.9.0")
     def ofNImpl(xs: Tree*): Tree = q"_root_.scala.Seq(..${xs map ofImpl})"
 
   }
