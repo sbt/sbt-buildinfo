@@ -23,6 +23,8 @@ abstract class ScalaRenderer extends BuildInfoRenderer {
         case TypeExpression("sbt.librarymanagement.ModuleID", Nil) => Some("String")
         case TypeExpression("sbt.librarymanagement.Resolver", Nil) => Some("String")
 
+        case TypeExpression("sbt.internal.util.Attributed", Seq(TypeExpression("java.io.File", Nil))) => Some("java.io.File")
+
         case TypeExpression("scala.Option", Seq(arg)) =>
           tpeToReturnType(arg) map { x => s"scala.Option[$x]" }
         case TypeExpression("scala.collection.Seq", Seq(arg)) =>
@@ -52,6 +54,7 @@ abstract class ScalaRenderer extends BuildInfoRenderer {
     case op: Option[_]      => op map { x => "scala.Some(" + quote(x) + ")" } getOrElse {"scala.None"}
     case url: java.net.URL  => "new java.net.URL(%s)" format quote(url.toString)
     case file: java.io.File => "new java.io.File(%s)" format quote(file.toString)
+    case attr: sbt.Attributed[_] => quote(attr.data)
     case s                  => "\"%s\"" format encodeStringLiteral(s.toString)
   }
 

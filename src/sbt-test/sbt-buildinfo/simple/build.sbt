@@ -6,6 +6,7 @@ lazy val root = (project in file(".")).
     name := "helloworld",
     version := "0.1",
     scalaVersion := "2.11.8",
+    TaskKey[Classpath]("someCp") := Seq(Attributed.blank(file("/tmp/f.txt"))),
     buildInfoKeys := BuildInfoKey.ofN(
       name,
       BuildInfoKey.map(version) { case (n, v) => "projectVersion" -> v.toDouble },
@@ -18,6 +19,7 @@ lazy val root = (project in file(".")).
       "year" -> 2012,
       "sym" -> 'Foo,
       BuildInfoKey.action("buildTime") { 1234L },
+      TaskKey[Classpath]("someCp"),
       target
     ),
     buildInfoPackage := "hello",
@@ -57,11 +59,13 @@ lazy val root = (project in file(".")).
              """  val sym: scala.Symbol = 'Foo""" ::
              """  /** The value is 1234L. */""" ::
              """  val buildTime: scala.Long = 1234L""" ::
+             """  /** The value is scala.collection.Seq(new java.io.File("/tmp/f.txt")). */""" ::
+             """  val someCp: scala.collection.Seq[java.io.File] = scala.collection.Seq(new java.io.File("/tmp/f.txt"))""" ::
              targetInfoComment ::
              targetInfo :: // """
              """  override val toString: String = {""" ::
-             """    "name: %s, projectVersion: %s, scalaVersion: %s, ivyXML: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, buildTime: %s, target: %s" format (""" ::
-             """      name, projectVersion, scalaVersion, ivyXML, homepage, licenses, apiMappings, isSnapshot, year, sym, buildTime, target""" ::
+             """    "name: %s, projectVersion: %s, scalaVersion: %s, ivyXML: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, buildTime: %s, someCp: %s, target: %s" format (""" ::
+             """      name, projectVersion, scalaVersion, ivyXML, homepage, licenses, apiMappings, isSnapshot, year, sym, buildTime, someCp, target""" ::
              """    )""" ::
              """  }""" ::
              """}""" :: Nil if (targetInfo contains "val target: java.io.File = new java.io.File(") =>
