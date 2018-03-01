@@ -40,7 +40,7 @@ lazy val root = (project in file(".")).
              """  /** The value is "helloworld". */"""::
              """  val name: String = "helloworld"""" ::
              """  /** The value is 0.1. */"""::
-             """  val projectVersion: scala.Double = 0.1""" ::
+             """  val projectVersion = 0.1""" ::
              """  /** The value is "2.11.8". */""" ::
              """  val scalaVersion: String = "2.11.8"""" ::
              """  /** The value is scala.collection.Seq(). */""" ::

@@ -28,7 +28,7 @@ Add the following in your `build.sbt`:
 lazy val root = (project in file(".")).
   enablePlugins(BuildInfoPlugin).
   settings(
-    buildInfoKeys := BuildInfoKey.ofN(name, version, scalaVersion, sbtVersion),
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "hello"
   )
 ```

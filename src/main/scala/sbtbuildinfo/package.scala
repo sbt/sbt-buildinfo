@@ -4,21 +4,19 @@ package object sbtbuildinfo {
   type BuildInfoKey = BuildInfoKey.Entry[_]
   object BuildInfoKey {
     implicit def setting[A](key: SettingKey[A]): Entry[A] = Setting(key)
-    @deprecated("Explicitly wrap in BuildInfoKey.of/ofN. Or if out-of-graph execution is required use BuildInfoKey.outOfGraphUnsafe", "0.7.1")
-    implicit def task[A](key: TaskKey[A]): Entry[A] = Task(key)
+    implicit def task[A](key: TaskKey[A]): Entry[A] = macro BuildInfoKeyMacros.taskImpl
     implicit def taskValue[A: Manifest](task: sbt.Task[A]): Entry[A] = TaskValue(task)
     implicit def constant[A: Manifest](tuple: (String, A)): Entry[A] = Constant(tuple)
     
     def apply[A](key: SettingKey[A]): Entry[A] = Setting(key)
-    @deprecated("Explicitly wrap in BuildInfoKey.of/ofN. Or if out-of-graph execution is required use BuildInfoKey.outOfGraphUnsafe", "0.7.1")
-    def apply[A](key: TaskKey[A]): Entry[A] = Task(key)
+    def apply[A](key: TaskKey[A]): Entry[A] = macro BuildInfoKeyMacros.taskImpl
     def apply[A: Manifest](tuple: (String, A)): Entry[A] = Constant(tuple)
     def map[A, B: Manifest](from: Entry[A])(fun: ((String, A)) => (String, B)): Entry[B] =
       BuildInfoKey.Mapped(from, fun)
     def action[A: Manifest](name: String)(fun: => A): Entry[A] = Action(name, () => fun)
 
-    def of(x: Any): BuildInfoKey = macro BuildInfoKeyMacros.ofImpl
-    def ofN(xs: Any*): Seq[BuildInfoKey] = macro BuildInfoKeyMacros.ofNImpl
+    def of[A](x: BuildInfoKey.Entry[A]): BuildInfoKey.Entry[A] = x
+    def ofN(xs: BuildInfoKey*): Seq[BuildInfoKey] = xs
 
     def outOfGraphUnsafe[A](key: TaskKey[A]): Entry[A] = Task(key)
 
@@ -54,6 +52,12 @@ package object sbtbuildinfo {
 
     val BuildInfoKey = q"_root_.sbtbuildinfo.BuildInfoKey"
 
+    def taskImpl(key: Tree): Tree = {
+      val A = key.tpe.typeArgs.head
+      q"$BuildInfoKey.taskValue[$A]($key.taskValue)($key.key.manifest.typeArguments.head.asInstanceOf[Manifest[$A]])"
+    }
+
+    @deprecated("No longer used", "0.9.0")
     def ofImpl(x: Tree): Tree = {
       x.tpe match {
         case tpe if tpe <:< typeOf[SettingKey[_]] =>
@@ -72,6 +76,7 @@ package object sbtbuildinfo {
       }
     }
 
+    @deprecated("No longer used", "0.9.0")
     def ofNImpl(xs: Tree*): Tree = q"_root_.scala.Seq(..${xs map ofImpl})"
 
   }
