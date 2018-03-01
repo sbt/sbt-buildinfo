@@ -1,0 +1,44 @@
+[@dwijnand]: https://github.com/dwijnand
+
+sbt-buildinfo 0.9.0 is published for sbt 1.
+
+### `TaskKey` to `BuildInfoKey` conversion potentially breaking semantic change
+
+*TL;DR* No need for `BuildInfoKey.of(...)` or `BuildInfoKey.ofN(...)` any more. Use
+`BuildInfoKey.outOfGraphUnsafe` if your build definition is now circular.
+
+sbt-buildinfo 0.8.0 deprecated the original `TaskKey[A]` to `BuildInfoKey.Entry[A]` implicit and explicit
+conversions (`BuildInfoKey.task` and `BuildInfoKey.apply` respectively), that executed the underlying sbt Task
+out of sbt's task graph execution, in favour of a newly introduced `BuildInfoKey.of(...)` and
+`BuildInfoKey.ofN(...)` API, which correctly wired up the task graph. See [#114][].
+
+As it was implemented (and released) it interacted poorly with sbt-buildinfo's `BuildInfoKey.map` API
+([#117][]), due to a mistake in the implementation and test coverage.
+
+In resolving the issue it became clear that instead of introducing a new API, that required sbt-buildinfo users
+to change their source code to use, the already used conversions could have been modified to use the new
+Task-based semantics.
+
+However, this change breaks any build definition that declares as a build info key any `TaskKey` that depends on
+`sourceGenerators` or `resourceGenerators`, because the build definiton would now be circular and fail to load.
+To fix this breaking semantic change the user has to either drop the key used, choose another key, or fallback
+to the previous semantics by using the not-deprecated `BuildInfoKey.outOfGraphUnsafe` API, also introduced in
+sbt-buildinfo 0.8.0.
+
+[#117][]/[#119][] by [@dwijnand][]
+
+[#114]: https://github.com/sbt/sbt-buildinfo/pull/114
+[#117]: https://github.com/sbt/sbt-buildinfo/issues/117
+[#119]: https://github.com/sbt/sbt-buildinfo/pull/119
+
+### Add direct support for sbt's `Attributed`
+
+A number of keys defined by sbt use sbt's `Attributed` type, specifically the keys that define classpaths.
+Prior to this change defining any of these keys as a build info key would generate `Seq[String]` as `Attributed`
+would be simply converted to string with `toString`. sbt-buildinfo 0.9.0 introduces direct support for these
+keys so they generate `Seq[File]` instead.
+
+[#112][]/[#120][] by [@dwijnand][]
+
+[#112]: https://github.com/sbt/sbt-buildinfo/issues/112
+[#120]: https://github.com/sbt/sbt-buildinfo/pull/120
