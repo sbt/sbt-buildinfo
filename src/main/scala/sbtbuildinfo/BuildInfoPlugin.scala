@@ -33,7 +33,7 @@ object BuildInfoPlugin extends AutoPlugin {
       prop.load(new java.io.FileInputStream(file))
       prop.getProperty("buildnumber", "0").toInt
     }
-    def writeProp(value: Int) {
+    def writeProp(value: Int) = {
       prop.setProperty("buildnumber", value.toString)
       prop.store(new java.io.FileOutputStream(file), null)
     }
