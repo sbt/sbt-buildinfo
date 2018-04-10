@@ -62,7 +62,17 @@ private[sbtbuildinfo] case class ScalaCaseObjectRenderer(options: Seq[BuildInfoO
 
   def toJsonLine: Seq[String] =
     if (options contains BuildInfoOption.ToJson)
-      List("""  val toJson: String = toMap.map(i => "\"" + i._1 + "\":\"" + i._2 + "\"").mkString("{", ", ", "}")""")
+      List(
+         """  val toJson: String = toMap.map{ i =>
+           |    def quote(x:Any) : String = "\"" + x + "\""
+           |    val key : String = quote(i._1)
+           |    val value : String = i._2 match {
+           |       case elem : Seq[_] => elem.map(quote).mkString("[", ",", "]")
+           |       case elem : Option[_] => elem.map(quote).getOrElse("null")
+           |       case elem => quote(elem)
+           |    }
+           |    s"$key : $value"
+           |    }.mkString("{", ", ", "}")""".stripMargin)
     else Nil
 
 }
