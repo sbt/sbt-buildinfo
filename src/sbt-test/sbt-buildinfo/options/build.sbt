@@ -40,8 +40,17 @@ lazy val root = (project in file(".")).
              """  val toMap: Map[String, Any] = Map[String, Any](""" ::
              """    "name" -> name,""" ::
              """    "scalaVersion" -> scalaVersion)""" ::
-             "" ::
-             """  val toJson: String = toMap.map(i => "\"" + i._1 + "\":\"" + i._2 + "\"").mkString("{", ", ", "}")""" ::
+             """""" ::
+             """  val toJson: String = toMap.map{ i =>""" ::
+             """    def quote(x:Any) : String = "\"" + x + "\""""" ::
+             """    val key : String = quote(i._1)""" ::
+             """    val value : String = i._2 match {""" ::
+             """       case elem : Seq[_] => elem.map(quote).mkString("[", ",", "]")""" ::
+             """       case elem : Option[_] => elem.map(quote).getOrElse("null")""" ::
+             """       case elem => quote(elem)""" ::
+             """    }""" ::
+             """    s"$key : $value"""" ::
+             """    }.mkString("{", ", ", "}")""" ::
              """}""" :: Nil =>
         case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
       }
