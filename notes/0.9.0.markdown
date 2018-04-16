@@ -1,4 +1,3 @@
-[@dwijnand]: https://github.com/dwijnand
 
 sbt-buildinfo 0.9.0 is published for sbt 1.
 
@@ -25,11 +24,7 @@ To fix this breaking semantic change the user has to either drop the key used, c
 to the previous semantics by using the not-deprecated `BuildInfoKey.outOfGraphUnsafe` API, also introduced in
 sbt-buildinfo 0.8.0.
 
-[#117][]/[#119][] by [@dwijnand][]
-
-[#114]: https://github.com/sbt/sbt-buildinfo/pull/114
-[#117]: https://github.com/sbt/sbt-buildinfo/issues/117
-[#119]: https://github.com/sbt/sbt-buildinfo/pull/119
+#117/#119 by @dwijnand
 
 ### Add direct support for sbt's `Attributed`
 
@@ -38,7 +33,37 @@ Prior to this change defining any of these keys as a build info key would genera
 would be simply converted to string with `toString`. sbt-buildinfo 0.9.0 introduces direct support for these
 keys so they generate `Seq[File]` instead.
 
-[#112][]/[#120][] by [@dwijnand][]
+#112/#120 by @dwijnand
 
+### Make `toJson` more JSONish
+
+sbt-buildinfo is able to generate `toJson` method using the following setting:
+
+```scala
+buildInfoOptions += BuildInfoOption.ToJson
+```
+
+sbt-buildinfo 0.9.0 makes the JSON encoding more natural:
+
+```
+"libraryDependencies" :
+  [ "org.scala-lang:scala-library:2.12.4",
+    "com.lihaoyi:acyclic:0.1.7:plugin->default(compile)",
+    .....]
+```
+
+#123 by @tonicebrian
+
+### Do not generate multi-parameter infix calls
+
+Multi-parameter infix calls may be removed in the future, so it's better
+not to generate this kind of code.
+
+#124 by @Duhemm
+
+[#114]: https://github.com/sbt/sbt-buildinfo/pull/114
+[#117]: https://github.com/sbt/sbt-buildinfo/issues/117
+[#119]: https://github.com/sbt/sbt-buildinfo/pull/119
 [#112]: https://github.com/sbt/sbt-buildinfo/issues/112
 [#120]: https://github.com/sbt/sbt-buildinfo/pull/120
+[@dwijnand]: https://github.com/dwijnand
