@@ -43,7 +43,7 @@ lazy val app = (project in file("app")).
              """  /** The value is "2.10.2". */""" ::
              """  val scalaVersion: String = "2.10.2"""" ::
              """  override val toString: String = {""" ::
-             """    "name: %s, projectID: %s, version: %s, homepage: %s, scalaVersion: %s" format (""" ::
+             """    "name: %s, projectID: %s, version: %s, homepage: %s, scalaVersion: %s".format(""" ::
              """      name, projectID, version, homepage, scalaVersion""" ::
              """    )""" ::
              """  }""" ::

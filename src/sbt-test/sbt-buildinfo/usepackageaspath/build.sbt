@@ -59,7 +59,7 @@ lazy val root = (project in file(".")).
              targetInfoComment ::
              targetInfo :: // """
              """  override val toString: String = {""" ::
-             """    "name: %s, projectVersion: %s, scalaVersion: %s, ivyXML: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, buildTime: %s, target: %s" format (""" ::
+             """    "name: %s, projectVersion: %s, scalaVersion: %s, ivyXML: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, buildTime: %s, target: %s".format(""" ::
              """      name, projectVersion, scalaVersion, ivyXML, homepage, licenses, apiMappings, isSnapshot, year, sym, buildTime, target""" ::
              """    )""" ::
              """  }""" ::

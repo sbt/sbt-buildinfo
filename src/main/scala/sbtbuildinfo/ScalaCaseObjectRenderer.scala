@@ -45,7 +45,7 @@ private[sbtbuildinfo] case class ScalaCaseObjectRenderer(options: Seq[BuildInfoO
     val fmt = idents.map("%s: %%s" format _).mkString(", ")
     val vars = idents.mkString(", ")
     s"""  override val toString: String = {
-         |    "$fmt" format (
+         |    "$fmt".format(
          |      $vars
          |    )
          |  }""".stripMargin
