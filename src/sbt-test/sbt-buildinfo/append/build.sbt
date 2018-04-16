@@ -41,7 +41,7 @@ lazy val root = (project in file(".")).
              """  /** The value is scala.collection.Seq("Sonatype Public: https://oss.sonatype.org/content/groups/public"). */""" ::
              """  val resolvers: scala.collection.Seq[String] = scala.collection.Seq("Sonatype Public: https://oss.sonatype.org/content/groups/public")""" ::
              """  override val toString: String = {""" ::
-             """    "name: %s, version: %s, scalaVersion: %s, sbtVersion: %s, organization: %s, libraryDependencies: %s, test_libraryDependencies: %s, resolvers: %s" format (""" ::
+             """    "name: %s, version: %s, scalaVersion: %s, sbtVersion: %s, organization: %s, libraryDependencies: %s, test_libraryDependencies: %s, resolvers: %s".format(""" ::
              """      name, version, scalaVersion, sbtVersion, organization, libraryDependencies, test_libraryDependencies, resolvers""" ::
              """    )""" ::
              """  }""" ::
