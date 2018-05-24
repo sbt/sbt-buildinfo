@@ -70,7 +70,7 @@ private[sbtbuildinfo] case class ScalaCaseObjectRenderer(options: Seq[BuildInfoO
            |      case elem: Seq[_] => elem.map(toJsonValue).mkString("[", ",", "]")
            |      case elem: Option[_] => elem.map(toJsonValue).orNull
            |      case elem: Map[String, Any] => elem.map {
-           |        case (k, v) => quote(k) + ":" + toJsonValue(v)
+           |        case (k, v) => toJsonValue(k) + ":" + toJsonValue(v)
            |      }.mkString("{", ", ", "}")
            |      case other => quote(other)
            |    }
