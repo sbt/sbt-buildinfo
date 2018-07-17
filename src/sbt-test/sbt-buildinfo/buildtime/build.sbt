@@ -7,7 +7,7 @@ lazy val root = (project in file(".")).
   settings(
     name := "helloworld",
     version := "0.1",
-    scalaVersion := "2.10.2",
+    scalaVersion := "2.12.6",
     buildInfoKeys := Seq(
       name,
       version,
@@ -31,8 +31,8 @@ lazy val root = (project in file(".")).
           """  val name: String = "helloworld"""" ::
           """  /** The value is "0.1". */"""::
           """  val version: String = "0.1"""" ::
-          """  /** The value is "2.10.2". */""" ::
-          """  val scalaVersion: String = "2.10.2"""" ::
+          """  /** The value is "2.12.6". */""" ::
+          """  val scalaVersion: String = "2.12.6"""" ::
           builtAtStringComment ::
           builtAtString ::
           builtAtMillisComment ::
