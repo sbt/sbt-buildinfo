@@ -4,7 +4,7 @@ lazy val commonSettings = Seq(
   version := "0.1",
   organization := "com.example",
   homepage := Some(url("http://example.com")),
-  scalaVersion := "2.10.2"
+  scalaVersion := "2.12.6"
 )
 
 lazy val root = (project in file(".")).
@@ -40,8 +40,8 @@ lazy val app = (project in file("app")).
              """  val version: String = "0.1"""" ::
              """  /** The value is new java.net.URL("http://example.com"). */""" ::
              """  val homepage = new java.net.URL("http://example.com")""" ::
-             """  /** The value is "2.10.2". */""" ::
-             """  val scalaVersion: String = "2.10.2"""" ::
+             """  /** The value is "2.12.6". */""" ::
+             """  val scalaVersion: String = "2.12.6"""" ::
              """  override val toString: String = {""" ::
              """    "name: %s, projectID: %s, version: %s, homepage: %s, scalaVersion: %s".format(""" ::
              """      name, projectID, version, homepage, scalaVersion""" ::

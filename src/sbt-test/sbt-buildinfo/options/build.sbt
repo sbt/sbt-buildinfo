@@ -5,7 +5,7 @@ lazy val root = (project in file(".")).
   settings(
     name := "helloworld",
     version := "0.1",
-    scalaVersion := "2.10.2",
+    scalaVersion := "2.12.6",
     buildInfoKeys := Seq(
       name,
       scalaVersion
@@ -30,8 +30,8 @@ lazy val root = (project in file(".")).
              """case object BuildInfo extends TestTrait1 with TestTrait2 with TestTrait3 {""" ::
              """  /** The value is "helloworld". */"""::
              """  val name: String = "helloworld"""" ::
-             """  /** The value is "2.10.2". */""" ::
-             """  val scalaVersion: String = "2.10.2"""" ::
+             """  /** The value is "2.12.6". */""" ::
+             """  val scalaVersion: String = "2.12.6"""" ::
              """  override val toString: String = {""" ::
              """    "name: %s, scalaVersion: %s".format(""" ::
              """      name, scalaVersion""" ::
