@@ -54,7 +54,7 @@ package object sbtbuildinfo {
 
     def taskImpl(key: Tree): Tree = {
       val A = key.tpe.typeArgs.head
-      q"$BuildInfoKey.taskValue[$A]($key.taskValue)($key.key.manifest.typeArguments.head.asInstanceOf[Manifest[$A]])"
+      q"$BuildInfoKey.taskValue[$A]($key.taskValue)($key.key.manifest.typeArguments.head.asInstanceOf[_root_.scala.reflect.Manifest[$A]])"
     }
 
     @deprecated("No longer used", "0.9.0")
@@ -66,7 +66,7 @@ package object sbtbuildinfo {
 
         case tpe if tpe <:< typeOf[TaskKey[_]] =>
           val A = tpe.typeArgs.head
-          q"$BuildInfoKey.taskValue[$A]($x.taskValue)($x.key.manifest.typeArguments.head.asInstanceOf[Manifest[$A]])"
+          q"$BuildInfoKey.taskValue[$A]($x.taskValue)($x.key.manifest.typeArguments.head.asInstanceOf[_root_.scala.reflect.Manifest[$A]])"
 
         case tpe if tpe <:< typeOf[(_, _)] =>
           val A = tpe.typeArgs.tail.head
