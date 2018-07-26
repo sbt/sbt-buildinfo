@@ -63,20 +63,26 @@ private[sbtbuildinfo] case class ScalaCaseObjectRenderer(options: Seq[BuildInfoO
   def toJsonLine: Seq[String] =
     if (options contains BuildInfoOption.ToJson)
       List(
-         """  private def quote(x: Any): String = "\"" + x + "\""
-           |
-           |  private def toJsonValue(value: Any): String = {
-           |    value match {
-           |      case elem: Seq[_] => elem.map(toJsonValue).mkString("[", ",", "]")
-           |      case elem: Option[_] => elem.map(toJsonValue).orNull
-           |      case elem: Map[String, Any] => elem.map {
-           |        case (k, v) => toJsonValue(k) + ":" + toJsonValue(v)
-           |      }.mkString("{", ", ", "}")
-           |      case other => quote(other)
-           |    }
-           |  }
-           |
-           |  val toJson: String = toJsonValue(toMap)""".stripMargin)
+         """|  private def quote(x: Any): String = "\"" + x + "\""
+            |  private def toJsonValue(value: Any): String = {
+            |    value match {
+            |      case elem: Seq[_] => elem.map(toJsonValue).mkString("[", ",", "]")
+            |      case elem: Option[_] => elem.map(toJsonValue).getOrElse("null")
+            |      case elem: Map[String, Any] => elem.map {
+            |        case (k, v) => toJsonValue(k) + ":" + toJsonValue(v)
+            |      }.mkString("{", ", ", "}")
+            |      case d: Double => d.toString
+            |      case f: Float => f.toString
+            |      case l: Long => l.toString
+            |      case i: Int => i.toString
+            |      case s: Short => s.toString
+            |      case bool: Boolean => bool.toString
+            |      case str: String => quote(str)
+            |      case other => quote(other.toString)
+            |    }
+            |  }
+            |
+            |  val toJson: String = toJsonValue(toMap)""".stripMargin)
     else Nil
 
 }
