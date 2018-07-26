@@ -41,16 +41,26 @@ lazy val root = (project in file(".")).
              """    "name" -> name,""" ::
              """    "scalaVersion" -> scalaVersion)""" ::
              """""" ::
-             """  val toJson: String = toMap.map{ i =>""" ::
-             """    def quote(x:Any) : String = "\"" + x + "\""""" ::
-             """    val key : String = quote(i._1)""" ::
-             """    val value : String = i._2 match {""" ::
-             """       case elem : Seq[_] => elem.map(quote).mkString("[", ",", "]")""" ::
-             """       case elem : Option[_] => elem.map(quote).getOrElse("null")""" ::
-             """       case elem => quote(elem)""" ::
+             """  private def quote(x: Any): String = "\"" + x + "\""""" ::
+             """  private def toJsonValue(value: Any): String = {""" ::
+             """    value match {""" ::
+             """      case elem: Seq[_] => elem.map(toJsonValue).mkString("[", ",", "]")""" ::
+             """      case elem: Option[_] => elem.map(toJsonValue).getOrElse("null")""" ::
+             """      case elem: Map[String, Any] => elem.map {""" ::
+             """        case (k, v) => toJsonValue(k) + ":" + toJsonValue(v)""" ::
+             """      }.mkString("{", ", ", "}")""" ::
+             """      case d: Double => d.toString""" ::
+             """      case f: Float => f.toString""" ::
+             """      case l: Long => l.toString""" ::
+             """      case i: Int => i.toString""" ::
+             """      case s: Short => s.toString""" ::
+             """      case bool: Boolean => bool.toString""" ::
+             """      case str: String => quote(str)""" ::
+             """      case other => quote(other.toString)""" ::
              """    }""" ::
-             """    s"$key : $value"""" ::
-             """    }.mkString("{", ", ", "}")""" ::
+             """  }""" ::
+             """""" ::
+             """  val toJson: String = toJsonValue(toMap)""" ::
              """}""" :: Nil =>
         case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
       }
