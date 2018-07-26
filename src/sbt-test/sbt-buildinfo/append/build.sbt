@@ -6,7 +6,7 @@ lazy val root = (project in file(".")).
     name := "helloworld",
     organization := "com.eed3si9n",
     version := "0.1",
-    scalaVersion := "2.10.2",
+    scalaVersion := "2.12.6",
     buildInfoKeys ++= Seq[BuildInfoKey](name, organization, version, scalaVersion,
       libraryDependencies, libraryDependencies in Test),
     buildInfoKeys += BuildInfoKey(resolvers),
@@ -28,16 +28,16 @@ lazy val root = (project in file(".")).
              """  val name: String = "helloworld"""" ::
              """  /** The value is "0.1". */""" ::
              """  val version: String = "0.1"""" ::
-             """  /** The value is "2.10.2". */""" ::
-             """  val scalaVersion: String = "2.10.2"""" ::
-             """  /** The value is "0.13.11". */""" ::
-             """  val sbtVersion: String = "0.13.11"""" ::
+             """  /** The value is "2.12.6". */""" ::
+             """  val scalaVersion: String = "2.12.6"""" ::
+             """  /** The value is "1.1.6". */""" ::
+             """  val sbtVersion: String = "1.1.6"""" ::
              """  /** The value is "com.eed3si9n". */""" ::
              """  val organization: String = "com.eed3si9n"""" ::
-             """  /** The value is scala.collection.Seq("org.scala-lang:scala-library:2.10.2"). */""" ::
-             """  val libraryDependencies: scala.collection.Seq[String] = scala.collection.Seq("org.scala-lang:scala-library:2.10.2")""" ::
-             """  /** The value is scala.collection.Seq("org.scala-lang:scala-library:2.10.2"). */""" ::
-             """  val test_libraryDependencies: scala.collection.Seq[String] = scala.collection.Seq("org.scala-lang:scala-library:2.10.2")""" ::
+             """  /** The value is scala.collection.Seq("org.scala-lang:scala-library:2.12.6"). */""" ::
+             """  val libraryDependencies: scala.collection.Seq[String] = scala.collection.Seq("org.scala-lang:scala-library:2.12.6")""" ::
+             """  /** The value is scala.collection.Seq("org.scala-lang:scala-library:2.12.6"). */""" ::
+             """  val test_libraryDependencies: scala.collection.Seq[String] = scala.collection.Seq("org.scala-lang:scala-library:2.12.6")""" ::
              """  /** The value is scala.collection.Seq("Sonatype Public: https://oss.sonatype.org/content/groups/public"). */""" ::
              """  val resolvers: scala.collection.Seq[String] = scala.collection.Seq("Sonatype Public: https://oss.sonatype.org/content/groups/public")""" ::
              """  override val toString: String = {""" ::

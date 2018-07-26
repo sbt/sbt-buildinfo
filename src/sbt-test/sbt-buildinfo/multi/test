@@ -1,6 +1,6 @@
 > project root
 
 > compile
-$ exists app/target/scala-2.10/src_managed/main/sbt-buildinfo/BuildInfo.scala
+$ exists app/target/scala-2.12/src_managed/main/sbt-buildinfo/BuildInfo.scala
 
 > check
