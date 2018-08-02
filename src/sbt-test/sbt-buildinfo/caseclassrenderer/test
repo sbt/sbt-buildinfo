@@ -1,0 +1,4 @@
+> compile
+$ exists target/scala-2.11/src_managed/main/sbt-buildinfo/BuildInfo.scala
+
+> check
