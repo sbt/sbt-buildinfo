@@ -5,3 +5,5 @@
                                   |Specify this property using the scriptedLaunchOpts -D.""".stripMargin)
   else addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % pluginVersion)
 }
+
+libraryDependencies += "org.scala-sbt" %% "scripted-plugin" % sbtVersion.value
