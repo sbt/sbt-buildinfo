@@ -1,6 +1,6 @@
 package sbtbuildinfo
 
-private[sbtbuildinfo] case class ScalaFinalCaseObjectRenderer(options: Seq[BuildInfoOption], pkg: String, obj: String) extends ScalaRenderer {
+case class ScalaFinalCaseObjectRenderer(options: Seq[BuildInfoOption], pkg: String, obj: String) extends ScalaRenderer {
 
   override def fileType = BuildInfoType.Source
   override def extension = "scala"
