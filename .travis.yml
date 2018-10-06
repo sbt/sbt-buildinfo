@@ -1,2 +1,5 @@
 language: scala
 script: "sbt scripted"
+jdk:
+- oraclejdk8
+- openjdk11
