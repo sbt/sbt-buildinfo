@@ -7,7 +7,7 @@ lazy val root = (project in file(".")).
   settings(
     name := "helloworld",
     version := "0.1",
-    scalaVersion := "2.11.8",
+    scalaVersion := "2.11.12",
     buildInfoKeys := Seq(
       name,
       BuildInfoKey.map(version) { case (n, v) => "projectVersion" -> v.toDouble },
@@ -59,7 +59,7 @@ lazy val root = (project in file(".")).
           """  def apply(): BuildInfo = new BuildInfo(""" ::
           """    name = "helloworld",""" ::
           """    projectVersion = 0.1,""" ::
-          """    scalaVersion = "2.11.8",""" ::
+          """    scalaVersion = "2.11.12",""" ::
           """    ivyXML = scala.collection.Seq(),""" ::
           """    homepage = scala.Some(new java.net.URL("http://example.com")),""" ::
           """    licenses = scala.collection.Seq(("MIT License" -> new java.net.URL("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))),""" ::
