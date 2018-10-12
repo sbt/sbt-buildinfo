@@ -1,7 +1,7 @@
 lazy val check = taskKey[Unit]("check")
 
 lazy val root = (project in file(".")).
-  enablePlugins(BuildInfoPlugin).
+  enablePlugins(BuildInfoPlugin, ScriptedPlugin).
   settings(
     name := "helloworld",
     organization := "com.eed3si9n",
@@ -30,14 +30,14 @@ lazy val root = (project in file(".")).
              """  val version: String = "0.1"""" ::
              """  /** The value is "2.12.6". */""" ::
              """  val scalaVersion: String = "2.12.6"""" ::
-             """  /** The value is "1.1.6". */""" ::
-             """  val sbtVersion: String = "1.1.6"""" ::
+             """  /** The value is "1.2.1". */""" ::
+             """  val sbtVersion: String = "1.2.1"""" ::
              """  /** The value is "com.eed3si9n". */""" ::
              """  val organization: String = "com.eed3si9n"""" ::
-             """  /** The value is scala.collection.Seq("org.scala-lang:scala-library:2.12.6"). */""" ::
-             """  val libraryDependencies: scala.collection.Seq[String] = scala.collection.Seq("org.scala-lang:scala-library:2.12.6")""" ::
-             """  /** The value is scala.collection.Seq("org.scala-lang:scala-library:2.12.6"). */""" ::
-             """  val test_libraryDependencies: scala.collection.Seq[String] = scala.collection.Seq("org.scala-lang:scala-library:2.12.6")""" ::
+             """  /** The value is scala.collection.Seq("org.scala-lang:scala-library:2.12.6", "org.scala-sbt:scripted-sbt:1.2.1:scripted-sbt", "org.scala-sbt:sbt-launch:1.2.1:scripted-sbt-launch"). */""" ::
+             """  val libraryDependencies: scala.collection.Seq[String] = scala.collection.Seq("org.scala-lang:scala-library:2.12.6", "org.scala-sbt:scripted-sbt:1.2.1:scripted-sbt", "org.scala-sbt:sbt-launch:1.2.1:scripted-sbt-launch")""" ::
+             """  /** The value is scala.collection.Seq("org.scala-lang:scala-library:2.12.6", "org.scala-sbt:scripted-sbt:1.2.1:scripted-sbt", "org.scala-sbt:sbt-launch:1.2.1:scripted-sbt-launch"). */""" ::
+             """  val test_libraryDependencies: scala.collection.Seq[String] = scala.collection.Seq("org.scala-lang:scala-library:2.12.6", "org.scala-sbt:scripted-sbt:1.2.1:scripted-sbt", "org.scala-sbt:sbt-launch:1.2.1:scripted-sbt-launch")""" ::
              """  /** The value is scala.collection.Seq("Sonatype Public: https://oss.sonatype.org/content/groups/public"). */""" ::
              """  val resolvers: scala.collection.Seq[String] = scala.collection.Seq("Sonatype Public: https://oss.sonatype.org/content/groups/public")""" ::
              """  override val toString: String = {""" ::
