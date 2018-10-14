@@ -7,7 +7,7 @@ lazy val root = (project in file(".")).
   settings(
     name := "helloworld",
     version := "0.1",
-    scalaVersion := "2.12.6",
+    scalaVersion := "2.12.7",
     TaskKey[Classpath]("someCp") := Seq(Attributed.blank(file("/tmp/f.txt"))),
     buildInfoKeys := BuildInfoKey.ofN(
       name,
@@ -44,8 +44,8 @@ lazy val root = (project in file(".")).
           """  final val name: String = "helloworld"""" ::
           """  /** The value is 0.1. */"""::
           """  final val projectVersion = 0.1""" ::
-          """  /** The value is "2.12.6". */""" ::
-          """  final val scalaVersion: String = "2.12.6"""" ::
+          """  /** The value is "2.12.7". */""" ::
+          """  final val scalaVersion: String = "2.12.7"""" ::
           """  /** The value is scala.collection.Seq(). */""" ::
           """  final val ivyXML: scala.xml.NodeSeq = scala.collection.Seq()""" ::
           """  /** The value is scala.Some(new java.net.URL("http://example.com")). */""" ::
