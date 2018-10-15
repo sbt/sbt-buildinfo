@@ -5,7 +5,7 @@ lazy val root = (project in file(".")).
   settings(
     name := "helloworld",
     version := "0.1",
-    scalaVersion := "2.12.6",
+    scalaVersion := "2.12.7",
     buildInfoKeys := Seq(name, version),
     buildInfoPackage := "hello",
     homepage := Some(url("http://example.com")),
