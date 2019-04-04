@@ -16,8 +16,8 @@ For sbt 1.x add sbt-buildinfo as a dependency in `project/plugins.sbt`:
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "x.y.z")
 ```
 
-- For sbt 0.13.(x >= 6), see [0.7.0](https://github.com/sbt/sbt-buildinfo/tree/v0.7.0).
-- For sbt 0.13.(x < 6), see [0.3.2](https://github.com/sbt/sbt-buildinfo/tree/0.3.2).
+- For `sbt >= 0.13.6`, see [0.9.0](https://github.com/sbt/sbt-buildinfo/tree/v0.9.0).
+- For `sbt < 0.13.6`, see [0.3.2](https://github.com/sbt/sbt-buildinfo/tree/0.3.2).
 
 Usage
 -----
