@@ -10,7 +10,7 @@ lazy val root = (project in file(".")).
     buildInfoKeys ++= Seq[BuildInfoKey](name, organization, version, scalaVersion,
       libraryDependencies, libraryDependencies in Test),
     buildInfoKeys += BuildInfoKey(resolvers),
-    buildInfoPackage := "hello",
+    buildInfoPackages := Set("hello"),
     homepage := Some(url("http://example.com")),
     licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")),
     resolvers ++= Seq("Sonatype Public" at "https://oss.sonatype.org/content/groups/public"),

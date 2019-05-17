@@ -21,7 +21,7 @@ lazy val app = (project in file("app")).
                          version,
                          BuildInfoKey.map(homepage) { case (n, opt) => n -> opt.get },
                          scalaVersion),
-    buildInfoPackage := "hello",
+    buildInfoPackages := Set("hello"),
     check := {
       val f = (sourceManaged in Compile).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList

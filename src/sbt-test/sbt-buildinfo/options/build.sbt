@@ -10,7 +10,7 @@ lazy val root = (project in file(".")).
       name,
       scalaVersion
     ),
-    buildInfoPackage := "hello",
+    buildInfoPackages := Set("hello"),
     buildInfoOptions ++= Seq(
       BuildInfoOption.ToJson,
       BuildInfoOption.ToMap,

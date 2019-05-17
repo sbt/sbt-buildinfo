@@ -22,7 +22,7 @@ lazy val root = (project in file(".")).
       TaskKey[Classpath]("someCp"),
       target
     ),
-    buildInfoPackage := "hello",
+    buildInfoPackages := Set("hello"),
     homepage := Some(url("http://example.com")),
     licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")),
     scalacOptions ++= Seq("-Ywarn-unused-import", "-Xfatal-warnings", "-Yno-imports"),

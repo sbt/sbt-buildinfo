@@ -13,7 +13,7 @@ lazy val root = (project in file(".")).
       version,
       scalaVersion
     ),
-    buildInfoPackage := "hello",
+    buildInfoPackages := Set("hello"),
     buildInfoOptions := Seq(BuildInfoOption.BuildTime),
     homepage := Some(url("http://example.com")),
     licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")),

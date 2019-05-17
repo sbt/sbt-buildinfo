@@ -52,7 +52,7 @@ object BuildInfoPlugin extends AutoPlugin {
           sourceManaged,
           resourceManaged,
           buildInfoUsePackageAsPath,
-          buildInfoPackage,
+          buildInfoPackages,
           buildInfoObject,
           buildInfoKeys,
           buildInfoOptions,
@@ -64,7 +64,7 @@ object BuildInfoPlugin extends AutoPlugin {
             srcDir: File,
             resDir: File,
             usePackageAsPath: Boolean,
-            packageName: String,
+            packageNames: Set[String],
             obj: String,
             keys: Seq[BuildInfoKey],
             opts: Seq[BuildInfoOption],
@@ -72,20 +72,22 @@ object BuildInfoPlugin extends AutoPlugin {
             s: State,
             taskStreams: TaskStreams,
         ) =>
-          val dir = {
+          val dirs = packageNames.map { packageName =>
             val parentDir = renderer.fileType match {
               case BuildInfoType.Source   => srcDir
               case BuildInfoType.Resource => resDir
             }
-            if (usePackageAsPath)
+            val dir = if (usePackageAsPath || packageNames.size > 1)
               packageName match {
                 case "" => parentDir
                 case _  => parentDir / (packageName split '.' mkString "/")
               }
             else
               parentDir / "sbt-buildinfo"
-          }
-          BuildInfo(dir, renderer, obj, keys, opts, pr, s, taskStreams.cacheDirectory) map (Seq(_))
+
+            (packageName, dir)
+          }.toMap
+          BuildInfo(dirs, renderer, obj, keys, opts, pr, s, taskStreams.cacheDirectory)
         }
     ).value,
     buildInfoValues := (
@@ -98,14 +100,13 @@ object BuildInfoPlugin extends AutoPlugin {
     resourceGenerators ++= (if (buildInfoRenderer.value.isResource) Seq(buildInfo.taskValue) else Nil),
     buildInfoRenderer := buildInfoRenderFactory.value.apply(
       buildInfoOptions.value,
-      buildInfoPackage.value,
       buildInfoObject.value)
     )
   )
 
   def buildInfoDefaultSettings: Seq[Setting[_]] = Seq(
     buildInfoObject  := "BuildInfo",
-    buildInfoPackage := "buildinfo",
+    buildInfoPackages := Set("buildinfo"),
     buildInfoUsePackageAsPath := false,
     buildInfoKeys    := Seq(name, version, scalaVersion, sbtVersion),
     buildInfoBuildNumber := buildNumberTask(baseDirectory.value, 1),

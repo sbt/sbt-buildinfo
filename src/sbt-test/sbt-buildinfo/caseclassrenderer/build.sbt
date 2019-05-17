@@ -23,7 +23,7 @@ lazy val root = (project in file(".")).
       target),
     buildInfoOptions += BuildInfoOption.Traits("traits.MyCustomTrait"),
     buildInfoRenderFactory := ScalaCaseClassRenderer.apply,
-    buildInfoPackage := "hello",
+    buildInfoPackages := Set("hello"),
     homepage := Some(url("http://example.com")),
     licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")),
     scalacOptions ++= Seq("-Ywarn-unused-import", "-Xfatal-warnings", "-Yno-imports"),

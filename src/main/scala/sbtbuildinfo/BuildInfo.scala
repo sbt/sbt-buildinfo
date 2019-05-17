@@ -5,10 +5,10 @@ import sbt._, Keys._
 case class BuildInfoResult(identifier: String, value: Any, typeExpr: TypeExpression)
 
 object BuildInfo {
-  def apply(dir: File, renderer: BuildInfoRenderer, obj: String,
+  def apply(dirs: Map[String, File], renderer: BuildInfoRenderer, obj: String,
             keys: Seq[BuildInfoKey], options: Seq[BuildInfoOption],
-            proj: ProjectRef, state: State, cacheDir: File): Task[File] =
-    BuildInfoTask(dir, renderer, obj, keys, options, proj, state, cacheDir).file
+            proj: ProjectRef, state: State, cacheDir: File): Task[Seq[File]] =
+    BuildInfoTask(dirs, renderer, obj, keys, options, proj, state, cacheDir).files
 
   private def extraKeys(options: Seq[BuildInfoOption]): Seq[BuildInfoKey] =
       if (options contains BuildInfoOption.BuildTime) {
@@ -70,7 +70,7 @@ object BuildInfo {
   )
 
 
-  private case class BuildInfoTask(dir: File,
+  private case class BuildInfoTask(dirs: Map[String, File],
                                    renderer: BuildInfoRenderer,
                                    obj: String,
                                    keys: Seq[BuildInfoKey],
@@ -82,30 +82,38 @@ object BuildInfo {
     import FileInfo.hash
     import Tracked.inputChanged
 
-    val tempFile = cacheDir / "sbt-buildinfo" / s"$obj.${renderer.extension}"
-    val outFile = dir / s"$obj.${renderer.extension}"
+    val tempAndOutFiles = dirs.mapValues { dir =>
+      (
+        cacheDir / "sbt-buildinfo" / dir.toString / s"$obj.${renderer.extension}",
+        dir / s"$obj.${renderer.extension}"
+      )
+    }
 
     // 1. make the file under cache/sbtbuildinfo.
     // 2. compare its SHA1 against cache/sbtbuildinfo-inputs
-    def file: Task[File] = {
-      makeFile(tempFile) map { _ =>
-        cachedCopyFile(hash(tempFile))
-        outFile
+    def files: Task[Seq[File]] = {
+      makeFiles(tempAndOutFiles) map { _ =>
+        tempAndOutFiles.toSeq map { case (_, (tempFile, outFile)) =>
+          cachedCopyFile(tempFile, outFile)(hash(tempFile))
+          outFile
+        }
       }
     }
 
-    val cachedCopyFile =
+    def cachedCopyFile(tempFile: File, outFile: File) =
       inputChanged(cacheDir / "sbtbuildinfo-inputs") { (inChanged, input: HashFileInfo) =>
         if (inChanged || !outFile.exists) {
           IO.copyFile(tempFile, outFile, preserveLastModified = true)
         } // if
       }
 
-    def makeFile(file: File): Task[File] = {
+    def makeFiles(files: Map[String, (File, File)]): Task[Seq[File]] = {
       results(keys, options, proj, state) map { values =>
-        val lines = renderer.renderKeys(values)
-        IO.writeLines(file, lines, IO.utf8)
-        file
+        files.map { case (packageName, (tempFile, _)) =>
+          val lines = renderer.renderKeys(packageName, values)
+          IO.writeLines(tempFile, lines, IO.utf8)
+          tempFile
+        }.toSeq
       }
     }
 
