@@ -5,10 +5,10 @@ import sbt._, Keys._
 case class BuildInfoResult(identifier: String, value: Any, typeExpr: TypeExpression)
 
 object BuildInfo {
-  def apply(dir: File, renderer: BuildInfoRenderer, obj: String,
+  def apply(dir: File, packageName: String, renderer: BuildInfoRenderer, obj: String,
             keys: Seq[BuildInfoKey], options: Seq[BuildInfoOption],
             proj: ProjectRef, state: State, cacheDir: File): Task[File] =
-    BuildInfoTask(dir, renderer, obj, keys, options, proj, state, cacheDir).file
+    BuildInfoTask(dir, packageName, renderer, obj, keys, options, proj, state, cacheDir).file
 
   private def extraKeys(options: Seq[BuildInfoOption]): Seq[BuildInfoKey] =
       if (options contains BuildInfoOption.BuildTime) {
@@ -71,6 +71,7 @@ object BuildInfo {
 
 
   private case class BuildInfoTask(dir: File,
+                                   packageName: String,
                                    renderer: BuildInfoRenderer,
                                    obj: String,
                                    keys: Seq[BuildInfoKey],
@@ -82,7 +83,7 @@ object BuildInfo {
     import FileInfo.hash
     import Tracked.inputChanged
 
-    val tempFile = cacheDir / "sbt-buildinfo" / s"$obj.${renderer.extension}"
+    val tempFile = cacheDir / "sbt-buildinfo" / dir.toString / s"$obj.${renderer.extension}"
     val outFile = dir / s"$obj.${renderer.extension}"
 
     // 1. make the file under cache/sbtbuildinfo.
@@ -103,7 +104,7 @@ object BuildInfo {
 
     def makeFile(file: File): Task[File] = {
       results(keys, options, proj, state) map { values =>
-        val lines = renderer.renderKeys(values)
+        val lines = renderer.renderKeys(packageName, values)
         IO.writeLines(file, lines, IO.utf8)
         file
       }

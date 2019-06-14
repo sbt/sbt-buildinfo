@@ -46,48 +46,53 @@ object BuildInfoPlugin extends AutoPlugin {
   import TupleSyntax._
 
   def buildInfoScopedSettings(conf: Configuration): Seq[Def.Setting[_]] = inConfig(conf)(Seq(
-    buildInfo := (
-        (
-          buildInfoRenderer,
-          sourceManaged,
-          resourceManaged,
-          buildInfoUsePackageAsPath,
-          buildInfoPackage,
-          buildInfoObject,
-          buildInfoKeys,
-          buildInfoOptions,
-          thisProjectRef,
-          state,
-          streams,
-        ) flatMap { (
-            renderer: BuildInfoRenderer,
-            srcDir: File,
-            resDir: File,
-            usePackageAsPath: Boolean,
-            packageName: String,
-            obj: String,
-            keys: Seq[BuildInfoKey],
-            opts: Seq[BuildInfoOption],
-            pr: ProjectRef,
-            s: State,
-            taskStreams: TaskStreams,
-        ) =>
+    buildInfo := {
+
+      (
+        buildInfoRenderer,
+        sourceManaged,
+        resourceManaged,
+        buildInfoUsePackageAsPath,
+        buildInfoPackages,
+        buildInfoObject,
+        buildInfoKeys,
+        buildInfoOptions,
+        thisProjectRef,
+        state,
+        streams,
+      ) flatMap { (
+                    renderer: BuildInfoRenderer,
+                    srcDir: File,
+                    resDir: File,
+                    usePackageAsPath: Boolean,
+                    packages: Set[String],
+                    obj: String,
+                    keys: Seq[BuildInfoKey],
+                    opts: Seq[BuildInfoOption],
+                    pr: ProjectRef,
+                    s: State,
+                    taskStreams: TaskStreams,
+                  ) =>
+
+        packages.toSeq.map { pkge =>
           val dir = {
             val parentDir = renderer.fileType match {
-              case BuildInfoType.Source   => srcDir
+              case BuildInfoType.Source => srcDir
               case BuildInfoType.Resource => resDir
             }
-            if (usePackageAsPath)
-              packageName match {
+            if (usePackageAsPath || packages.size > 1)
+              pkge match {
                 case "" => parentDir
-                case _  => parentDir / (packageName split '.' mkString "/")
+                case _ => parentDir / (pkge split '.' mkString "/")
               }
             else
               parentDir / "sbt-buildinfo"
           }
-          BuildInfo(dir, renderer, obj, keys, opts, pr, s, taskStreams.cacheDirectory) map (Seq(_))
-        }
-    ).value,
+
+          BuildInfo(dir, pkge, renderer, obj, keys, opts, pr, s, taskStreams.cacheDirectory)
+        }.join
+      }
+    }.value,
     buildInfoValues := (
       (buildInfoKeys, buildInfoOptions, thisProjectRef, state) flatMap ((keys, opts, pr, s) =>
         BuildInfo.results(keys, opts, pr, s)
@@ -98,7 +103,6 @@ object BuildInfoPlugin extends AutoPlugin {
     resourceGenerators ++= (if (buildInfoRenderer.value.isResource) Seq(buildInfo.taskValue) else Nil),
     buildInfoRenderer := buildInfoRenderFactory.value.apply(
       buildInfoOptions.value,
-      buildInfoPackage.value,
       buildInfoObject.value)
     )
   )
@@ -106,6 +110,7 @@ object BuildInfoPlugin extends AutoPlugin {
   def buildInfoDefaultSettings: Seq[Setting[_]] = Seq(
     buildInfoObject  := "BuildInfo",
     buildInfoPackage := "buildinfo",
+    buildInfoPackages := Set(buildInfoPackage.value),
     buildInfoUsePackageAsPath := false,
     buildInfoKeys    := Seq(name, version, scalaVersion, sbtVersion),
     buildInfoBuildNumber := buildNumberTask(baseDirectory.value, 1),

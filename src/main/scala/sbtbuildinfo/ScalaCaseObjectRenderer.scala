@@ -1,6 +1,6 @@
 package sbtbuildinfo
 
-private[sbtbuildinfo] case class ScalaCaseObjectRenderer(options: Seq[BuildInfoOption], pkg: String, obj: String) extends ScalaRenderer {
+private[sbtbuildinfo] case class ScalaCaseObjectRenderer(options: Seq[BuildInfoOption], obj: String) extends ScalaRenderer {
 
   override def fileType = BuildInfoType.Source
   override def extension = "scala"
@@ -13,7 +13,7 @@ private[sbtbuildinfo] case class ScalaCaseObjectRenderer(options: Seq[BuildInfoO
   // fully qualify every reference. Note it is NOT safe to use `import scala._` because of the possibility of
   // the project using `-Ywarn-unused-import` because we do not always generated references that are part of
   // `scala` such as `scala.Option`.
-  def header = List(
+  def header(pkg: String) = List(
     s"package $pkg",
     "",
     "import scala.Predef._",
@@ -24,8 +24,8 @@ private[sbtbuildinfo] case class ScalaCaseObjectRenderer(options: Seq[BuildInfoO
 
   def footer = List("}")
 
-  override def renderKeys(buildInfoResults: Seq[BuildInfoResult]) =
-    header ++
+  override def renderKeys(packageName: String, buildInfoResults: Seq[BuildInfoResult]) =
+    header(packageName) ++
     buildInfoResults.flatMap(line) ++ Seq(toStringLines(buildInfoResults)) ++
     toMapLine(buildInfoResults) ++ toJsonLine ++
     footer
