@@ -1,5 +1,6 @@
 language: scala
 script: "sbt scripted"
+dist: xenial
 jdk:
-- oraclejdk8
+- openjdk8
 - openjdk11
