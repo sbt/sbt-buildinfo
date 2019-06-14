@@ -82,7 +82,7 @@ object BuildInfo {
     import FileInfo.hash
     import Tracked.inputChanged
 
-    val tempFile = cacheDir / "sbt-buildinfo" / s"$obj.${renderer.extension}"
+    val tempFile = cacheDir / "sbt-buildinfo" / dir.toString / s"$obj.${renderer.extension}"
     val outFile = dir / s"$obj.${renderer.extension}"
 
     // 1. make the file under cache/sbtbuildinfo.

@@ -1,0 +1,6 @@
+> compile
+$ exists target/scala-2.12/src_managed/main/foo/bar/baz/BuildInfo.scala
+$ exists target/scala-2.12/src_managed/main/foo/bar/bay/BuildInfo.scala
+-$ exists target/scala-2.12/src_managed/main/sbt-buildinfo/BuildInfo.scala
+
+> check

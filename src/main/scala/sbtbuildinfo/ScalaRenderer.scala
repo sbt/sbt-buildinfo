@@ -1,9 +1,6 @@
 package sbtbuildinfo
 
 abstract class ScalaRenderer extends BuildInfoRenderer {
-
-  protected def pkg: String
-
   protected def getType(typeExpr: TypeExpression): Option[String] = {
     def tpeToReturnType(tpe: TypeExpression): Option[String] =
       tpe match {

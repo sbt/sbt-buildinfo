@@ -13,5 +13,6 @@ trait BuildInfoRenderer {
 
   def isSource = fileType == BuildInfoType.Source
   def isResource = fileType == BuildInfoType.Resource
+  def pkg: String
   def isPkgPriv: Boolean = options contains BuildInfoOption.PackagePrivate
 }
