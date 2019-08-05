@@ -77,7 +77,7 @@ package object sbtbuildinfo {
     }
 
     @deprecated("No longer used", "0.9.0")
-    def ofNImpl(xs: Tree*): Tree = q"_root_.scala.Seq(..${xs map ofImpl})"
+    def ofNImpl(xs: Tree*): Tree = q"_root_.scala.collection.immutable.Seq(..${xs map ofImpl})"
 
   }
 }

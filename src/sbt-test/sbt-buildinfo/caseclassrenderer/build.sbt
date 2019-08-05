@@ -44,7 +44,7 @@ lazy val root = (project in file(".")).
           """  scalaVersion: String,""" ::
           """  ivyXML: scala.xml.NodeSeq,""" ::
           """  homepage: scala.Option[java.net.URL],""" ::
-          """  licenses: scala.collection.Seq[(String, java.net.URL)],""" ::
+          """  licenses: scala.collection.immutable.Seq[(String, java.net.URL)],""" ::
           """  apiMappings: Map[java.io.File, java.net.URL],""" ::
           """  isSnapshot: scala.Boolean,""" ::
           """  year: scala.Int,""" ::
@@ -60,9 +60,9 @@ lazy val root = (project in file(".")).
           """    name = "helloworld",""" ::
           """    projectVersion = 0.1,""" ::
           """    scalaVersion = "2.11.12",""" ::
-          """    ivyXML = scala.collection.Seq(),""" ::
+          """    ivyXML = scala.collection.immutable.Seq(),""" ::
           """    homepage = scala.Some(new java.net.URL("http://example.com")),""" ::
-          """    licenses = scala.collection.Seq(("MIT License" -> new java.net.URL("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))),""" ::
+          """    licenses = scala.collection.immutable.Seq(("MIT License" -> new java.net.URL("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))),""" ::
           """    apiMappings = Map(),""" ::
           """    isSnapshot = false,""" ::
           """    year = 2012,""" ::

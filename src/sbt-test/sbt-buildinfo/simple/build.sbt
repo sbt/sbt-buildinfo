@@ -43,12 +43,12 @@ lazy val root = (project in file(".")).
              """  val projectVersion = 0.1""" ::
              """  /** The value is "2.12.7". */""" ::
              """  val scalaVersion: String = "2.12.7"""" ::
-             """  /** The value is scala.collection.Seq(). */""" ::
-             """  val ivyXML: scala.xml.NodeSeq = scala.collection.Seq()""" ::
+             """  /** The value is scala.collection.immutable.Seq(). */""" ::
+             """  val ivyXML: scala.xml.NodeSeq = scala.collection.immutable.Seq()""" ::
              """  /** The value is scala.Some(new java.net.URL("http://example.com")). */""" ::
              """  val homepage: scala.Option[java.net.URL] = scala.Some(new java.net.URL("http://example.com"))""" ::
-             """  /** The value is scala.collection.Seq(("MIT License" -> new java.net.URL("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))). */""" ::
-             """  val licenses: scala.collection.Seq[(String, java.net.URL)] = scala.collection.Seq(("MIT License" -> new java.net.URL("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")))""" ::
+             """  /** The value is scala.collection.immutable.Seq(("MIT License" -> new java.net.URL("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))). */""" ::
+             """  val licenses: scala.collection.immutable.Seq[(String, java.net.URL)] = scala.collection.immutable.Seq(("MIT License" -> new java.net.URL("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")))""" ::
              """  /** The value is Map(). */""" ::
              """  val apiMappings: Map[java.io.File, java.net.URL] = Map()""" ::
              """  /** The value is false. */""" ::
@@ -59,8 +59,8 @@ lazy val root = (project in file(".")).
              """  val sym: scala.Symbol = 'Foo""" ::
              """  /** The value is 1234L. */""" ::
              """  val buildTime: scala.Long = 1234L""" ::
-             """  /** The value is scala.collection.Seq(new java.io.File("/tmp/f.txt")). */""" ::
-             """  val someCp: scala.collection.Seq[java.io.File] = scala.collection.Seq(new java.io.File("/tmp/f.txt"))""" ::
+             """  /** The value is scala.collection.immutable.Seq(new java.io.File("/tmp/f.txt")). */""" ::
+             """  val someCp: scala.collection.immutable.Seq[java.io.File] = scala.collection.immutable.Seq(new java.io.File("/tmp/f.txt"))""" ::
              targetInfoComment ::
              targetInfo :: // """
              """  override val toString: String = {""" ::
