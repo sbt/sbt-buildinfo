@@ -27,8 +27,8 @@ abstract class ScalaRenderer extends BuildInfoRenderer {
 
         case TypeExpression("scala.Option", Seq(arg)) =>
           tpeToReturnType(arg) map { x => s"scala.Option[$x]" }
-        case TypeExpression("scala.collection.Seq", Seq(arg)) =>
-          tpeToReturnType(arg) map { x => s"scala.collection.Seq[$x]" }
+        case TypeExpression("scala.collection.Seq" | "scala.collection.immutable.Seq", Seq(arg)) =>
+          tpeToReturnType(arg) map { x => s"scala.collection.immutable.Seq[$x]" }
         case TypeExpression("scala.collection.immutable.Map", Seq(arg0, arg1)) =>
           for {
             x0 <- tpeToReturnType(arg0)
@@ -50,7 +50,7 @@ abstract class ScalaRenderer extends BuildInfoRenderer {
     case node: scala.xml.NodeSeq if node.toString().trim.nonEmpty => node.toString()
     case (k, _v)            => "(%s -> %s)" format(quote(k), quote(_v))
     case mp: Map[_, _]      => mp.toList.map(quote(_)).mkString("Map(", ", ", ")")
-    case seq: Seq[_]        => seq.map(quote).mkString("scala.collection.Seq(", ", ", ")")
+    case seq: collection.Seq[_] => seq.map(quote).mkString("scala.collection.immutable.Seq(", ", ", ")")
     case op: Option[_]      => op map { x => "scala.Some(" + quote(x) + ")" } getOrElse {"scala.None"}
     case url: java.net.URL  => "new java.net.URL(%s)" format quote(url.toString)
     case file: java.io.File => "new java.io.File(%s)" format quote(file.toString)
