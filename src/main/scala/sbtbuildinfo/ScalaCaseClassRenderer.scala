@@ -33,7 +33,7 @@ case class ScalaCaseClassRenderer(options: Seq[BuildInfoOption], pkg: String, ob
       caseObjectLine(buildInfoResults)
 
   private def caseClassDefinitionBegin = List(
-    s"case class $obj("
+    withPkgPriv(s"case class $obj(")
   )
 
   private def caseClassParameter(r: BuildInfoResult): Seq[String] = {
@@ -57,7 +57,7 @@ case class ScalaCaseClassRenderer(options: Seq[BuildInfoOption], pkg: String, ob
   private def caseClassEnd = List("}")
 
   private def caseObjectLine(buildInfoResults: Seq[BuildInfoResult]) = List(
-    s"case object $obj {",
+    withPkgPriv(s"case object $obj {"),
     s"  def apply(): $obj = new $obj(${buildInfoResults.map(r => s"\n    ${r.identifier} = ${quote(r.value)}").mkString(",")})",
     s"  val get = apply()",
     s"  val value = apply()",

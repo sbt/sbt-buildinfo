@@ -9,4 +9,5 @@ object BuildInfoOption {
   case object ToJson extends BuildInfoOption
   case class Traits(names: String*) extends BuildInfoOption
   case object BuildTime extends BuildInfoOption
+  case object PackagePrivate extends BuildInfoOption
 }
