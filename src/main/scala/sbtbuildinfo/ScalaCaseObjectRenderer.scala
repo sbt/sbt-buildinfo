@@ -4,7 +4,6 @@ private[sbtbuildinfo] case class ScalaCaseObjectRenderer(options: Seq[BuildInfoO
 
   override def fileType = BuildInfoType.Source
   override def extension = "scala"
-
   val traitNames = options.collect{case BuildInfoOption.Traits(ts @ _*) => ts}.flatten
   val objTraits = if (traitNames.isEmpty) "" else " extends " ++ traitNames.mkString(" with ")
 
