@@ -1,6 +1,9 @@
 package sbtbuildinfo
 
 abstract class ScalaRenderer extends BuildInfoRenderer {
+
+  protected def pkg: String
+
   protected def getType(typeExpr: TypeExpression): Option[String] = {
     def tpeToReturnType(tpe: TypeExpression): Option[String] =
       tpe match {
@@ -62,5 +65,9 @@ abstract class ScalaRenderer extends BuildInfoRenderer {
     str.replace("\\","\\\\").replace("\n","\\n").replace("\b","\\b").replace("\r","\\r").
       replace("\t","\\t").replace("\'","\\'").replace("\f","\\f").replace("\"","\\\"")
 
+  protected def withPkgPriv(str: String): String =
+    if(pkg.nonEmpty && isPkgPriv)
+      s"private[${pkg.split('.').last}] $str"
+    else str
 
 }
