@@ -15,6 +15,7 @@ lazy val root = (project in file(".")).
     scalacOptions += "-language:experimental.macros",
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value % Provided,
     description := "sbt plugin to generate build info",
+    homepage := Some(url("https://github.com/sbt/sbt-buildinfo")),
     licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")),
     scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Dplugin.version=" + version.value),
     scriptedBufferLog := false
