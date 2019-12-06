@@ -14,6 +14,7 @@ case class ScalaFinalCaseObjectRenderer(options: Seq[BuildInfoOption], pkg: Stri
   // the project using `-Ywarn-unused-import` because we do not always generated references that are part of
   // `scala` such as `scala.Option`.
   def header = List(
+    "// $COVERAGE-OFF$",
     s"package $pkg",
     "",
     "import scala.Predef._",
@@ -22,7 +23,7 @@ case class ScalaFinalCaseObjectRenderer(options: Seq[BuildInfoOption], pkg: Stri
     withPkgPriv(s"case object $obj$objTraits {")
   )
 
-  def footer = List("}")
+  def footer = List("}", "// $COVERAGE-ON$")
 
   override def renderKeys(buildInfoResults: Seq[BuildInfoResult]) =
     header ++

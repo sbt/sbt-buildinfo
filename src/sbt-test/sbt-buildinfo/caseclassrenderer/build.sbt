@@ -32,7 +32,8 @@ lazy val root = (project in file(".")).
       val f = (sourceManaged in Compile).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
       lines match {
-        case """package hello""" ::
+        case """// $COVERAGE-OFF$""" :: 
+          """package hello""" ::
           """""" ::
           """import scala.Predef._""" ::
           """import scala.Any""" ::
@@ -71,7 +72,8 @@ lazy val root = (project in file(".")).
           targetInfo ::
           """  val get = apply()""" ::
           """  val value = apply()""" ::
-          """}""" :: Nil if (targetInfo contains "target = new java.io.File(") =>
+          """}""" ::
+          """// $COVERAGE-ON$""" :: Nil if (targetInfo contains "target = new java.io.File(") =>
         case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
       }
       ()
