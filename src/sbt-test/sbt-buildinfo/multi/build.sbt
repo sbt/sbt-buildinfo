@@ -26,7 +26,8 @@ lazy val app = (project in file("app")).
       val f = (sourceManaged in Compile).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
       lines match {
-        case """package hello""" ::
+        case """// $COVERAGE-OFF$""" :: 
+             """package hello""" ::
              """""" ::
              """import scala.Predef._""" ::
              """""" ::
@@ -47,7 +48,8 @@ lazy val app = (project in file("app")).
              """      name, projectID, version, homepage, scalaVersion""" ::
              """    )""" ::
              """  }""" ::
-             """}""" :: Nil =>
+             """}""" ::
+             """// $COVERAGE-ON$""" :: Nil =>
         case _ => sys.error("unexpected output: " + lines.mkString("\n"))
       }
       ()
