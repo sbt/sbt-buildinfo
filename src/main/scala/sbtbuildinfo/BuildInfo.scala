@@ -13,8 +13,8 @@ object BuildInfo {
   private def extraKeys(options: Seq[BuildInfoOption]): Seq[BuildInfoKey] =
       if (options contains BuildInfoOption.BuildTime) {
         val now = System.currentTimeMillis()
-        val dtf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
-        dtf.setTimeZone(java.util.TimeZone.getTimeZone("UTC"))
+        // Output the build time with the local timezone suffix
+        val dtf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ")
         val nowStr = dtf.format(new java.util.Date(now))
         Seq[BuildInfoKey](
           "builtAtString" -> nowStr,

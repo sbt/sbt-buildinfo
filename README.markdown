@@ -159,8 +159,8 @@ buildInfoOptions += BuildInfoOption.BuildTime
 to add timestamp values:
 
 ```scala
-/** The value is "2015-07-30 03:30:16.849". */
-val builtAtString: String = "2015-07-30 03:30:16.849"
+/** The value is "2015-07-30 03:30:16.849-0700". */
+val builtAtString: String = "2015-07-30 03:30:16.849-0700"
 /** The value is 1438227016849L. */
 val builtAtMillis: Long = 1438227016849L
 ```
