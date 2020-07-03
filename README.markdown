@@ -53,7 +53,7 @@ case object BuildInfo {
   val scalaVersion: String = "2.10.3"
   /** The value is "0.13.2". */
   val sbtVersion: String = "0.13.2"
-  override val toString: String = "name: %s, version: %s, scalaVersion: %s, sbtVersion: %s" format (name, version, scalaVersion, sbtVersion)
+  override val toString: String = "name: %s, version: %s, scalaVersion: %s, sbtVersion: %s".format(name, version, scalaVersion, sbtVersion)
 }
 ```
 
