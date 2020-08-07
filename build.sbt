@@ -20,4 +20,6 @@ lazy val root = (project in file("."))
     scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Dplugin.version=" + version.value),
     scriptedBufferLog := false,
     publishTo := (bintray / publishTo).value,
+    publishMavenStyle := false,
+    bintrayOrganization := Some("eed3i9n"),
   )
