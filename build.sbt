@@ -8,7 +8,6 @@ ThisBuild / version := {
 
 lazy val root = (project in file("."))
   .enablePlugins(SbtPlugin)
-  .disablePlugins(Sonatype)
   .settings(
     name := "sbt-buildinfo",
     pluginCrossBuild / sbtVersion := "1.2.8",
