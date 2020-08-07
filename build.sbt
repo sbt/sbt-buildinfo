@@ -21,5 +21,5 @@ lazy val root = (project in file("."))
     scriptedBufferLog := false,
     publishTo := (bintray / publishTo).value,
     publishMavenStyle := false,
-    bintrayOrganization := Some("eed3i9n"),
+    bintrayOrganization := Some("eed3si9n"),
   )
