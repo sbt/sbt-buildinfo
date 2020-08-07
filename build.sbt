@@ -1,16 +1,17 @@
-lazy val commonSettings: Seq[Setting[_]] = Seq(
-  git.baseVersion in ThisBuild := "0.9.0",
-  organization in ThisBuild := "com.eed3si9n"
-)
+ThisBuild / organization := "com.eed3si9n"
+ThisBuild / dynverSonatypeSnapshots := true
+ThisBuild / version := {
+  val orig = (ThisBuild / version).value
+  if (orig.endsWith("-SNAPSHOT")) "0.10.0-SNAPSHOT"
+  else orig
+}
 
-lazy val root = (project in file(".")).
-  enablePlugins(GitVersioning, ScriptedPlugin).
-  settings(
-    commonSettings,
-    sbtPlugin := true,
+lazy val root = (project in file("."))
+  .enablePlugins(SbtPlugin)
+  .disablePlugins(Sonatype)
+  .settings(
     name := "sbt-buildinfo",
-    // sbtVersion in Global := "0.13.0" 
-    // scalaVersion in Global := "2.10.2"
+    pluginCrossBuild / sbtVersion := "1.2.8",
     scalacOptions := Seq("-Xfuture", "-unchecked", "-deprecation", "-feature", "-language:implicitConversions"),
     scalacOptions += "-language:experimental.macros",
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value % Provided,

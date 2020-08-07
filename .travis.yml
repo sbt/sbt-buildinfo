@@ -1,6 +1,35 @@
 language: scala
-script: "sbt scripted"
-dist: xenial
-jdk:
-- openjdk8
-- openjdk11
+
+stages:
+  - name: test
+  - name: release
+    if: (tag IS present) AND NOT fork
+
+jdk: openjdk8
+
+jobs:
+  include:
+    # stage="test" if no stage is specified
+    - name: jdk8
+      jdk: openjdk8
+    - name: jdk11
+      jdk: openjdk11
+    # run ci-release only if previous stages passed
+    - stage: release
+      script: sbt ci-release
+
+before_install:
+  - git fetch --tags
+
+script: sbt clean test scripted
+
+before_cache:
+- find $HOME/.ivy2/cache     -name "ivydata-*.properties" -print -delete
+- find $HOME/.cache/coursier -name                        -print -delete
+- find $HOME/.sbt            -name "*.lock"               -print -delete
+
+cache:
+  directories:
+    - $HOME/.ivy2/cache
+    - $HOME/.cache/coursier
+    - $HOME/.sbt
