@@ -11,7 +11,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "sbt-buildinfo",
     pluginCrossBuild / sbtVersion := "1.2.8",
-    scalacOptions := Seq("-Xfuture", "-unchecked", "-deprecation", "-feature", "-language:implicitConversions"),
+    scalacOptions := Seq("-Xlint", "-Xfatal-warnings", "-unchecked", "-deprecation", "-feature", "-language:implicitConversions"),
     scalacOptions += "-language:experimental.macros",
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value % Provided,
     description := "sbt plugin to generate build info",

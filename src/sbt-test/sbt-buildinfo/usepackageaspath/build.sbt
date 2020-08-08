@@ -7,7 +7,7 @@ lazy val root = (project in file(".")).
     version := "0.1",
     scalaVersion := "2.12.7",
     libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.1.0",
-    buildInfoKeys := BuildInfoKey.ofN(
+    buildInfoKeys := Seq[BuildInfoKey](
       name,
       BuildInfoKey.map(version) { case (n, v) => "projectVersion" -> v.toDouble },
       scalaVersion,

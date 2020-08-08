@@ -9,7 +9,7 @@ lazy val root = (project in file(".")).
     version := "0.1",
     scalaVersion := "2.12.7",
     TaskKey[Classpath]("someCp") := Seq(Attributed.blank(file("/tmp/f.txt"))),
-    buildInfoKeys := BuildInfoKey.ofN(
+    buildInfoKeys := Seq[BuildInfoKey](
       name,
       BuildInfoKey.map(version) { case (n, v) => "projectVersion" -> v.toDouble },
       scalaVersion,
