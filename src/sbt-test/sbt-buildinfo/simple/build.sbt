@@ -1,13 +1,16 @@
 lazy val check = taskKey[Unit]("checks this plugin")
 
-lazy val root = (project in file(".")).
-  enablePlugins(BuildInfoPlugin).
-  settings(
+ThisBuild / version := "0.1"
+ThisBuild / scalaVersion := "2.13.3"
+ThisBuild / homepage := Some(url("http://example.com"))
+ThisBuild / licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
+
+lazy val root = (project in file("."))
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
     name := "helloworld",
-    version := "0.1",
-    scalaVersion := "2.12.7",
     TaskKey[Classpath]("someCp") := Seq(Attributed.blank(file("/tmp/f.txt"))),
-    buildInfoKeys := BuildInfoKey.ofN(
+    buildInfoKeys := Seq[BuildInfoKey](
       name,
       BuildInfoKey.map(version) { case (n, v) => "projectVersion" -> v.toDouble },
       scalaVersion,
@@ -23,11 +26,10 @@ lazy val root = (project in file(".")).
       target
     ),
     buildInfoPackage := "hello",
-    homepage := Some(url("http://example.com")),
-    licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")),
-    scalacOptions ++= Seq("-Ywarn-unused-import", "-Xfatal-warnings", "-Yno-imports"),
-    libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
+    scalacOptions ++= Seq("-Xlint", "-Xfatal-warnings", "-Yno-imports"),
+    libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.3.0",
     check := {
+      val sv = scalaVersion.value
       val f = (sourceManaged in Compile).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
       lines match {
@@ -42,8 +44,8 @@ lazy val root = (project in file(".")).
              """  val name: String = "helloworld"""" ::
              """  /** The value is 0.1. */"""::
              """  val projectVersion = 0.1""" ::
-             """  /** The value is "2.12.7". */""" ::
-             """  val scalaVersion: String = "2.12.7"""" ::
+             scalaVersionInfoComment ::
+             scalaVersionInfo ::
              """  /** The value is scala.collection.immutable.Seq(). */""" ::
              """  val ivyXML: scala.xml.NodeSeq = scala.collection.immutable.Seq()""" ::
              """  /** The value is scala.Some(new java.net.URL("http://example.com")). */""" ::
@@ -56,8 +58,8 @@ lazy val root = (project in file(".")).
              """  val isSnapshot: scala.Boolean = false""" ::
              """  /** The value is 2012. */""" ::
              """  val year: scala.Int = 2012""" ::
-             """  /** The value is 'Foo. */""" ::
-             """  val sym: scala.Symbol = 'Foo""" ::
+             """  /** The value is scala.Symbol("Foo"). */""" ::
+             """  val sym: scala.Symbol = scala.Symbol("Foo")""" ::
              """  /** The value is 1234L. */""" ::
              """  val buildTime: scala.Long = 1234L""" ::
              """  /** The value is scala.collection.immutable.Seq(new java.io.File("/tmp/f.txt")). */""" ::
@@ -70,7 +72,8 @@ lazy val root = (project in file(".")).
              """    )""" ::
              """  }""" ::
              """}""" ::
-             """// $COVERAGE-ON$""" :: Nil if (targetInfo contains "val target: java.io.File = new java.io.File(") =>
+             """// $COVERAGE-ON$""" :: Nil if (targetInfo contains "val target: java.io.File = new java.io.File(") &&
+             (scalaVersionInfo.trim == s"""val scalaVersion: String = "$sv"""") => ()
         case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
       }
       ()

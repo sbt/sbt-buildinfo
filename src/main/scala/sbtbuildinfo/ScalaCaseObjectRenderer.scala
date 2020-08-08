@@ -69,8 +69,8 @@ private[sbtbuildinfo] case class ScalaCaseObjectRenderer(options: Seq[BuildInfoO
             |    value match {
             |      case elem: Seq[_] => elem.map(toJsonValue).mkString("[", ",", "]")
             |      case elem: Option[_] => elem.map(toJsonValue).getOrElse("null")
-            |      case elem: Map[String, Any] => elem.map {
-            |        case (k, v) => toJsonValue(k) + ":" + toJsonValue(v)
+            |      case elem: Map[_, Any] => elem.map {
+            |        case (k, v) => toJsonValue(k.toString) + ":" + toJsonValue(v)
             |      }.mkString("{", ", ", "}")
             |      case d: Double => d.toString
             |      case f: Float => f.toString

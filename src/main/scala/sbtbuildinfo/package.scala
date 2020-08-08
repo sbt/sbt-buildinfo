@@ -3,11 +3,11 @@ import sbt._
 package object sbtbuildinfo {
   type BuildInfoKey = BuildInfoKey.Entry[_]
   object BuildInfoKey {
-    implicit def setting[A](key: SettingKey[A]): Entry[A] = Setting(key)
-    implicit def task[A](key: TaskKey[A]): Entry[A] = macro BuildInfoKeyMacros.taskImpl
-    implicit def taskValue[A: Manifest](task: sbt.Task[A]): Entry[A] = TaskValue(task)
-    implicit def constant[A: Manifest](tuple: (String, A)): Entry[A] = Constant(tuple)
-    
+    implicit def sbtbuildinfoSettingEntry[A](key: SettingKey[A]): Entry[A] = Setting(key)
+    implicit def sbtbuildinfoTaskEntry[A](key: TaskKey[A]): Entry[A] = macro BuildInfoKeyMacros.taskImpl
+    implicit def sbtbuildinfoTaskValueEntry[A: Manifest](task: sbt.Task[A]): Entry[A] = TaskValue(task)
+    implicit def sbtbuildinfoConstantEntry[A: Manifest](tuple: (String, A)): Entry[A] = Constant(tuple)
+
     def apply[A](key: SettingKey[A]): Entry[A] = Setting(key)
     def apply[A](key: TaskKey[A]): Entry[A] = macro BuildInfoKeyMacros.taskImpl
     def apply[A: Manifest](tuple: (String, A)): Entry[A] = Constant(tuple)
@@ -15,7 +15,9 @@ package object sbtbuildinfo {
       BuildInfoKey.Mapped(from, fun)
     def action[A: Manifest](name: String)(fun: => A): Entry[A] = Action(name, () => fun)
 
+    @deprecated("use += (x: BuildInfoKey) instead", "0.10.0")
     def of[A](x: BuildInfoKey.Entry[A]): BuildInfoKey.Entry[A] = x
+    @deprecated("use ++= Seq[BuildInfoKey](...) instead", "0.10.0")
     def ofN(xs: BuildInfoKey*): Seq[BuildInfoKey] = xs
 
     def outOfGraphUnsafe[A](key: TaskKey[A]): Entry[A] = Task(key)
@@ -43,41 +45,5 @@ package object sbtbuildinfo {
     sealed trait Entry[A] {
       private[sbtbuildinfo] def manifest: Manifest[A]
     }
-  }
-
-  import scala.reflect.macros.blackbox
-
-  final class BuildInfoKeyMacros(val c: blackbox.Context) {
-    import c.universe._
-
-    val BuildInfoKey = q"_root_.sbtbuildinfo.BuildInfoKey"
-
-    def taskImpl(key: Tree): Tree = {
-      val A = key.tpe.typeArgs.head
-      q"$BuildInfoKey.taskValue[$A]($key.taskValue)($key.key.manifest.typeArguments.head.asInstanceOf[_root_.scala.reflect.Manifest[$A]])"
-    }
-
-    @deprecated("No longer used", "0.9.0")
-    def ofImpl(x: Tree): Tree = {
-      x.tpe match {
-        case tpe if tpe <:< typeOf[SettingKey[_]] =>
-          val A = tpe.typeArgs.head
-          q"$BuildInfoKey.setting[$A]($x)"
-
-        case tpe if tpe <:< typeOf[TaskKey[_]] =>
-          val A = tpe.typeArgs.head
-          q"$BuildInfoKey.taskValue[$A]($x.taskValue)($x.key.manifest.typeArguments.head.asInstanceOf[_root_.scala.reflect.Manifest[$A]])"
-
-        case tpe if tpe <:< typeOf[(_, _)] =>
-          val A = tpe.typeArgs.tail.head
-          q"$BuildInfoKey.constant[$A]($x)"
-
-        case tpe if tpe <:< typeOf[BuildInfoKey] => x
-      }
-    }
-
-    @deprecated("No longer used", "0.9.0")
-    def ofNImpl(xs: Tree*): Tree = q"_root_.scala.collection.immutable.Seq(..${xs map ofImpl})"
-
   }
 }

@@ -1,20 +1,17 @@
 lazy val check = taskKey[Unit]("check")
 
-lazy val commonSettings = Seq(
-  version := "0.1",
-  organization := "com.example",
-  homepage := Some(url("http://example.com")),
-  scalaVersion := "2.12.7"
-)
+ThisBuild / version := "0.1"
+ThisBuild / organization := "com.example"
+ThisBuild / scalaVersion := "2.13.3"
+ThisBuild / homepage := Some(url("http://example.com"))
+ThisBuild / licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
 
-lazy val root = (project in file(".")).
-  aggregate(app).
-  settings(commonSettings: _*)
+lazy val root = (project in file("."))
+  .aggregate(app)
 
-lazy val app = (project in file("app")).
-  enablePlugins(BuildInfoPlugin).
-  settings(commonSettings: _*).
-  settings(
+lazy val app = (project in file("app"))
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
     name := "sbt-buildinfo-example-app",
     buildInfoKeys := Seq(name,
                          projectID in LocalProject("root"),
@@ -22,11 +19,13 @@ lazy val app = (project in file("app")).
                          BuildInfoKey.map(homepage) { case (n, opt) => n -> opt.get },
                          scalaVersion),
     buildInfoPackage := "hello",
+    scalacOptions ++= Seq("-Xlint", "-Xfatal-warnings", "-Yno-imports"),
     check := {
+      val sv = scalaVersion.value
       val f = (sourceManaged in Compile).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
       lines match {
-        case """// $COVERAGE-OFF$""" :: 
+        case """// $COVERAGE-OFF$""" ::
              """package hello""" ::
              """""" ::
              """import scala.Predef._""" ::
@@ -41,18 +40,17 @@ lazy val app = (project in file("app")).
              """  val version: String = "0.1"""" ::
              """  /** The value is new java.net.URL("http://example.com"). */""" ::
              """  val homepage = new java.net.URL("http://example.com")""" ::
-             """  /** The value is "2.12.7". */""" ::
-             """  val scalaVersion: String = "2.12.7"""" ::
+             scalaVersionInfoComment ::
+             scalaVersionInfo ::
              """  override val toString: String = {""" ::
              """    "name: %s, projectID: %s, version: %s, homepage: %s, scalaVersion: %s".format(""" ::
              """      name, projectID, version, homepage, scalaVersion""" ::
              """    )""" ::
              """  }""" ::
              """}""" ::
-             """// $COVERAGE-ON$""" :: Nil =>
+             """// $COVERAGE-ON$""" :: Nil if (scalaVersionInfo.trim == s"""val scalaVersion: String = "$sv"""") => ()
         case _ => sys.error("unexpected output: " + lines.mkString("\n"))
       }
       ()
     }
   )
-

@@ -2,12 +2,15 @@ import sbtbuildinfo.ScalaCaseClassRenderer
 
 lazy val check = taskKey[Unit]("checks this plugin")
 
-lazy val root = (project in file(".")).
-  enablePlugins(BuildInfoPlugin).
-  settings(
+ThisBuild / version := "0.1"
+ThisBuild / scalaVersion := "2.12.12"
+ThisBuild / homepage := Some(url("http://example.com"))
+ThisBuild / licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
+
+lazy val root = (project in file("."))
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
     name := "helloworld",
-    version := "0.1",
-    scalaVersion := "2.11.12",
     buildInfoKeys := Seq(
       name,
       BuildInfoKey.map(version) { case (n, v) => "projectVersion" -> v.toDouble },
@@ -24,15 +27,13 @@ lazy val root = (project in file(".")).
     buildInfoOptions += BuildInfoOption.Traits("traits.MyCustomTrait"),
     buildInfoRenderFactory := ScalaCaseClassRenderer.apply,
     buildInfoPackage := "hello",
-    homepage := Some(url("http://example.com")),
-    licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")),
     scalacOptions ++= Seq("-Ywarn-unused-import", "-Xfatal-warnings", "-Yno-imports"),
     libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
     check := {
       val f = (sourceManaged in Compile).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
       lines match {
-        case """// $COVERAGE-OFF$""" :: 
+        case """// $COVERAGE-OFF$""" ::
           """package hello""" ::
           """""" ::
           """import scala.Predef._""" ::
@@ -60,14 +61,14 @@ lazy val root = (project in file(".")).
           """  def apply(): BuildInfo = new BuildInfo(""" ::
           """    name = "helloworld",""" ::
           """    projectVersion = 0.1,""" ::
-          """    scalaVersion = "2.11.12",""" ::
+          """    scalaVersion = "2.12.12",""" ::
           """    ivyXML = scala.collection.immutable.Seq(),""" ::
           """    homepage = scala.Some(new java.net.URL("http://example.com")),""" ::
           """    licenses = scala.collection.immutable.Seq(("MIT License" -> new java.net.URL("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))),""" ::
           """    apiMappings = Map(),""" ::
           """    isSnapshot = false,""" ::
           """    year = 2012,""" ::
-          """    sym = 'Foo,""" ::
+          """    sym = scala.Symbol("Foo"),""" ::
           """    buildTime = 1234L,""" ::
           targetInfo ::
           """  val get = apply()""" ::

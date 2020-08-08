@@ -1,7 +1,5 @@
 package sbtbuildinfo
 
-import sbt._
-
 sealed trait BuildInfoOption
 
 object BuildInfoOption {
