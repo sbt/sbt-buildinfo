@@ -6,6 +6,7 @@ private[sbtbuildinfo] case class ScalaCaseObjectRenderer(options: Seq[BuildInfoO
   override def extension = "scala"
   val traitNames = options.collect{case BuildInfoOption.Traits(ts @ _*) => ts}.flatten
   val objTraits = if (traitNames.isEmpty) "" else " extends " ++ traitNames.mkString(" with ")
+  val constantValue = options.contains(BuildInfoOption.ConstantValue)
 
   // It is safe to add `import scala.Predef` even though we need to keep `-Ywarn-unused-import` in mind
   // because we always generate code that has a reference to `String`. If the "base" generated code were to be
@@ -31,13 +32,23 @@ private[sbtbuildinfo] case class ScalaCaseObjectRenderer(options: Seq[BuildInfoO
     toMapLine(buildInfoResults) ++ toJsonLine ++
     footer
 
+
+  private val constantTypes = Set("scala.Int", "scala.Long", "scala.Double", "scala.Boolean", "scala.Symbol", "String")
+
   private def line(result: BuildInfoResult): Seq[String] = {
     import result._
-    val typeDecl = getType(result.typeExpr) map { ": " + _ } getOrElse ""
-
+    val (typeDecl, modifier) =
+      getType(result.typeExpr) match {
+        case Some(tp) if !constantValue || !constantTypes(tp) =>
+          (s": $tp", "")
+        case _ if constantValue =>
+          ("", "final ")
+        case _ =>
+          ("", "")
+      }
     List(
       s"  /** The value is ${quote(value)}. */",
-      s"  val $identifier$typeDecl = ${quote(value)}"
+      s"  ${modifier}val $identifier$typeDecl = ${quote(value)}"
     )
   }
 

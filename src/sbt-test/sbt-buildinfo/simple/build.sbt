@@ -46,8 +46,8 @@ lazy val root = (project in file("."))
              """  val projectVersion = 0.1""" ::
              scalaVersionInfoComment ::
              scalaVersionInfo ::
-             """  /** The value is scala.collection.immutable.Seq(). */""" ::
-             """  val ivyXML: scala.xml.NodeSeq = scala.collection.immutable.Seq()""" ::
+             """  /** The value is scala.xml.NodeSeq.Empty. */""" ::
+             """  val ivyXML: scala.xml.NodeSeq = scala.xml.NodeSeq.Empty""" ::
              """  /** The value is scala.Some(new java.net.URL("http://example.com")). */""" ::
              """  val homepage: scala.Option[java.net.URL] = scala.Some(new java.net.URL("http://example.com"))""" ::
              """  /** The value is scala.collection.immutable.Seq(("MIT License" -> new java.net.URL("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))). */""" ::
