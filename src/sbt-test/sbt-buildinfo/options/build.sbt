@@ -1,14 +1,15 @@
 lazy val check = taskKey[Unit]("checks this plugin")
 
-lazy val root = (project in file(".")).
-  enablePlugins(BuildInfoPlugin).
-  settings(
+ThisBuild / version := "0.1"
+ThisBuild / scalaVersion := "2.12.12"
+
+lazy val root = (project in file("."))
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
     name := "helloworld",
-    version := "0.1",
-    scalaVersion := "2.12.7",
     buildInfoKeys := Seq(
       name,
-      scalaVersion
+      scalaVersion,
     ),
     buildInfoPackage := "hello",
     buildInfoOptions ++= Seq(
@@ -19,6 +20,7 @@ lazy val root = (project in file(".")).
       BuildInfoOption.PackagePrivate),
     homepage := Some(url("http://example.com")),
     licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")),
+    scalacOptions ++= Seq("-Xlint", "-Xfatal-warnings"),
     check := {
       val f = (sourceManaged in Compile).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
@@ -32,8 +34,8 @@ lazy val root = (project in file(".")).
               """private[hello] case object BuildInfo extends TestTrait1 with TestTrait2 with TestTrait3 {""" ::
               """  /** The value is "helloworld". */""" ::
               """  val name: String = "helloworld"""" ::
-              """  /** The value is "2.12.7". */""" ::
-              """  val scalaVersion: String = "2.12.7"""" ::
+              """  /** The value is "2.12.12". */""" ::
+              """  val scalaVersion: String = "2.12.12"""" ::
               """  override val toString: String = {""" ::
               """    "name: %s, scalaVersion: %s".format(""" ::
               """      name, scalaVersion""" ::
@@ -48,8 +50,8 @@ lazy val root = (project in file(".")).
               """    value match {""" ::
               """      case elem: Seq[_] => elem.map(toJsonValue).mkString("[", ",", "]")""" ::
               """      case elem: Option[_] => elem.map(toJsonValue).getOrElse("null")""" ::
-              """      case elem: Map[String, Any] => elem.map {""" ::
-              """        case (k, v) => toJsonValue(k) + ":" + toJsonValue(v)""" ::
+              """      case elem: Map[_, Any] => elem.map {""" ::
+              """        case (k, v) => toJsonValue(k.toString) + ":" + toJsonValue(v)""" ::
               """      }.mkString("{", ", ", "}")""" ::
               """      case d: Double => d.toString""" ::
               """      case f: Float => f.toString""" ::
