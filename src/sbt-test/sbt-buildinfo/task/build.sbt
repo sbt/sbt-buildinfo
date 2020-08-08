@@ -1,6 +1,9 @@
 import StableState.{ counterOutOfTaskGraph, counterInTaskGraph }
 
-scalaVersion in ThisBuild := "2.12.4"
+ThisBuild / version := "0.1"
+ThisBuild / scalaVersion := "2.12.12"
+ThisBuild / homepage := Some(url("http://example.com"))
+ThisBuild / licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
 
 val projOutOfTaskGraph1 = project
   .settings (

@@ -1,21 +1,24 @@
 lazy val check = taskKey[Unit]("check")
 
-lazy val root = (project in file(".")).
-  enablePlugins(BuildInfoPlugin).
-  settings(
+ThisBuild / scalaVersion := "2.12.12"
+ThisBuild / organization := "com.example"
+ThisBuild / version := "0.1"
+ThisBuild / homepage := Some(url("http://example.com"))
+ThisBuild / licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
+
+lazy val root = (project in file("."))
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
     name := "helloworld",
-    version := "0.1",
-    scalaVersion := "2.12.7",
     buildInfoKeys := Seq(name, version),
     buildInfoPackage := "hello",
-    homepage := Some(url("http://example.com")),
-    licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")),
+    scalacOptions ++= Seq("-Xlint", "-Xfatal-warnings", "-Yno-imports"),
     check := {
       val dir = (sourceManaged in Compile).value
       val f = dir / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
       lines match {
-        case """// $COVERAGE-OFF$""" :: 
+        case """// $COVERAGE-OFF$""" ::
              """package hello""" ::
              """""" ::
              """import scala.Predef._""" ::

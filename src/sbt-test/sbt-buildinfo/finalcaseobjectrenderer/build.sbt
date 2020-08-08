@@ -2,12 +2,15 @@ import sbtbuildinfo.ScalaFinalCaseObjectRenderer
 
 lazy val check = taskKey[Unit]("checks this plugin")
 
+ThisBuild / version := "0.1"
+ThisBuild / scalaVersion := "2.12.12"
+ThisBuild / homepage := Some(url("http://example.com"))
+ThisBuild / licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
+
 lazy val root = (project in file(".")).
   enablePlugins(BuildInfoPlugin).
   settings(
     name := "helloworld",
-    version := "0.1",
-    scalaVersion := "2.12.7",
     TaskKey[Classpath]("someCp") := Seq(Attributed.blank(file("/tmp/f.txt"))),
     buildInfoKeys := Seq[BuildInfoKey](
       name,
@@ -26,8 +29,6 @@ lazy val root = (project in file(".")).
     buildInfoOptions += BuildInfoOption.Traits("traits.MyCustomTrait"),
     buildInfoRenderFactory := ScalaFinalCaseObjectRenderer.apply,
     buildInfoPackage := "hello",
-    homepage := Some(url("http://example.com")),
-    licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")),
     scalacOptions ++= Seq("-Ywarn-unused-import", "-Xfatal-warnings", "-Yno-imports"),
     libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
     check := {
@@ -45,8 +46,8 @@ lazy val root = (project in file(".")).
           """  final val name: String = "helloworld"""" ::
           """  /** The value is 0.1. */"""::
           """  final val projectVersion = 0.1""" ::
-          """  /** The value is "2.12.7". */""" ::
-          """  final val scalaVersion: String = "2.12.7"""" ::
+          """  /** The value is "2.12.12". */""" ::
+          """  final val scalaVersion: String = "2.12.12"""" ::
           """  /** The value is scala.collection.immutable.Seq(). */""" ::
           """  final val ivyXML: scala.xml.NodeSeq = scala.collection.immutable.Seq()""" ::
           """  /** The value is scala.Some(new java.net.URL("http://example.com")). */""" ::
@@ -59,8 +60,8 @@ lazy val root = (project in file(".")).
           """  final val isSnapshot: scala.Boolean = false""" ::
           """  /** The value is 2012. */""" ::
           """  final val year: scala.Int = 2012""" ::
-          """  /** The value is 'Foo. */""" ::
-          """  final val sym: scala.Symbol = 'Foo""" ::
+          """  /** The value is scala.Symbol("Foo"). */""" ::
+          """  final val sym: scala.Symbol = scala.Symbol("Foo")""" ::
           """  /** The value is 1234L. */""" ::
           """  final val buildTime: scala.Long = 1234L""" ::
           """  /** The value is scala.collection.immutable.Seq(new java.io.File("/tmp/f.txt")). */""" ::
