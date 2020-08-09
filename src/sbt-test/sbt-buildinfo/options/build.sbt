@@ -20,7 +20,7 @@ lazy val root = (project in file("."))
       BuildInfoOption.PackagePrivate),
     homepage := Some(url("http://example.com")),
     licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")),
-    scalacOptions ++= Seq("-Xlint", "-Xfatal-warnings"),
+    scalacOptions ++= Seq("-Xlint", "-Xfatal-warnings", "-Yno-imports"),
     check := {
       val f = (sourceManaged in Compile).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
@@ -41,24 +41,24 @@ lazy val root = (project in file("."))
               """      name, scalaVersion""" ::
               """    )""" ::
               """  }""" ::
-              """  val toMap: Map[String, Any] = Map[String, Any](""" ::
+              """  val toMap: Map[String, scala.Any] = Map[String, scala.Any](""" ::
               """    "name" -> name,""" ::
               """    "scalaVersion" -> scalaVersion)""" ::
               """""" ::
-              """  private def quote(x: Any): String = "\"" + x + "\""""" ::
-              """  private def toJsonValue(value: Any): String = {""" ::
+              """  private def quote(x: scala.Any): String = "\"" + x + "\""""" ::
+              """  private def toJsonValue(value: scala.Any): String = {""" ::
               """    value match {""" ::
-              """      case elem: Seq[_] => elem.map(toJsonValue).mkString("[", ",", "]")""" ::
-              """      case elem: Option[_] => elem.map(toJsonValue).getOrElse("null")""" ::
-              """      case elem: Map[_, Any] => elem.map {""" ::
+              """      case elem: scala.collection.Seq[_] => elem.map(toJsonValue).mkString("[", ",", "]")""" ::
+              """      case elem: scala.Option[_] => elem.map(toJsonValue).getOrElse("null")""" ::
+              """      case elem: scala.collection.Map[_, scala.Any] => elem.map {""" ::
               """        case (k, v) => toJsonValue(k.toString) + ":" + toJsonValue(v)""" ::
               """      }.mkString("{", ", ", "}")""" ::
-              """      case d: Double => d.toString""" ::
-              """      case f: Float => f.toString""" ::
-              """      case l: Long => l.toString""" ::
-              """      case i: Int => i.toString""" ::
-              """      case s: Short => s.toString""" ::
-              """      case bool: Boolean => bool.toString""" ::
+              """      case d: scala.Double => d.toString""" ::
+              """      case f: scala.Float => f.toString""" ::
+              """      case l: scala.Long => l.toString""" ::
+              """      case i: scala.Int => i.toString""" ::
+              """      case s: scala.Short => s.toString""" ::
+              """      case bool: scala.Boolean => bool.toString""" ::
               """      case str: String => quote(str)""" ::
               """      case other => quote(other.toString)""" ::
               """    }""" ::

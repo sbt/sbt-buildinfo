@@ -4,6 +4,42 @@ abstract class ScalaRenderer extends BuildInfoRenderer {
 
   protected def pkg: String
 
+  def options: Seq[BuildInfoOption]
+
+  protected def toMapLines(results: Seq[BuildInfoResult]): Seq[String] =
+    if (options.contains(BuildInfoOption.ToMap) || options.contains(BuildInfoOption.ToJson))
+      results
+        .map(result => "    \"%s\" -> %s".format(result.identifier, result.identifier))
+        .mkString("  val toMap: Map[String, scala.Any] = Map[String, scala.Any](\n", ",\n", ")")
+        .split("\n")
+        .toList ::: List("")
+    else Nil
+
+  protected def toJsonLines: Seq[String] =
+    if (options contains BuildInfoOption.ToJson)
+      List(
+         """|  private def quote(x: scala.Any): String = "\"" + x + "\""
+            |  private def toJsonValue(value: scala.Any): String = {
+            |    value match {
+            |      case elem: scala.collection.Seq[_] => elem.map(toJsonValue).mkString("[", ",", "]")
+            |      case elem: scala.Option[_] => elem.map(toJsonValue).getOrElse("null")
+            |      case elem: scala.collection.Map[_, scala.Any] => elem.map {
+            |        case (k, v) => toJsonValue(k.toString) + ":" + toJsonValue(v)
+            |      }.mkString("{", ", ", "}")
+            |      case d: scala.Double => d.toString
+            |      case f: scala.Float => f.toString
+            |      case l: scala.Long => l.toString
+            |      case i: scala.Int => i.toString
+            |      case s: scala.Short => s.toString
+            |      case bool: scala.Boolean => bool.toString
+            |      case str: String => quote(str)
+            |      case other => quote(other.toString)
+            |    }
+            |  }
+            |
+            |  val toJson: String = toJsonValue(toMap)""".stripMargin)
+    else Nil
+
   protected def getType(typeExpr: TypeExpression): Option[String] = {
     def tpeToReturnType(tpe: TypeExpression): Option[String] =
       tpe match {

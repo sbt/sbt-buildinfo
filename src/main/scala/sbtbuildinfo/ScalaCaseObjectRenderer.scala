@@ -28,10 +28,11 @@ private[sbtbuildinfo] case class ScalaCaseObjectRenderer(options: Seq[BuildInfoO
 
   override def renderKeys(buildInfoResults: Seq[BuildInfoResult]) =
     header ++
-    buildInfoResults.flatMap(line) ++ Seq(toStringLines(buildInfoResults)) ++
-    toMapLine(buildInfoResults) ++ toJsonLine ++
+    buildInfoResults.flatMap(line) ++
+    Seq(toStringLines(buildInfoResults)) ++
+    toMapLines(buildInfoResults) ++
+    toJsonLines ++
     footer
-
 
   private val constantTypes = Set("scala.Int", "scala.Long", "scala.Double", "scala.Boolean", "scala.Symbol", "String")
 
@@ -62,39 +63,4 @@ private[sbtbuildinfo] case class ScalaCaseObjectRenderer(options: Seq[BuildInfoO
          |    )
          |  }""".stripMargin
   }
-
-  def toMapLine(results: Seq[BuildInfoResult]): Seq[String] =
-    if (options.contains(BuildInfoOption.ToMap) || options.contains(BuildInfoOption.ToJson))
-      results
-        .map(result => "    \"%s\" -> %s".format(result.identifier, result.identifier))
-        .mkString("  val toMap: Map[String, Any] = Map[String, Any](\n", ",\n", ")")
-        .split("\n")
-        .toList ::: List("")
-    else Nil
-
-  def toJsonLine: Seq[String] =
-    if (options contains BuildInfoOption.ToJson)
-      List(
-         """|  private def quote(x: Any): String = "\"" + x + "\""
-            |  private def toJsonValue(value: Any): String = {
-            |    value match {
-            |      case elem: Seq[_] => elem.map(toJsonValue).mkString("[", ",", "]")
-            |      case elem: Option[_] => elem.map(toJsonValue).getOrElse("null")
-            |      case elem: Map[_, Any] => elem.map {
-            |        case (k, v) => toJsonValue(k.toString) + ":" + toJsonValue(v)
-            |      }.mkString("{", ", ", "}")
-            |      case d: Double => d.toString
-            |      case f: Float => f.toString
-            |      case l: Long => l.toString
-            |      case i: Int => i.toString
-            |      case s: Short => s.toString
-            |      case bool: Boolean => bool.toString
-            |      case str: String => quote(str)
-            |      case other => quote(other.toString)
-            |    }
-            |  }
-            |
-            |  val toJson: String = toJsonValue(toMap)""".stripMargin)
-    else Nil
-
 }

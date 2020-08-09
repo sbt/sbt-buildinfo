@@ -30,7 +30,8 @@ case class ScalaCaseClassRenderer(options: Seq[BuildInfoOption], pkg: String, ob
     caseClassDefinitionBegin ++
       buildInfoResults.flatMap(caseClassParameter).mkString(",\n").split("\n") ++
       caseClassDefinitionEnd ++
-      toMapMethod(buildInfoResults) ++
+      toMapLines(buildInfoResults) ++
+      toJsonLines ++
       caseClassEnd ++
       List("") ++
       caseObjectLine(buildInfoResults) ++
@@ -48,15 +49,6 @@ case class ScalaCaseClassRenderer(options: Seq[BuildInfoOption], pkg: String, ob
     )
   }
 
-  private def toMapMethod(results: Seq[BuildInfoResult]) =
-    if (options.contains(BuildInfoOption.ToMap))
-      results
-        .map(result => "    \"%s\" -> %s".format(result.identifier, result.identifier))
-        .mkString("  def toMap: Map[String, Any] = Map[String, Any](\n", ",\n", ")")
-        .split("\n")
-        .toList ::: List("")
-    else Nil
-
   private def caseClassDefinitionEnd = List(s") $objTraits {", "")
   private def caseClassEnd = List("}")
 
@@ -67,13 +59,4 @@ case class ScalaCaseClassRenderer(options: Seq[BuildInfoOption], pkg: String, ob
     s"  val value = apply()",
     s"}"
   )
-
-  def toMapLine(results: Seq[BuildInfoResult]): Seq[String] =
-    if (options.contains(BuildInfoOption.ToMap) || options.contains(BuildInfoOption.ToJson))
-      results
-        .map(result => "    \"%s\" -> %s".format(result.identifier, result.identifier))
-        .mkString("  val toMap: Map[String, Any] = Map[String, Any](\n", ",\n", ")")
-        .split("\n")
-        .toList ::: List("")
-    else Nil
 }
