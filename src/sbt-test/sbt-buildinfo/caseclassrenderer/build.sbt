@@ -24,7 +24,11 @@ lazy val root = (project in file("."))
       "sym" -> 'Foo,
       BuildInfoKey.action("buildTime") { 1234L },
       target),
-    buildInfoOptions += BuildInfoOption.Traits("traits.MyCustomTrait"),
+    buildInfoOptions ++= Seq(
+      BuildInfoOption.ToJson,
+      BuildInfoOption.ToMap,
+      BuildInfoOption.Traits("traits.MyCustomTrait"),
+    ),
     buildInfoRenderFactory := ScalaCaseClassRenderer.apply,
     buildInfoPackage := "hello",
     scalacOptions ++= Seq("-Ywarn-unused-import", "-Xfatal-warnings", "-Yno-imports"),
@@ -55,6 +59,40 @@ lazy val root = (project in file("."))
           """  target: java.io.File""" ::
           """) extends traits.MyCustomTrait {""" ::
           """""" ::
+          """  val toMap: Map[String, scala.Any] = Map[String, scala.Any](""" ::
+          """    "name" -> name,""" ::
+          """    "projectVersion" -> projectVersion,""" ::
+          """    "scalaVersion" -> scalaVersion,""" ::
+          """    "ivyXML" -> ivyXML,""" ::
+          """    "homepage" -> homepage,""" ::
+          """    "licenses" -> licenses,""" ::
+          """    "apiMappings" -> apiMappings,""" ::
+          """    "isSnapshot" -> isSnapshot,""" ::
+          """    "year" -> year,""" ::
+          """    "sym" -> sym,""" ::
+          """    "buildTime" -> buildTime,""" ::
+          """    "target" -> target)""" ::
+          """""" ::
+          """  private def quote(x: scala.Any): String = "\"" + x + "\""""" ::
+          """  private def toJsonValue(value: scala.Any): String = {""" ::
+          """    value match {""" ::
+          """      case elem: scala.collection.Seq[_] => elem.map(toJsonValue).mkString("[", ",", "]")""" ::
+          """      case elem: scala.Option[_] => elem.map(toJsonValue).getOrElse("null")""" ::
+          """      case elem: scala.collection.Map[_, scala.Any] => elem.map {""" ::
+          """        case (k, v) => toJsonValue(k.toString) + ":" + toJsonValue(v)""" ::
+          """      }.mkString("{", ", ", "}")""" ::
+          """      case d: scala.Double => d.toString""" ::
+          """      case f: scala.Float => f.toString""" ::
+          """      case l: scala.Long => l.toString""" ::
+          """      case i: scala.Int => i.toString""" ::
+          """      case s: scala.Short => s.toString""" ::
+          """      case bool: scala.Boolean => bool.toString""" ::
+          """      case str: String => quote(str)""" ::
+          """      case other => quote(other.toString)""" ::
+          """    }""" ::
+          """  }""" ::
+          """""" ::
+          """  val toJson: String = toJsonValue(toMap)""" ::
           """}""" ::
           """""" ::
           """case object BuildInfo {""" ::
