@@ -8,4 +8,5 @@ object BuildInfoOption {
   case class Traits(names: String*) extends BuildInfoOption
   case object BuildTime extends BuildInfoOption
   case object PackagePrivate extends BuildInfoOption
+  case object ConstantValue extends BuildInfoOption
 }
