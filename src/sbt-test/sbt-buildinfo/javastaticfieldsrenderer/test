@@ -1,0 +1,4 @@
+> compile
+$ exists target/src_managed/main/sbt-buildinfo/BuildInfo.java
+
+> check
