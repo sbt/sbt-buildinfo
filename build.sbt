@@ -17,7 +17,7 @@ lazy val root = (project in file("."))
     description := "sbt plugin to generate build info",
     homepage := Some(url("https://github.com/sbt/sbt-buildinfo")),
     licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")),
-    scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Dplugin.version=" + version.value),
+    scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Xss4M", "-Dplugin.version=" + version.value),
     scriptedBufferLog := false,
     publishTo := (bintray / publishTo).value,
     publishMavenStyle := false,
