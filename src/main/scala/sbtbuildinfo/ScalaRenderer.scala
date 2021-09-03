@@ -88,7 +88,7 @@ abstract class ScalaRenderer extends BuildInfoRenderer {
     case x: Symbol          => s"""scala.Symbol("${x.name}")"""
     case x: Long            => x.toString + "L"
     case node: scala.xml.NodeSeq if node.toString().trim.nonEmpty => node.toString()
-    case node: scala.xml.NodeSeq => "scala.xml.NodeSeq.Empty"
+    case _: scala.xml.NodeSeq => "scala.xml.NodeSeq.Empty"
     case (k, _v)            => "(%s -> %s)" format(quote(k), quote(_v))
     case mp: Map[_, _]      => mp.toList.map(quote(_)).mkString("Map(", ", ", ")")
     case seq: collection.Seq[_] => seq.map(quote).mkString("scala.collection.immutable.Seq(", ", ", ")")
