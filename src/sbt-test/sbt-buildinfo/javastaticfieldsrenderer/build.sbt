@@ -24,6 +24,7 @@ lazy val root = (project in file("."))
       isSnapshot,
       "year" -> 2012,
       "sym" -> 'Foo,
+      "now" -> java.time.LocalDate.parse("2021-11-02"),
       BuildInfoKey.action("buildTime") { 1234L },
       target),
     buildInfoOptions ++= Seq(
@@ -60,14 +61,16 @@ lazy val root = (project in file("."))
           """  public static final Integer year = 2012;""" ::
           """  /** The value is ("Foo").intern(). */""" ::
           """  public static final String sym = ("Foo").intern();""" ::
+          """  /** The value is java.time.LocalDate.parse("2021-11-02"). */""" ::
+          """  public static final java.time.LocalDate now = java.time.LocalDate.parse("2021-11-02");""" ::
           """  /** The value is 1234L. */""" ::
           """  public static final Long buildTime = 1234L;""" ::
           targetInfoComment ::
           targetInfo ::
           """""" ::
           """  public static String makeString() {""" ::
-          """    return String.format("name: %s, scalaVersion: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, buildTime: %s, target: %s",""" ::
-          """      name, scalaVersion, homepage, licenses, apiMappings, isSnapshot, year, sym, buildTime, target""" ::
+          """    return String.format("name: %s, scalaVersion: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, now: %s, buildTime: %s, target: %s",""" ::
+          """      name, scalaVersion, homepage, licenses, apiMappings, isSnapshot, year, sym, now, buildTime, target""" ::
           """    );""" ::
           """  }""" ::
           """""" ::
@@ -81,6 +84,7 @@ lazy val root = (project in file("."))
           """    m.put("isSnapshot", isSnapshot);""" ::
           """    m.put("year", year);""" ::
           """    m.put("sym", sym);""" ::
+          """    m.put("now", now);""" ::
           """    m.put("buildTime", buildTime);""" ::
           """    m.put("target", target);""" ::
           """    return java.util.Collections.unmodifiableMap(m);""" ::

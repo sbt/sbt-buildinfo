@@ -78,6 +78,9 @@ abstract class ScalaRenderer extends BuildInfoRenderer {
             x0 <- tpeToReturnType(arg0)
             x1 <- tpeToReturnType(arg1)
           } yield s"($x0, $x1)"
+
+        case TypeExpression("java.time.LocalDate", Nil) => Some("java.time.LocalDate")
+
         case _ => None
       }
     tpeToReturnType(typeExpr)
@@ -96,6 +99,7 @@ abstract class ScalaRenderer extends BuildInfoRenderer {
     case url: java.net.URL  => "new java.net.URL(%s)" format quote(url.toString)
     case file: java.io.File => "new java.io.File(%s)" format quote(file.toString)
     case attr: sbt.Attributed[_] => quote(attr.data)
+    case date: java.time.LocalDate => "java.time.LocalDate.parse(%s)" format quote(date.toString)
     case s                  => "\"%s\"" format encodeStringLiteral(s.toString)
   }
 

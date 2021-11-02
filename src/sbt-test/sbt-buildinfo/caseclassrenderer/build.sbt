@@ -22,6 +22,7 @@ lazy val root = (project in file("."))
       isSnapshot,
       "year" -> 2012,
       "sym" -> 'Foo,
+      "now" -> java.time.LocalDate.parse("2021-11-02"),
       BuildInfoKey.action("buildTime") { 1234L },
       target),
     buildInfoOptions ++= Seq(
@@ -55,6 +56,7 @@ lazy val root = (project in file("."))
           """  isSnapshot: scala.Boolean,""" ::
           """  year: scala.Int,""" ::
           """  sym: scala.Symbol,""" ::
+          """  now: java.time.LocalDate,""" ::
           """  buildTime: scala.Long,""" ::
           """  target: java.io.File""" ::
           """) extends traits.MyCustomTrait {""" ::
@@ -70,6 +72,7 @@ lazy val root = (project in file("."))
           """    "isSnapshot" -> isSnapshot,""" ::
           """    "year" -> year,""" ::
           """    "sym" -> sym,""" ::
+          """    "now" -> now,""" ::
           """    "buildTime" -> buildTime,""" ::
           """    "target" -> target)""" ::
           """""" ::
@@ -107,6 +110,7 @@ lazy val root = (project in file("."))
           """    isSnapshot = false,""" ::
           """    year = 2012,""" ::
           """    sym = scala.Symbol("Foo"),""" ::
+          """    now = java.time.LocalDate.parse("2021-11-02"),""" ::
           """    buildTime = 1234L,""" ::
           targetInfo ::
           """  val get = apply()""" ::

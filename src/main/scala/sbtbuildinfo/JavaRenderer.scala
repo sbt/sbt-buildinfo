@@ -177,6 +177,9 @@ abstract class JavaRenderer(pkg: String, cl: String, makeStatic: Boolean) extend
             x0 <- tpeToReturnType(arg0)
             x1 <- tpeToReturnType(arg1)
           } yield s"java.util.Map.Entry<$x0, $x1>"
+        
+        case TypeExpression("java.time.LocalDate", Nil) => Some("java.time.LocalDate")
+
         case _ => None
       }
     tpeToReturnType(typeExpr)
@@ -198,6 +201,7 @@ abstract class JavaRenderer(pkg: String, cl: String, makeStatic: Boolean) extend
     case url: java.net.URL       => "internalAsUrl(%s)" format quote(url.toString)
     case file: java.io.File      => "new java.io.File(%s)" format quote(file.toString)
     case attr: sbt.Attributed[_] => quote(attr.data)
+    case date: java.time.LocalDate => "java.time.LocalDate.parse(%s)" format quote(date.toString)
     case s                       => "\"%s\"" format encodeStringLiteral(s.toString)
   }
 
