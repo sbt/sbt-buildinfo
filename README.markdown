@@ -10,7 +10,7 @@ Latest Stable
 
 For sbt 1.x add sbt-buildinfo as a dependency in `project/plugins.sbt`:
 
-![Bintray version](https://img.shields.io/bintray/v/eed3si9n/sbt-plugins/sbt-buildinfo.svg)
+[![sbt-buildinfo Scala version support](https://index.scala-lang.org/sbt/sbt-buildinfo/sbt-buildinfo/latest-by-scala-version.svg?targetType=Sbt)](https://index.scala-lang.org/sbt/sbt-buildinfo/sbt-buildinfo)
 
 ```scala
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "x.y.z")
