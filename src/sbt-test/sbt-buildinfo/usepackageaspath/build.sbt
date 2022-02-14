@@ -26,6 +26,7 @@ lazy val root = (project in file("."))
     ),
     buildInfoPackage := "foo.bar.baz",
     buildInfoUsePackageAsPath := true,
+    buildInfoOptions := Seq(BuildInfoOption.ImportScalaPredef),
     scalacOptions ++= Seq("-Ywarn-unused-import", "-Xfatal-warnings", "-Yno-imports"),
     check := {
       val f = (sourceManaged in Compile).value / "foo" / "bar" / "baz" / ("%s.scala" format "BuildInfo")

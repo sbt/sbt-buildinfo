@@ -25,7 +25,11 @@ lazy val root = (project in file(".")).
       BuildInfoKey.action("buildTime") { 1234L },
       TaskKey[Classpath]("someCp"),
       target),
-    buildInfoOptions ++= Seq(BuildInfoOption.Traits("traits.MyCustomTrait"), BuildInfoOption.ConstantValue),
+    buildInfoOptions ++= Seq(
+      BuildInfoOption.Traits("traits.MyCustomTrait"),
+      BuildInfoOption.ConstantValue,
+      BuildInfoOption.ImportScalaPredef,
+    ),
     buildInfoPackage := "hello",
     scalacOptions ++= Seq("-Xlint", "-Xfatal-warnings", "-Yno-imports"),
     libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.3.0",

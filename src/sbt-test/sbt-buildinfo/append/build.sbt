@@ -15,6 +15,7 @@ lazy val root = (project in file("."))
       libraryDependencies, libraryDependencies in Test),
     buildInfoKeys += BuildInfoKey(resolvers),
     buildInfoPackage := "hello",
+    buildInfoOptions := Seq(BuildInfoOption.ImportScalaPredef),
     resolvers ++= Seq("Sonatype Public" at "https://oss.sonatype.org/content/groups/public"),
     check := {
       val f = (sourceManaged in Compile).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
