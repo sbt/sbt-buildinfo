@@ -1,6 +1,19 @@
+# sbt
 target/
 lib_managed/
 src_managed/
 project/boot/
+
+# Metals
+/.metals/
+**/project/metals.sbt
+
+# VS Code
+/.vscode/
+
+# Bloop
+.bloop/
+
+# IntelliJ
 .idea/
 .idea_modules/
