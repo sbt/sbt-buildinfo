@@ -22,6 +22,8 @@ lazy val root = (project in file(".")).
       isSnapshot,
       "year" -> 2012,
       "sym" -> 'Foo,
+      "now" -> java.time.LocalDate.parse("2021-11-02"),
+      "instant" -> java.time.Instant.parse("2021-11-02T01:23:45.678Z"),
       BuildInfoKey.action("buildTime") { 1234L },
       TaskKey[Classpath]("someCp"),
       target),
@@ -67,6 +69,10 @@ lazy val root = (project in file(".")).
           """  final val year = 2012""" ::
           """  /** The value is scala.Symbol("Foo"). */""" ::
           """  final val sym = scala.Symbol("Foo")""" ::
+          """  /** The value is java.time.LocalDate.parse("2021-11-02"). */""" ::
+          """  val now: java.time.LocalDate = java.time.LocalDate.parse("2021-11-02")""" ::
+          """  /** The value is java.time.Instant.parse("2021-11-02T01:23:45.678Z"). */""" ::
+          """  val instant: java.time.Instant = java.time.Instant.parse("2021-11-02T01:23:45.678Z")""" ::
           """  /** The value is 1234L. */""" ::
           """  final val buildTime = 1234L""" ::
           """  /** The value is scala.collection.immutable.Seq(new java.io.File("/tmp/f.txt")). */""" ::
@@ -74,8 +80,8 @@ lazy val root = (project in file(".")).
           targetInfoComment ::
           targetInfo :: // """
           """  override val toString: String = {""" ::
-          """    "name: %s, version: %s, projectVersion: %s, scalaVersion: %s, ivyXML: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, buildTime: %s, someCp: %s, target: %s".format(""" ::
-          """      name, version, projectVersion, scalaVersion, ivyXML, homepage, licenses, apiMappings, isSnapshot, year, sym, buildTime, someCp, target""" ::
+          """    "name: %s, version: %s, projectVersion: %s, scalaVersion: %s, ivyXML: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, now: %s, instant: %s, buildTime: %s, someCp: %s, target: %s".format(""" ::
+          """      name, version, projectVersion, scalaVersion, ivyXML, homepage, licenses, apiMappings, isSnapshot, year, sym, now, instant, buildTime, someCp, target""" ::
           """    )""" ::
           """  }""" ::
           """}""" ::

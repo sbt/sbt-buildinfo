@@ -24,6 +24,8 @@ lazy val root = (project in file("."))
       isSnapshot,
       "year" -> 2012,
       "sym" -> 'Foo,
+      "now" -> java.time.LocalDate.parse("2021-11-02"),
+      "instant" -> java.time.Instant.parse("2021-11-02T01:23:45.678Z"),
       BuildInfoKey.action("buildTime") { 1234L },
       target),
     buildInfoOptions ++= Seq(
@@ -62,14 +64,18 @@ lazy val root = (project in file("."))
           """  public final Integer year = 2012;""" ::
           """  /** The value is ("Foo").intern(). */""" ::
           """  public final String sym = ("Foo").intern();""" ::
+          """  /** The value is java.time.LocalDate.parse("2021-11-02"). */""" ::
+          """  public final java.time.LocalDate now = java.time.LocalDate.parse("2021-11-02");""" ::
+          """  /** The value is java.time.Instant.parse("2021-11-02T01:23:45.678Z"). */""" ::
+          """  public final java.time.Instant instant = java.time.Instant.parse("2021-11-02T01:23:45.678Z");""" ::
           """  /** The value is 1234L. */""" ::
           """  public final Long buildTime = 1234L;""" ::
           targetInfoComment ::
           targetInfo ::
           """""" ::
           """  public String toString() {""" ::
-          """    return String.format("name: %s, scalaVersion: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, buildTime: %s, target: %s",""" ::
-          """      name, scalaVersion, homepage, licenses, apiMappings, isSnapshot, year, sym, buildTime, target""" ::
+          """    return String.format("name: %s, scalaVersion: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, now: %s, instant: %s, buildTime: %s, target: %s",""" ::
+          """      name, scalaVersion, homepage, licenses, apiMappings, isSnapshot, year, sym, now, instant, buildTime, target""" ::
           """    );""" ::
           """  }""" ::
           """""" ::
@@ -83,6 +89,8 @@ lazy val root = (project in file("."))
           """    m.put("isSnapshot", isSnapshot);""" ::
           """    m.put("year", year);""" ::
           """    m.put("sym", sym);""" ::
+          """    m.put("now", now);""" ::
+          """    m.put("instant", instant);""" ::
           """    m.put("buildTime", buildTime);""" ::
           """    m.put("target", target);""" ::
           """    return java.util.Collections.unmodifiableMap(m);""" ::
