@@ -18,7 +18,10 @@ lazy val root = (project in file("."))
       scalaVersion
     ),
     buildInfoPackage := "hello",
-    buildInfoOptions := Seq(BuildInfoOption.BuildTime),
+    buildInfoOptions := Seq(
+      BuildInfoOption.BuildTime,
+      BuildInfoOption.ImportScalaPredef,
+    ),
     scalacOptions ++= Seq("-Xlint", "-Xfatal-warnings", "-Yno-imports"),
     check := {
       val f = (sourceManaged in Compile).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")

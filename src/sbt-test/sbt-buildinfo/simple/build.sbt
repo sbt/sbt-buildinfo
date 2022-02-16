@@ -26,6 +26,7 @@ lazy val root = (project in file("."))
       target
     ),
     buildInfoPackage := "hello",
+    buildInfoOptions := Seq(BuildInfoOption.ImportScalaPredef),
     scalacOptions ++= Seq("-Xlint", "-Xfatal-warnings", "-Yno-imports"),
     libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.3.0",
     check := {

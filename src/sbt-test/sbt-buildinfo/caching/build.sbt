@@ -12,6 +12,7 @@ lazy val root = (project in file("."))
     name := "helloworld",
     buildInfoKeys := Seq(name, version),
     buildInfoPackage := "hello",
+    buildInfoOptions := Seq(BuildInfoOption.ImportScalaPredef),
     scalacOptions ++= Seq("-Xlint", "-Xfatal-warnings", "-Yno-imports"),
     check := {
       val dir = (sourceManaged in Compile).value

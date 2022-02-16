@@ -19,6 +19,7 @@ lazy val app = (project in file("app"))
                          BuildInfoKey.map(homepage) { case (n, opt) => n -> opt.get },
                          scalaVersion),
     buildInfoPackage := "hello",
+    buildInfoOptions := Seq(BuildInfoOption.ImportScalaPredef),
     scalacOptions ++= Seq("-Xlint", "-Xfatal-warnings", "-Yno-imports"),
     check := {
       val sv = scalaVersion.value
