@@ -22,6 +22,20 @@ lazy val root = (project in file("."))
     }
   )
 
+ThisBuild / scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/sbt/sbt-buildinfo"),
+    "scm:git@github.com:sbt/sbt-buildinfo.git"
+  )
+)
+ThisBuild / developers := List(
+  Developer(
+    id = "eed3si9n",
+    name = "Eugene Yokota",
+    email = "@eed3si9n",
+    url = url("https://eed3si9n.com/")
+  )
+)
 ThisBuild / description := "sbt plugin to generate build info"
 ThisBuild / licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
 ThisBuild / pomIncludeRepository := { _ =>
