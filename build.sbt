@@ -10,16 +10,27 @@ lazy val root = (project in file("."))
   .enablePlugins(SbtPlugin)
   .settings(
     name := "sbt-buildinfo",
-    pluginCrossBuild / sbtVersion := "1.2.8",
     scalacOptions := Seq("-Xlint", "-Xfatal-warnings", "-unchecked", "-deprecation", "-feature", "-language:implicitConversions"),
     scalacOptions += "-language:experimental.macros",
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value % Provided,
-    description := "sbt plugin to generate build info",
-    homepage := Some(url("https://github.com/sbt/sbt-buildinfo")),
-    licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")),
     scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Xss4M", "-Dplugin.version=" + version.value),
     scriptedBufferLog := false,
-    publishTo := (bintray / publishTo).value,
-    publishMavenStyle := false,
-    bintrayOrganization := Some("eed3si9n"),
+    (pluginCrossBuild / sbtVersion) := {
+      scalaBinaryVersion.value match {
+        case "2.12" => "1.2.8"
+      }
+    }
   )
+
+ThisBuild / description := "sbt plugin to generate build info"
+ThisBuild / licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
+ThisBuild / pomIncludeRepository := { _ =>
+  false
+}
+ThisBuild / publishTo := {
+  val nexus = "https://oss.sonatype.org/"
+  if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
+  else Some("releases" at nexus + "service/local/staging/deploy/maven2")
+}
+ThisBuild / publishMavenStyle := true
+ThisBuild / homepage := Some(url("https://github.com/sbt/sbt-buildinfo"))
