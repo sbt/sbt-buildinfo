@@ -8,6 +8,7 @@ ThisBuild / version := {
 
 lazy val root = (project in file("."))
   .enablePlugins(SbtPlugin)
+  .settings(pomConsistency2021DraftSettings)
   .settings(
     name := "sbt-buildinfo",
     scalacOptions := Seq("-Xlint", "-Xfatal-warnings", "-unchecked", "-deprecation", "-feature", "-language:implicitConversions"),
@@ -48,3 +49,30 @@ ThisBuild / publishTo := {
 }
 ThisBuild / publishMavenStyle := true
 ThisBuild / homepage := Some(url("https://github.com/sbt/sbt-buildinfo"))
+
+// See https://eed3si9n.com/pom-consistency-for-sbt-plugins
+lazy val pomConsistency2021Draft = settingKey[Boolean]("experimental")
+
+/**
+ * this is an unofficial experiment to re-publish plugins with better Maven compatibility
+ */
+def pomConsistency2021DraftSettings: Seq[Setting[_]] = Seq(
+  pomConsistency2021Draft := Set("true", "1")(sys.env.get("POM_CONSISTENCY").getOrElse("false")),
+  moduleName := {
+    if (pomConsistency2021Draft.value)
+      sbtPluginModuleName2021Draft(moduleName.value,
+        (pluginCrossBuild / sbtBinaryVersion).value)
+    else moduleName.value
+  },
+  projectID := {
+    if (pomConsistency2021Draft.value) sbtPluginExtra2021Draft(projectID.value)
+    else projectID.value
+  },
+)
+
+def sbtPluginModuleName2021Draft(n: String, sbtV: String): String =
+  s"""${n}_sbt${if (sbtV == "1.0") "1" else if (sbtV == "2.0") "2" else sbtV}"""
+
+def sbtPluginExtra2021Draft(m: ModuleID): ModuleID =
+  m.withExtraAttributes(Map.empty)
+   .withCrossVersion(CrossVersion.binary)
