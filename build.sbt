@@ -1,5 +1,11 @@
 ThisBuild / organization := "com.eed3si9n"
 
+ThisBuild / version := {
+  val orig = (ThisBuild / version).value
+  if (orig.endsWith("-SNAPSHOT")) "0.11.0-SNAPSHOT"
+  else orig
+}
+
 lazy val root = (project in file("."))
   .enablePlugins(SbtPlugin)
   .settings(
