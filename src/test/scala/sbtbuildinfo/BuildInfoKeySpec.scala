@@ -1,7 +1,7 @@
 package sbtbuildinfo
 
 import sbt._, Keys._
-import BuildInfoPlugin.autoImport._
+import BuildInfoPlugin.autoImport.buildInfoKeys
 
 /** This is a compile-only test of the BuildInfoKey syntax/macros. */
 object BuildInfoKeySpec {
