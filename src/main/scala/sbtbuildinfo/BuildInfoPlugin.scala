@@ -110,6 +110,6 @@ object BuildInfoPlugin extends AutoPlugin {
     buildInfoKeys    := Seq(name, version, scalaVersion, sbtVersion),
     buildInfoBuildNumber := buildNumberTask(baseDirectory.value, 1),
     buildInfoOptions := Seq(),
-    buildInfoRenderFactory := ScalaCaseObjectRenderer.apply
+    buildInfoRenderFactory := (if(scalaVersion.value.startsWith("3")) Scala3CaseObjectRenderer.apply else ScalaCaseObjectRenderer.apply)
   )
 }
