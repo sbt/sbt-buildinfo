@@ -1,12 +1,7 @@
 name: Publish
 
 on:
-  push:
-    branches:
-      - develop
-    tags: ["**"]
-  release:
-    types: [published]
+  workflow_dispatch:
 
 jobs:
   publish-artifacts:
