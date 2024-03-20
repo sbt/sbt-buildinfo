@@ -17,7 +17,7 @@ lazy val root = (project in file("."))
     scriptedBufferLog := false,
     (pluginCrossBuild / sbtVersion) := {
       scalaBinaryVersion.value match {
-        case "2.12" => "1.2.8"
+        case "2.12" => "1.5.8"
       }
     }
   )
