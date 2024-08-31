@@ -1,5 +1,6 @@
 package sbtbuildinfo
 
+import scala.annotation.nowarn
 import sbt._, Keys._
 
 case class BuildInfoResult(identifier: String, value: Any, typeExpr: TypeExpression)
@@ -44,9 +45,10 @@ object BuildInfo {
     distinctKeys.flatMap(entry(_)).join
   }
 
+  @nowarn
   private def scope(scoped: Scoped, project: ProjectReference) = {
     val scope0 = scoped.scope
-    if (scope0.project == This) scope0 in project
+    if (scope0.project == This) scope0.in(project)
     else scope0
   }
 
