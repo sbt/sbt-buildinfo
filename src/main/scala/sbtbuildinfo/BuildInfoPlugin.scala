@@ -2,17 +2,17 @@ package sbtbuildinfo
 
 import sbt._, Keys._
 import java.io.File
+import PluginCompat.*
+import sbt.Plugins.Basic
 
 object BuildInfoPlugin extends AutoPlugin {
-  type BuildInfoKey = BuildInfoKey.Entry[_]
+  type BuildInfoKey = PluginCompat.Entry[_]
 
   override def requires = plugins.JvmPlugin
-  override def projectSettings: Seq[Def.Setting[_]] =
-    buildInfoScopedSettings(Compile) ++ buildInfoDefaultSettings
 
-  object autoImport extends BuildInfoKeys {
+  object autoImport extends BuildInfoKeys with PluginCompat.BuildInfoKeys0 {
     val BuildInfoKey = sbtbuildinfo.BuildInfoKey
-    type BuildInfoKey = sbtbuildinfo.BuildInfoKey
+    type BuildInfoKey = Entry[?]
     val BuildInfoOption = sbtbuildinfo.BuildInfoOption
     type BuildInfoOption = sbtbuildinfo.BuildInfoOption
     val BuildInfoType = sbtbuildinfo.BuildInfoType
@@ -23,7 +23,21 @@ object BuildInfoPlugin extends AutoPlugin {
     val buildInfoValues: TaskKey[Seq[BuildInfoResult]] =
       taskKey("BuildInfo keys/values/types for use in the sbt build")
   }
-  import autoImport._
+
+  import autoImport.{ given, * }
+
+  override def globalSettings: Seq[Def.Setting[?]] = Seq(
+    buildInfoObject  := "BuildInfo",
+    buildInfoPackage := "buildinfo",
+    buildInfoUsePackageAsPath := false,
+    buildInfoOptions := Seq(),
+  )
+
+  override def projectSettings: Seq[Def.Setting[_]] = buildInfoScopedSettings(Compile) ++ Seq(
+    buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
+    buildInfoBuildNumber := buildNumberTask(baseDirectory.value, 1),
+    buildInfoRenderFactory := (if(scalaVersion.value.startsWith("3")) Scala3CaseObjectRenderer.apply else ScalaCaseObjectRenderer.apply)
+  )
 
   def buildNumberTask(dir: File, increment: Int): Int = {
     val file: File = dir / "buildinfo.properties"
@@ -47,7 +61,7 @@ object BuildInfoPlugin extends AutoPlugin {
 
   def buildInfoScopedSettings(conf: Configuration): Seq[Def.Setting[_]] = inConfig(conf)(Seq(
     buildInfo := (
-        (
+        RichRichTaskable11((
           buildInfoRenderer,
           sourceManaged,
           resourceManaged,
@@ -59,7 +73,7 @@ object BuildInfoPlugin extends AutoPlugin {
           thisProjectRef,
           state,
           streams,
-        ) flatMap { (
+        )).flatMapN { (
             renderer: BuildInfoRenderer,
             srcDir: File,
             resDir: File,
@@ -89,7 +103,7 @@ object BuildInfoPlugin extends AutoPlugin {
         }
     ).value,
     buildInfoValues := (
-      (buildInfoKeys, buildInfoOptions, thisProjectRef, state) flatMap ((keys, opts, pr, s) =>
+      RichRichTaskable4((buildInfoKeys, buildInfoOptions, thisProjectRef, state)).flatMapN ((keys, opts, pr, s) =>
         BuildInfo.results(keys, opts, pr, s)
       )
     ).value,
@@ -101,15 +115,5 @@ object BuildInfoPlugin extends AutoPlugin {
       buildInfoPackage.value,
       buildInfoObject.value)
     )
-  )
-
-  def buildInfoDefaultSettings: Seq[Setting[_]] = Seq(
-    buildInfoObject  := "BuildInfo",
-    buildInfoPackage := "buildinfo",
-    buildInfoUsePackageAsPath := false,
-    buildInfoKeys    := Seq(name, version, scalaVersion, sbtVersion),
-    buildInfoBuildNumber := buildNumberTask(baseDirectory.value, 1),
-    buildInfoOptions := Seq(),
-    buildInfoRenderFactory := (if(scalaVersion.value.startsWith("3")) Scala3CaseObjectRenderer.apply else ScalaCaseObjectRenderer.apply)
   )
 }

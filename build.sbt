@@ -1,23 +1,36 @@
 ThisBuild / organization := "com.eed3si9n"
-
 ThisBuild / version := {
   val orig = (ThisBuild / version).value
   if (orig.endsWith("-SNAPSHOT")) "0.11.0-SNAPSHOT"
   else orig
 }
+val scala3 = "3.3.4"
+ThisBuild / scalaVersion := scala3
 
 lazy val root = (project in file("."))
   .enablePlugins(SbtPlugin)
   .settings(
     name := "sbt-buildinfo",
-    scalacOptions := Seq("-Xlint", "-Xfatal-warnings", "-unchecked", "-deprecation", "-feature", "-language:implicitConversions"),
+    scalacOptions := {
+      scalaBinaryVersion.value match {
+        case "2.12" => Seq("-Xsource:3", "-Xfatal-warnings", "-unchecked", "-deprecation", "-feature", "-language:implicitConversions")
+        case _      => Seq("-Vdebug")
+      }
+    },
     scalacOptions += "-language:experimental.macros",
-    libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value % Provided,
+    libraryDependencies += {
+      scalaBinaryVersion.value match {
+        case "2.12" => "org.scala-lang" % "scala-reflect" % scalaVersion.value % Provided
+        case _      => "org.scala-lang" % "scala-reflect" % "2.13.12" % Provided
+      }
+    },
     scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Xss4M", "-Dplugin.version=" + version.value),
     scriptedBufferLog := false,
+    crossSbtVersions := List(scala3, "2.12.20"),
     (pluginCrossBuild / sbtVersion) := {
       scalaBinaryVersion.value match {
-        case "2.12" => "1.2.8"
+        case "2.12" => "1.5.8"
+        case _      => "2.0.0-M2"
       }
     }
   )

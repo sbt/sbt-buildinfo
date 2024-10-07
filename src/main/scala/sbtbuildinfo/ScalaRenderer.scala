@@ -44,10 +44,10 @@ abstract class ScalaRenderer extends BuildInfoRenderer {
     def tpeToReturnType(tpe: TypeExpression): Option[String] =
       tpe match {
         case TypeExpression("Any", Nil)    => None
-        case TypeExpression("Int", Nil)    => Some("scala.Int")
-        case TypeExpression("Long", Nil)   => Some("scala.Long")
-        case TypeExpression("Double", Nil) => Some("scala.Double")
-        case TypeExpression("Boolean", Nil) => Some("scala.Boolean")
+        case TypeExpression("Int" | "scala.Int", Nil) => Some("scala.Int")
+        case TypeExpression("Long" | "scala.Long", Nil)  => Some("scala.Long")
+        case TypeExpression("Double" | "scala.Double", Nil) => Some("scala.Double")
+        case TypeExpression("Boolean" | "scala.Boolean", Nil) => Some("scala.Boolean")
         case TypeExpression("scala.Symbol", Nil) => Some("scala.Symbol")
         case TypeExpression("java.lang.String", Nil) => Some("String")
         case TypeExpression("java.net.URL", Nil) => Some("java.net.URL")
