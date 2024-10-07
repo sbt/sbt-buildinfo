@@ -9,6 +9,6 @@ final class BuildInfoKeyMacros(val c: blackbox.Context) {
 
   def taskImpl(key: Tree): Tree = {
     val A = key.tpe.typeArgs.head
-    q"$BuildInfoKey.sbtbuildinfoTaskValueEntry[$A]($key.taskValue)($key.key.manifest.typeArguments.head.asInstanceOf[_root_.scala.reflect.Manifest[$A]])"
+    q"""$BuildInfoKey.sbtbuildinfoTaskValueEntry[$A]($key.taskValue)($key.key.manifest.typeArguments.head.asInstanceOf[_root_.scala.reflect.Manifest[$A]])"""
   }
 }

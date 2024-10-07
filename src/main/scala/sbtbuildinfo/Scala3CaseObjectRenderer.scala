@@ -44,7 +44,7 @@ case class Scala3CaseObjectRenderer(options: Seq[BuildInfoOption], pkg: String, 
   private def line(result: BuildInfoResult): Seq[String] = {
     import result._
     val (typeDecl, modifier) =
-      getType(result.typeExpr) match {
+      getType(result.manifest) match {
         case Some(tp) if !constantValue || !constantTypes(tp) =>
           (s": $tp", "")
         case _ if constantValue =>

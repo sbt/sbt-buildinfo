@@ -15,7 +15,7 @@ lazy val root = (project in file("."))
     buildInfoOptions := Seq(BuildInfoOption.ImportScalaPredef),
     scalacOptions ++= Seq("-Xlint", "-Xfatal-warnings", "-Yno-imports"),
     check := {
-      val dir = (sourceManaged in Compile).value
+      val dir = (Compile / sourceManaged).value
       val f = dir / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
       lines match {

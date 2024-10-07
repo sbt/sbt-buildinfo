@@ -34,7 +34,7 @@ lazy val root = (project in file("."))
     scalacOptions ++= Seq("-Ywarn-unused-import", "-Xfatal-warnings"),
     libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
     check := {
-      val f = (sourceManaged in Compile).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
+      val f = (Compile / sourceManaged).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
       lines match {
         case """// $COVERAGE-OFF$""" ::

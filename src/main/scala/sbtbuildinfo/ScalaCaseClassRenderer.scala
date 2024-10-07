@@ -46,7 +46,7 @@ case class ScalaCaseClassRenderer(options: Seq[BuildInfoOption], pkg: String, ob
   )
 
   private def caseClassParameter(r: BuildInfoResult): Seq[String] = {
-    val typeDecl = getType(r.typeExpr) getOrElse "scala.Any"
+    val typeDecl = getType(r.manifest) getOrElse "scala.Any"
 
     List(
       s"  ${r.identifier}: $typeDecl"

@@ -1,10 +1,15 @@
 package sbtbuildinfo
 
 import sbt._, Keys._
+import PluginCompat.BuildInfoKeys0.{ given, * }
+import PluginCompat.*
+import scala.language.implicitConversions
 
-case class BuildInfoResult(identifier: String, value: Any, typeExpr: TypeExpression)
+case class BuildInfoResult(identifier: String, value: Any, manifest: Manifest[?])
 
 object BuildInfo {
+  type BuildInfoKey = Entry[?]
+
   def apply(dir: File, renderer: BuildInfoRenderer, obj: String,
             keys: Seq[BuildInfoKey], options: Seq[BuildInfoOption],
             proj: ProjectRef, state: State, cacheDir: File): Task[File] =
@@ -28,17 +33,20 @@ object BuildInfo {
     val distinctKeys = (keys ++ extraKeys(options)).toList.distinct
     val extracted = Project.extract(state)
 
-    def entry[A](info: BuildInfoKey.Entry[A]): Option[Task[BuildInfoResult]] = {
-      val typeExpr = TypeExpression.parse(info.manifest.toString())._1
+    def entry[A](info: PluginCompat.Entry[A]): Option[Task[BuildInfoResult]] = {
+      // val typeExpr = TypeExpression.parse(info.manifest.toString())._1
+
       val result = info match {
-        case BuildInfoKey.Setting(key)      => extracted getOpt (key in scope(key, project)) map (v => task(ident(key) -> v))
-        case BuildInfoKey.Task(key)         => Some(task(ident(key) -> extracted.runTask(key in scope(key, project), state)._2))
-        case BuildInfoKey.TaskValue(task)   => Some(task.map(x => ident(task) -> x))
-        case BuildInfoKey.Constant(tuple)   => Some(task(tuple))
-        case BuildInfoKey.Action(name, fun) => Some(task(name -> fun.apply))
-        case BuildInfoKey.Mapped(from, fun) => entry(from) map (_ map (r => fun((r.identifier, r.value.asInstanceOf[A]))))
+        case PluginCompat.Setting(key)        => extracted.getOpt(project / key).map((v) => task(ident(key) -> v))
+        case PluginCompat.Task(key)           => Some(task(ident(key) -> extracted.runTask(project / key, state)._2))
+        case PluginCompat.TaskValue(task)     => Some(task.map(x => ident(task) -> x))
+        case PluginCompat.Constant(tuple)     => Some(task(tuple))
+        case PluginCompat.Action(name, fun)   => Some(task(name -> fun.apply))
+        case m@PluginCompat.Mapped(from, fun) => entry(from).map { (t) => t.map((r) => fun((r.identifier, r.value.asInstanceOf[from.A]))) }
       }
-      result map (_ map { case (identifier, value) => BuildInfoResult(identifier, value, typeExpr) })
+      result.map(_.map {
+        case (identifier, value) => BuildInfoResult(identifier, value, info.manifest)
+      })
     }
 
     distinctKeys.flatMap(entry(_)).join
@@ -46,7 +54,7 @@ object BuildInfo {
 
   private def scope(scoped: Scoped, project: ProjectReference) = {
     val scope0 = scoped.scope
-    if (scope0.project == This) scope0 in project
+    if (scope0.project == This) scope0.rescope(project)
     else scope0
   }
 

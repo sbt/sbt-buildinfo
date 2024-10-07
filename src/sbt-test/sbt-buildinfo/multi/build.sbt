@@ -14,7 +14,7 @@ lazy val app = (project in file("app"))
   .settings(
     name := "sbt-buildinfo-example-app",
     buildInfoKeys := Seq(name,
-                         projectID in LocalProject("root"),
+                         LocalProject("root") / projectID,
                          version,
                          BuildInfoKey.map(homepage) { case (n, opt) => n -> opt.get },
                          scalaVersion),
@@ -23,7 +23,7 @@ lazy val app = (project in file("app"))
     scalacOptions ++= Seq("-Xlint", "-Xfatal-warnings", "-Yno-imports"),
     check := {
       val sv = scalaVersion.value
-      val f = (sourceManaged in Compile).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
+      val f = (Compile / sourceManaged).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
       lines match {
         case """// $COVERAGE-OFF$""" ::

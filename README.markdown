@@ -59,7 +59,7 @@ Customize `buildInfoKeys` by adding whatever keys you want to have in `BuildInfo
 ```scala
 buildInfoKeys ++= Seq[BuildInfoKey](
   resolvers,
-  libraryDependencies in Test,
+  Test / libraryDependencies,
   BuildInfoKey.map(name) { case (k, v) => "project" + k.capitalize -> v.capitalize },
   "custom" -> 1234, // computed at project load time
   BuildInfoKey.action("buildTime") {

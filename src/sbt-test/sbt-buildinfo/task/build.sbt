@@ -15,12 +15,12 @@ val projOutOfTaskGraph2 = project
   .settings (
     BuildInfoPlugin.buildInfoDefaultSettings,
     addBuildInfoToConfig(Test),
-    buildInfoKeys in Test += BuildInfoKey.outOfGraphUnsafe(fullClasspath in Compile),
+    Test / buildInfoKeys += BuildInfoKey.outOfGraphUnsafe(fullClasspath in Compile),
   )
 
 val projInTaskGraph1 = project
   .settings (
-    sourceGenerators in Compile += Def.task { counterInTaskGraph.incrementAndGet(); Nil }.taskValue
+    Compile / sourceGenerators += Def.task { counterInTaskGraph.incrementAndGet(); Nil }.taskValue
   )
 
 val projInTaskGraph2 = project
@@ -28,7 +28,7 @@ val projInTaskGraph2 = project
   .settings (
     BuildInfoPlugin.buildInfoDefaultSettings,
     addBuildInfoToConfig(Test),
-    buildInfoKeys in Test += (fullClasspath in Compile: BuildInfoKey)
+    Test / buildInfoKeys += (fullClasspath in Compile: BuildInfoKey)
   )
 
 TaskKey[Unit]("checkOutOfTaskGraph") := {

@@ -1,5 +1,7 @@
 package sbtbuildinfo
 
+import PluginCompat.TypeExpression
+
 abstract class JavaRenderer(pkg: String, cl: String, makeStatic: Boolean) extends BuildInfoRenderer {
 
   override def fileType  = BuildInfoType.Source
@@ -20,7 +22,7 @@ abstract class JavaRenderer(pkg: String, cl: String, makeStatic: Boolean) extend
   protected def line(result: BuildInfoResult): Seq[String] = {
     import result._
     val mod = if (makeStatic) " static" else ""
-    getJavaType(result.typeExpr)
+    getJavaType(result.manifest)
       .map(typeDecl =>
         List(
           s"  /** The value is ${quote(value)}. */",
@@ -54,7 +56,7 @@ abstract class JavaRenderer(pkg: String, cl: String, makeStatic: Boolean) extend
   protected def toStringLines(results: Seq[BuildInfoResult]): String = {
     val mod = if (makeStatic) " static" else ""
     val methodPrefix = if (makeStatic) "make" else "to"
-    val idents = results.filter(v => getJavaType(v.typeExpr).isDefined).map(_.identifier)
+    val idents = results.filter(v => getJavaType(v.manifest).isDefined).map(_.identifier)
     val fmt    = idents.map("%s: %%s" format _).mkString(", ")
     val vars   = idents.mkString(", ")
     s"""
@@ -75,7 +77,7 @@ abstract class JavaRenderer(pkg: String, cl: String, makeStatic: Boolean) extend
         "    java.util.Map<String, Object> m = new java.util.HashMap<>();"
       ) ++
         results
-          .filter(v => getJavaType(v.typeExpr).isDefined)
+          .filter(v => getJavaType(v.manifest).isDefined)
           .map(result => "    m.put(\"%s\", %s);".format(result.identifier, result.identifier)) ++
         List(
           "    return java.util.Collections.unmodifiableMap(m);",
@@ -136,16 +138,16 @@ abstract class JavaRenderer(pkg: String, cl: String, makeStatic: Boolean) extend
     } else
       Nil
 
-  protected def getJavaType(typeExpr: TypeExpression): Option[String] = {
-    def tpeToReturnType(tpe: TypeExpression): Option[String] =
+  protected def getJavaType(m: PluginCompat.Manifest[?]): Option[String] = {
+    def tpeToReturnType(tpe: PluginCompat.Manifest[?]): Option[String] =
       tpe match {
-        case TypeExpression("Any", Nil)               => None
-        case TypeExpression("Short", Nil)             => Some("Short")
-        case TypeExpression("Int", Nil)               => Some("Integer")
-        case TypeExpression("Long", Nil)              => Some("Long")
-        case TypeExpression("Double", Nil)            => Some("Double")
-        case TypeExpression("Float", Nil)             => Some("Float")
-        case TypeExpression("Boolean", Nil)           => Some("Boolean")
+        case TypeExpression("Any", Nil)                       => None
+        case TypeExpression("Short" | "scala.Short", Nil)     => Some("Short")
+        case TypeExpression("Int" | "scala.Int", Nil)         => Some("Integer")
+        case TypeExpression("Long" | "scala.Long", Nil)       => Some("Long")
+        case TypeExpression("Double" | "scala.Double", Nil)   => Some("Double")
+        case TypeExpression("Float" | "scala.Float", Nil)     => Some("Float")
+        case TypeExpression("Boolean" | "scala.Boolean", Nil) => Some("Boolean")
         case TypeExpression("scala.Symbol", Nil)      => Some("String")
         case TypeExpression("java.lang.String", Nil)  => Some("String")
         case TypeExpression("java.net.URL", Nil)      => Some("java.net.URL")
@@ -156,12 +158,16 @@ abstract class JavaRenderer(pkg: String, cl: String, makeStatic: Boolean) extend
 
         case TypeExpression("sbt.ModuleID", Nil) => Some("String")
         case TypeExpression("sbt.Resolver", Nil) => Some("String")
+        case TypeExpression("xsbti.HashedVirtualFileRef", Nil) => Some("String")
+        case TypeExpression("xsbti.VirtualFileRef", Nil) => Some("String")
+        case TypeExpression("xsbti.VirtualFile", Nil) => Some("String")
 
         case TypeExpression("sbt.librarymanagement.ModuleID", Nil) => Some("String")
         case TypeExpression("sbt.librarymanagement.Resolver", Nil) => Some("String")
 
         case TypeExpression("sbt.internal.util.Attributed", Seq(TypeExpression("java.io.File", Nil))) =>
           Some("java.io.File")
+        case TypeExpression("sbt.internal.util.Attributed", Seq(TypeExpression("xsbti.HashedVirtualFileRef", Nil))) => Some("String")
 
         case TypeExpression("scala.Option", Seq(arg)) =>
           tpeToReturnType(arg) map { x => s"java.util.Optional<$x>" }
@@ -181,9 +187,11 @@ abstract class JavaRenderer(pkg: String, cl: String, makeStatic: Boolean) extend
         case TypeExpression("java.time.LocalDate", Nil) => Some("java.time.LocalDate")
         case TypeExpression("java.time.Instant", Nil) => Some("java.time.Instant")
 
-        case _ => None
+        case _ =>
+          // println(s"java other: $tpe")
+          None
       }
-    tpeToReturnType(typeExpr)
+    tpeToReturnType(m)
   }
 
   protected def quote(v: Any): String = v match {
