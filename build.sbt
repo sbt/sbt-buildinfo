@@ -4,7 +4,7 @@ ThisBuild / version := {
   if (orig.endsWith("-SNAPSHOT")) "0.11.0-SNAPSHOT"
   else orig
 }
-val scala3 = "3.3.4"
+val scala3 = "3.6.0-RC1-bin-20241008-3408ed7-NIGHTLY"
 ThisBuild / scalaVersion := scala3
 
 lazy val root = (project in file("."))
