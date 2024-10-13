@@ -7,7 +7,7 @@ ThisBuild / licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-bui
 
 val projOutOfTaskGraph1 = project
   .settings (
-    sourceGenerators in Compile += Def.task { counterOutOfTaskGraph.incrementAndGet(); Nil }.taskValue
+    Compile / sourceGenerators += Def.task { counterOutOfTaskGraph.incrementAndGet(); Nil }.taskValue
   )
 
 val projOutOfTaskGraph2 = project
@@ -15,7 +15,7 @@ val projOutOfTaskGraph2 = project
   .settings (
     BuildInfoPlugin.buildInfoDefaultSettings,
     addBuildInfoToConfig(Test),
-    Test / buildInfoKeys += BuildInfoKey.outOfGraphUnsafe(fullClasspath in Compile),
+    Test / buildInfoKeys += BuildInfoKey.outOfGraphUnsafe(Compile / fullClasspath),
   )
 
 val projInTaskGraph1 = project
@@ -28,7 +28,7 @@ val projInTaskGraph2 = project
   .settings (
     BuildInfoPlugin.buildInfoDefaultSettings,
     addBuildInfoToConfig(Test),
-    Test / buildInfoKeys += (fullClasspath in Compile: BuildInfoKey)
+    Test / buildInfoKeys += ((Compile / fullClasspath: TaskKey[Classpath]): BuildInfoKey)
   )
 
 TaskKey[Unit]("checkOutOfTaskGraph") := {

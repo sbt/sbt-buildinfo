@@ -11,7 +11,7 @@ lazy val root = (project in file("."))
   .enablePlugins(BuildInfoPlugin)
   .settings(
     name := "helloworld",
-    buildInfoKeys := Seq(
+    buildInfoKeys := Seq[BuildInfoKey](
       name,
       BuildInfoKey.map(version) { case (n, v) => "projectVersion" -> v.toDouble },
       scalaVersion,
@@ -21,7 +21,7 @@ lazy val root = (project in file("."))
       apiMappings,
       isSnapshot,
       "year" -> 2012,
-      "sym" -> 'Foo,
+      "sym" -> Symbol("Foo"),
       "now" -> java.time.LocalDate.parse("2021-11-02"),
       "instant" -> java.time.Instant.parse("2021-11-02T01:23:45.678Z"),
       BuildInfoKey.action("buildTime") { 1234L },
@@ -53,7 +53,7 @@ lazy val root = (project in file("."))
           """  ivyXML: scala.xml.NodeSeq,""" ::
           """  homepage: scala.Option[java.net.URL],""" ::
           """  licenses: scala.collection.immutable.Seq[(String, java.net.URL)],""" ::
-          """  apiMappings: Map[java.io.File, java.net.URL],""" ::
+          apiMappingsDecl ::
           """  isSnapshot: scala.Boolean,""" ::
           """  year: scala.Int,""" ::
           """  sym: scala.Symbol,""" ::
@@ -120,7 +120,8 @@ lazy val root = (project in file("."))
           """  val get = apply()""" ::
           """  val value = apply()""" ::
           """}""" ::
-          """// $COVERAGE-ON$""" :: Nil if (targetInfo contains "target = new java.io.File(") =>
+          """// $COVERAGE-ON$""" :: Nil if (targetInfo contains "target = new java.io.File(") &&
+            (apiMappingsDecl.contains("apiMappings")) =>
         case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
       }
       ()

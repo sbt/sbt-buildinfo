@@ -9,7 +9,7 @@ lazy val root = (project in file(".")).
   enablePlugins(BuildInfoPlugin).
   settings(
     name := "helloworld",
-    TaskKey[Classpath]("someCp") := Seq(Attributed.blank(file("/tmp/f.txt"))),
+    // TaskKey[Classpath]("someCp") := Seq(Attributed.blank(file("/tmp/f.txt"))),
     buildInfoKeys := Seq[BuildInfoKey](
       name,
       version,
@@ -21,11 +21,11 @@ lazy val root = (project in file(".")).
       apiMappings,
       isSnapshot,
       "year" -> 2012,
-      "sym" -> 'Foo,
+      "sym" -> Symbol("Foo"),
       "now" -> java.time.LocalDate.parse("2021-11-02"),
       "instant" -> java.time.Instant.parse("2021-11-02T01:23:45.678Z"),
       BuildInfoKey.action("buildTime") { 1234L },
-      TaskKey[Classpath]("someCp"),
+      // TaskKey[Classpath]("someCp"),
       target),
     buildInfoOptions ++= Seq(
       BuildInfoOption.Traits("traits.MyCustomTrait"),
@@ -62,7 +62,7 @@ lazy val root = (project in file(".")).
           """  /** The value is scala.collection.immutable.Seq(("MIT License" -> new java.net.URI("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE").toURL)). */""" ::
           """  val licenses: scala.collection.immutable.Seq[(String, java.net.URL)] = scala.collection.immutable.Seq(("MIT License" -> new java.net.URI("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE").toURL))""" ::
           """  /** The value is Map(). */""" ::
-          """  val apiMappings: Map[java.io.File, java.net.URL] = Map()""" ::
+          apiMappingsCode ::
           """  /** The value is false. */""" ::
           """  final val isSnapshot = false""" ::
           """  /** The value is 2012. */""" ::
@@ -75,13 +75,13 @@ lazy val root = (project in file(".")).
           """  val instant: java.time.Instant = java.time.Instant.parse("2021-11-02T01:23:45.678Z")""" ::
           """  /** The value is 1234L. */""" ::
           """  final val buildTime = 1234L""" ::
-          """  /** The value is scala.collection.immutable.Seq(new java.io.File("/tmp/f.txt")). */""" ::
-          """  val someCp: scala.collection.immutable.Seq[java.io.File] = scala.collection.immutable.Seq(new java.io.File("/tmp/f.txt"))""" ::
+          // """  /** The value is scala.collection.immutable.Seq(new java.io.File("/tmp/f.txt")). */""" ::
+          // """  val someCp: scala.collection.immutable.Seq[java.io.File] = scala.collection.immutable.Seq(new java.io.File("/tmp/f.txt"))""" ::
           targetInfoComment ::
           targetInfo :: // """
           """  override val toString: String = {""" ::
-          """    "name: %s, version: %s, projectVersion: %s, scalaVersion: %s, ivyXML: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, now: %s, instant: %s, buildTime: %s, someCp: %s, target: %s".format(""" ::
-          """      name, version, projectVersion, scalaVersion, ivyXML, homepage, licenses, apiMappings, isSnapshot, year, sym, now, instant, buildTime, someCp, target""" ::
+          """    "name: %s, version: %s, projectVersion: %s, scalaVersion: %s, ivyXML: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, now: %s, instant: %s, buildTime: %s, target: %s".format(""" ::
+          """      name, version, projectVersion, scalaVersion, ivyXML, homepage, licenses, apiMappings, isSnapshot, year, sym, now, instant, buildTime, target""" ::
           """    )""" ::
           """  }""" ::
           """}""" ::

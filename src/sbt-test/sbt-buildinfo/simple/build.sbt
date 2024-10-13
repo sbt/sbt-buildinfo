@@ -41,27 +41,6 @@ lazy val root = (project in file("."))
       val f = (Compile / sourceManaged).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
 
-      // val segment1 = """  /** The value is scala.xml.NodeSeq.Empty. */""" ::
-      //        """  val ivyXML: scala.xml.NodeSeq = scala.xml.NodeSeq.Empty""" ::
-      //        """  /** The value is scala.Some(new java.net.URI("http://example.com").toURL). */""" ::
-      //        """  val homepage = scala.Some(new java.net.URI("http://example.com").toURL)""" ::
-      //        """  /** The value is scala.collection.immutable.Seq(("MIT License" -> new java.net.URI("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE").toURL)). */""" ::
-      //        """  val licenses: scala.collection.immutable.Seq[(String, java.net.URL)] = scala.collection.immutable.Seq(("MIT License" -> new java.net.URI("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE").toURL))""" ::
-      //        """  /** The value is Map(). */""" ::
-      //        """  val apiMappings = Map()""" ::
-      //        """  /** The value is false. */""" ::
-      //        """  val isSnapshot: scala.Boolean = false""" ::
-      //        """  /** The value is 2012. */""" ::
-      //        """  val year: scala.Int = 2012""" ::
-      //        """  /** The value is scala.Symbol("Foo"). */""" ::
-      //        """  val sym: scala.Symbol = scala.Symbol("Foo")""" ::
-      //        """  /** The value is java.time.LocalDate.parse("2021-11-02"). */""" ::
-      //        """  val now: java.time.LocalDate = java.time.LocalDate.parse("2021-11-02")""" ::
-      //        """  /** The value is 1234L. */""" ::
-      //        """  val buildTime: scala.Long = 1234L""" :: Nil
-      // if !lines.containsSlice(segment1) then
-      //   sys.error("segment1 is not there")
-
       lines match {
         case """// $COVERAGE-OFF$""" ::
              """package hello""" ::
@@ -73,7 +52,7 @@ lazy val root = (project in file("."))
              """  /** The value is "helloworld". */"""::
              """  val name: String = "helloworld"""" ::
              """  /** The value is 0.1. */"""::
-             """  val projectVersion: scala.Double = 0.1""" ::
+             projectVer ::
              scalaVersionInfoComment ::
              scalaVersionInfo ::
              """  /** The value is scala.xml.NodeSeq.Empty. */""" ::
@@ -81,9 +60,9 @@ lazy val root = (project in file("."))
              """  /** The value is scala.Some(new java.net.URI("http://example.com").toURL). */""" ::
              """  val homepage: scala.Option[java.net.URL] = scala.Some(new java.net.URI("http://example.com").toURL)""" ::
              """  /** The value is scala.collection.immutable.Seq(("MIT License" -> new java.net.URI("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE").toURL)). */""" ::
-             """  val licenses = scala.collection.immutable.Seq(("MIT License" -> new java.net.URI("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE").toURL))""" ::
+             licensesCode ::
              """  /** The value is Map(). */""" ::
-             """  val apiMappings = Map()""" ::
+             apiMappingsCode ::
              """  /** The value is false. */""" ::
              """  val isSnapshot: scala.Boolean = false""" ::
              """  /** The value is 2012. */""" ::
@@ -106,7 +85,8 @@ lazy val root = (project in file("."))
              """}""" ::
              """// $COVERAGE-ON$""" :: Nil if (targetInfo contains "val target: java.io.File = new java.io.File(") &&
              (scalaVersionInfo.trim == s"""val scalaVersion: String = "$sv"""") &&
-             (someCpInfo.contains("/tmp/f.txt")) => ()
+             (someCpInfo.contains("/tmp/f.txt")) &&
+             (projectVer.contains("val projectVersion")) => ()
         case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
       }
       ()

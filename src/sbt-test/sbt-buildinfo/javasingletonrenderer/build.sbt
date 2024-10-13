@@ -13,9 +13,10 @@ lazy val root = (project in file("."))
     name := "helloworld",
     crossPaths := false,
     autoScalaLibrary := false,
-    buildInfoKeys := Seq(
+    buildInfoKeys := Seq[BuildInfoKey](
       name,
-      BuildInfoKey.map(version) { case (n, v) => "projectVersion" -> v.toDouble },
+      // This only works on sbt 2.x
+      // BuildInfoKey.map(version) { case (n, v) => "projectVersion" -> v.toDouble },
       scalaVersion,
       ivyXML,
       homepage,
@@ -23,7 +24,7 @@ lazy val root = (project in file("."))
       apiMappings,
       isSnapshot,
       "year" -> 2012,
-      "sym" -> 'Foo,
+      "sym" -> Symbol("Foo"),
       "now" -> java.time.LocalDate.parse("2021-11-02"),
       "instant" -> java.time.Instant.parse("2021-11-02T01:23:45.678Z"),
       BuildInfoKey.action("buildTime") { 1234L },
@@ -57,7 +58,7 @@ lazy val root = (project in file("."))
           """  /** The value is java.util.Collections.unmodifiableList(java.util.Arrays.asList(new java.util.AbstractMap.SimpleImmutableEntry<>("MIT License", internalAsUrl("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")))). */""" ::
           """  public final java.util.Collection<java.util.Map.Entry<String, java.net.URL>> licenses = java.util.Collections.unmodifiableList(java.util.Arrays.asList(new java.util.AbstractMap.SimpleImmutableEntry<>("MIT License", internalAsUrl("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))));""" ::
           """  /** The value is internalAsMap(). */""" ::
-          """  public final java.util.Map<java.io.File, java.net.URL> apiMappings = internalAsMap();""" ::
+          apiMappingsCode ::
           """  /** The value is false. */""" ::
           """  public final Boolean isSnapshot = false;""" ::
           """  /** The value is 2012. */""" ::
