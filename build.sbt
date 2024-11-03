@@ -28,7 +28,7 @@ lazy val root = (project in file("."))
     },
     scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Xss4M", "-Dplugin.version=" + version.value),
     scriptedBufferLog := false,
-    crossSbtVersions := List(scala3, "2.12.20"),
+    crossScalaVersions := List(scala3, "2.12.20"),
     (pluginCrossBuild / sbtVersion) := {
       scalaBinaryVersion.value match {
         case "2.12" => "1.5.8"
