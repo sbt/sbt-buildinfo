@@ -13,8 +13,8 @@ lazy val app = (project in file("app"))
   .enablePlugins(BuildInfoPlugin)
   .settings(
     name := "sbt-buildinfo-example-app",
-    buildInfoKeys := Seq(name,
-                         projectID in LocalProject("root"),
+    buildInfoKeys := Seq[BuildInfoKey](name,
+                         (LocalProject("root") / projectID: SettingKey[ModuleID]),
                          version,
                          BuildInfoKey.map(homepage) { case (n, opt) => n -> opt.get },
                          scalaVersion),
@@ -23,7 +23,7 @@ lazy val app = (project in file("app"))
     scalacOptions ++= Seq("-Xlint", "-Xfatal-warnings", "-Yno-imports"),
     check := {
       val sv = scalaVersion.value
-      val f = (sourceManaged in Compile).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
+      val f = (Compile / sourceManaged).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
       lines match {
         case """// $COVERAGE-OFF$""" ::
@@ -35,12 +35,12 @@ lazy val app = (project in file("app"))
              """case object BuildInfo {""" ::
              """  /** The value is "sbt-buildinfo-example-app". */""" ::
              """  val name: String = "sbt-buildinfo-example-app"""" ::
-             """  /** The value is "com.example:root:0.1". */""" ::
-             """  val projectID: String = "com.example:root:0.1"""" ::
+             projectIdComment ::
+             projectIdCode :: // project id changed in sbt 2.x
              """  /** The value is "0.1". */""" ::
              """  val version: String = "0.1"""" ::
              """  /** The value is new java.net.URI("http://example.com").toURL. */""" ::
-             """  val homepage = new java.net.URI("http://example.com").toURL""" ::
+             homepageCode ::
              scalaVersionInfoComment ::
              scalaVersionInfo ::
              """  override val toString: String = {""" ::

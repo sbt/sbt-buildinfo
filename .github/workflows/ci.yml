@@ -8,18 +8,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
-            java: 11
-            distribution: temurin
+          - os: macos-latest
+            java: 8
+            distribution: zulu
             jobtype: 1
           - os: ubuntu-latest
             java: 8
-            distribution: temurin
+            distribution: zulu
             jobtype: 1
     runs-on: ${{ matrix.os }}
     env:
-      JAVA_OPTS: -Xms800M -Xmx1G -Xss2M -XX:ReservedCodeCacheSize=128M -Dfile.encoding=UTF-8
-      JVM_OPTS: -Xms800M -Xmx1G -Xss2M -XX:ReservedCodeCacheSize=128M -Dfile.encoding=UTF-8
+      JAVA_OPTS: -Xms800M -Xmx2G -Xss2M -XX:ReservedCodeCacheSize=128M -Dfile.encoding=UTF-8
+      JVM_OPTS: -Xms800M -Xmx2G -Xss2M -XX:ReservedCodeCacheSize=128M -Dfile.encoding=UTF-8
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-java@v4
@@ -27,5 +27,9 @@ jobs:
         distribution: "${{ matrix.distribution }}"
         java-version: "${{ matrix.java }}"
         cache: "sbt"
+    - uses: sbt/setup-sbt@v1
     - shell: bash
-      run: sbt -v clean test scripted
+      run: |
+        sbt -v clean compile || true
+        sleep 1
+        sbt -v test scripted

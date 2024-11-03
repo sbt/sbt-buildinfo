@@ -1,10 +1,14 @@
 package sbtbuildinfo
 
 import sbt._, Keys._
-import BuildInfoPlugin.autoImport.buildInfoKeys
+import BuildInfoPlugin.autoImport.{ given, * }
+import sbt.internal.inc.MappedFileConverter
+import xsbti.FileConverter
 
 /** This is a compile-only test of the BuildInfoKey syntax/macros. */
 object BuildInfoKeySpec {
+  implicit val conv: FileConverter = MappedFileConverter.empty
+
   buildInfoKeys  := Seq(name, version)                         // test `:=` works with setting keys
   buildInfoKeys  := Seq(products, fullClasspath)               // test `:=` works with task keys
   buildInfoKeys  := Seq(name, fullClasspath)                   // test `:=` works with setting and task keys

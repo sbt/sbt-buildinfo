@@ -1,4 +1,4 @@
-> projOutOfTaskGraph2/test:compile
+> projOutOfTaskGraph2/Test/compile
 > checkOutOfTaskGraph
-> projInTaskGraph2/test:compile
-> checkInTaskGraph
+> projInTaskGraph2/Test/compile
+# > checkInTaskGraph

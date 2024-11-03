@@ -20,7 +20,7 @@ lazy val root = (project in file("."))
       apiMappings,
       isSnapshot,
       "year" -> 2012,
-      "sym" -> 'Foo,
+      "sym" -> Symbol("Foo"),
       BuildInfoKey.action("buildTime") { 1234L },
       target
     ),
@@ -29,7 +29,7 @@ lazy val root = (project in file("."))
     buildInfoOptions := Seq(BuildInfoOption.ImportScalaPredef),
     scalacOptions ++= Seq("-Ywarn-unused-import", "-Xfatal-warnings", "-Yno-imports"),
     check := {
-      val f = (sourceManaged in Compile).value / "foo" / "bar" / "baz" / ("%s.scala" format "BuildInfo")
+      val f = (Compile / sourceManaged).value / "foo" / "bar" / "baz" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
       lines match {
         case """// $COVERAGE-OFF$""" ::
@@ -42,7 +42,7 @@ lazy val root = (project in file("."))
              """  /** The value is "helloworld". */"""::
              """  val name: String = "helloworld"""" ::
              """  /** The value is 0.1. */"""::
-             """  val projectVersion = 0.1""" ::
+             projectVer ::
              """  /** The value is "2.12.12". */""" ::
              """  val scalaVersion: String = "2.12.12"""" ::
              """  /** The value is scala.xml.NodeSeq.Empty. */""" ::
@@ -52,7 +52,7 @@ lazy val root = (project in file("."))
              """  /** The value is scala.collection.immutable.Seq(("MIT License" -> new java.net.URI("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE").toURL)). */""" ::
              """  val licenses: scala.collection.immutable.Seq[(String, java.net.URL)] = scala.collection.immutable.Seq(("MIT License" -> new java.net.URI("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE").toURL))""" ::
              """  /** The value is Map(). */""" ::
-             """  val apiMappings: Map[java.io.File, java.net.URL] = Map()""" ::
+             apiMappingsCode ::
              """  /** The value is false. */""" ::
              """  val isSnapshot: scala.Boolean = false""" ::
              """  /** The value is 2012. */""" ::

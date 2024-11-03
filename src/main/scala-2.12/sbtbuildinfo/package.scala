@@ -35,15 +35,16 @@ package object sbtbuildinfo {
     private[sbtbuildinfo] final case class Constant[A](tuple: (String, A))(implicit val manifest: Manifest[A])
     extends Entry[A]
 
-    private[sbtbuildinfo] final case class Mapped[A, B](from: Entry[A], fun: ((String, A)) => (String, B))
-                                                 (implicit val manifest: Manifest[B])
-    extends Entry[B]
+    private[sbtbuildinfo] final case class Mapped[A1, A2](from: Entry[A1], fun: ((String, A1)) => (String, A2))
+                                                 (implicit val manifest: Manifest[A2])
+    extends Entry[A2]
 
     private[sbtbuildinfo] final case class Action[A](name: String, fun: () => A)(implicit val manifest: Manifest[A])
     extends Entry[A]
 
-    sealed trait Entry[A] {
-      private[sbtbuildinfo] def manifest: Manifest[A]
+    sealed trait Entry[A1] {
+      type A = A1
+      private[sbtbuildinfo] def manifest: Manifest[A1]
     }
   }
 }

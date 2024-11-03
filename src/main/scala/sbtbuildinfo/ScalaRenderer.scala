@@ -1,5 +1,7 @@
 package sbtbuildinfo
 
+import PluginCompat.TypeExpression
+
 abstract class ScalaRenderer extends BuildInfoRenderer {
 
   protected def pkg: String
@@ -40,14 +42,14 @@ abstract class ScalaRenderer extends BuildInfoRenderer {
             |  val toJson: String = toJsonValue(toMap)""".stripMargin)
     else Nil
 
-  protected def getType(typeExpr: TypeExpression): Option[String] = {
-    def tpeToReturnType(tpe: TypeExpression): Option[String] =
-      tpe match {
+  protected def getType(m: PluginCompat.Manifest[?]): Option[String] = {
+    def tpeToReturnType(m: PluginCompat.Manifest[?]): Option[String] =
+      m match {
         case TypeExpression("Any", Nil)    => None
-        case TypeExpression("Int", Nil)    => Some("scala.Int")
-        case TypeExpression("Long", Nil)   => Some("scala.Long")
-        case TypeExpression("Double", Nil) => Some("scala.Double")
-        case TypeExpression("Boolean", Nil) => Some("scala.Boolean")
+        case TypeExpression("Int" | "scala.Int", Nil) => Some("scala.Int")
+        case TypeExpression("Long" | "scala.Long", Nil)  => Some("scala.Long")
+        case TypeExpression("Double" | "scala.Double", Nil) => Some("scala.Double")
+        case TypeExpression("Boolean" | "scala.Boolean" | "java.lang.Boolean", Nil) => Some("scala.Boolean")
         case TypeExpression("scala.Symbol", Nil) => Some("scala.Symbol")
         case TypeExpression("java.lang.String", Nil) => Some("String")
         case TypeExpression("java.net.URL", Nil) => Some("java.net.URL")
@@ -58,11 +60,15 @@ abstract class ScalaRenderer extends BuildInfoRenderer {
 
         case TypeExpression("sbt.ModuleID", Nil) => Some("String")
         case TypeExpression("sbt.Resolver", Nil) => Some("String")
+        case TypeExpression("xsbti.HashedVirtualFileRef", Nil) => Some("String")
+        case TypeExpression("xsbti.VirtualFileRef", Nil) => Some("String")
+        case TypeExpression("xsbti.VirtualFile", Nil) => Some("String")
 
         case TypeExpression("sbt.librarymanagement.ModuleID", Nil) => Some("String")
         case TypeExpression("sbt.librarymanagement.Resolver", Nil) => Some("String")
 
         case TypeExpression("sbt.internal.util.Attributed", Seq(TypeExpression("java.io.File", Nil))) => Some("java.io.File")
+        case TypeExpression("sbt.internal.util.Attributed", Seq(TypeExpression("xsbti.HashedVirtualFileRef", Nil))) => Some("String")
 
         case TypeExpression("scala.Option", Seq(arg)) =>
           tpeToReturnType(arg) map { x => s"scala.Option[$x]" }
@@ -82,9 +88,11 @@ abstract class ScalaRenderer extends BuildInfoRenderer {
         case TypeExpression("java.time.LocalDate", Nil) => Some("java.time.LocalDate")
         case TypeExpression("java.time.Instant", Nil)   => Some("java.time.Instant")
 
-        case _ => None
+        case _ =>
+          // println(s"tpe: $m")
+          None
       }
-    tpeToReturnType(typeExpr)
+    tpeToReturnType(m)
   }
 
   protected def quote(v: Any): String = v match {

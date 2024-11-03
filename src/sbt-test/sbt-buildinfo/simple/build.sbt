@@ -1,3 +1,5 @@
+import sbtbuildinfo.PluginCompat
+
 lazy val check = taskKey[Unit]("checks this plugin")
 
 ThisBuild / version := "0.1"
@@ -9,7 +11,11 @@ lazy val root = (project in file("."))
   .enablePlugins(BuildInfoPlugin)
   .settings(
     name := "helloworld",
-    TaskKey[Classpath]("someCp") := Seq(Attributed.blank(file("/tmp/f.txt"))),
+    TaskKey[Classpath]("someCp") := {
+      val c0 = fileConverter.value
+      implicit val c: xsbti.FileConverter = c0
+      PluginCompat.toClasspath(Vector(file("/tmp/f.txt").toPath()))
+    },
     buildInfoKeys := Seq[BuildInfoKey](
       name,
       BuildInfoKey.map(version) { case (n, v) => "projectVersion" -> v.toDouble },
@@ -20,7 +26,7 @@ lazy val root = (project in file("."))
       apiMappings,
       isSnapshot,
       "year" -> 2012,
-      "sym" -> 'Foo,
+      "sym" -> Symbol("Foo"),
       "now" -> java.time.LocalDate.parse("2021-11-02"),
       BuildInfoKey.action("buildTime") { 1234L },
       TaskKey[Classpath]("someCp"),
@@ -32,8 +38,9 @@ lazy val root = (project in file("."))
     libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.3.0",
     check := {
       val sv = scalaVersion.value
-      val f = (sourceManaged in Compile).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
+      val f = (Compile / sourceManaged).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
       val lines = scala.io.Source.fromFile(f).getLines.toList
+
       lines match {
         case """// $COVERAGE-OFF$""" ::
              """package hello""" ::
@@ -45,7 +52,7 @@ lazy val root = (project in file("."))
              """  /** The value is "helloworld". */"""::
              """  val name: String = "helloworld"""" ::
              """  /** The value is 0.1. */"""::
-             """  val projectVersion = 0.1""" ::
+             projectVer ::
              scalaVersionInfoComment ::
              scalaVersionInfo ::
              """  /** The value is scala.xml.NodeSeq.Empty. */""" ::
@@ -53,9 +60,9 @@ lazy val root = (project in file("."))
              """  /** The value is scala.Some(new java.net.URI("http://example.com").toURL). */""" ::
              """  val homepage: scala.Option[java.net.URL] = scala.Some(new java.net.URI("http://example.com").toURL)""" ::
              """  /** The value is scala.collection.immutable.Seq(("MIT License" -> new java.net.URI("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE").toURL)). */""" ::
-             """  val licenses: scala.collection.immutable.Seq[(String, java.net.URL)] = scala.collection.immutable.Seq(("MIT License" -> new java.net.URI("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE").toURL))""" ::
+             licensesCode ::
              """  /** The value is Map(). */""" ::
-             """  val apiMappings: Map[java.io.File, java.net.URL] = Map()""" ::
+             apiMappingsCode ::
              """  /** The value is false. */""" ::
              """  val isSnapshot: scala.Boolean = false""" ::
              """  /** The value is 2012. */""" ::
@@ -66,8 +73,8 @@ lazy val root = (project in file("."))
              """  val now: java.time.LocalDate = java.time.LocalDate.parse("2021-11-02")""" ::
              """  /** The value is 1234L. */""" ::
              """  val buildTime: scala.Long = 1234L""" ::
-             """  /** The value is scala.collection.immutable.Seq(new java.io.File("/tmp/f.txt")). */""" ::
-             """  val someCp: scala.collection.immutable.Seq[java.io.File] = scala.collection.immutable.Seq(new java.io.File("/tmp/f.txt"))""" ::
+             someCpComment ::
+             someCpInfo ::
              targetInfoComment ::
              targetInfo :: // """
              """  override val toString: String = {""" ::
@@ -77,7 +84,9 @@ lazy val root = (project in file("."))
              """  }""" ::
              """}""" ::
              """// $COVERAGE-ON$""" :: Nil if (targetInfo contains "val target: java.io.File = new java.io.File(") &&
-             (scalaVersionInfo.trim == s"""val scalaVersion: String = "$sv"""") => ()
+             (scalaVersionInfo.trim == s"""val scalaVersion: String = "$sv"""") &&
+             (someCpInfo.contains("/tmp/f.txt")) &&
+             (projectVer.contains("val projectVersion")) => ()
         case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
       }
       ()
