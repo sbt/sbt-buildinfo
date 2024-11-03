@@ -11,11 +11,15 @@ jobs:
           - os: macos-latest
             java: 8
             distribution: zulu
-            jobtype: 1
+            scala: 3.x
           - os: ubuntu-latest
             java: 8
             distribution: zulu
-            jobtype: 1
+            scala: 3.x
+          - os: ubuntu-latest
+            java: 8
+            distribution: zulu
+            scala: 2.12.x
     runs-on: ${{ matrix.os }}
     env:
       JAVA_OPTS: -Xms800M -Xmx2G -Xss2M -XX:ReservedCodeCacheSize=128M -Dfile.encoding=UTF-8
@@ -30,6 +34,6 @@ jobs:
     - uses: sbt/setup-sbt@v1
     - shell: bash
       run: |
-        sbt -v clean compile || true
+        sbt -v clean "++${{ matrix.scala }}" compile || true
         sleep 1
-        sbt -v test scripted
+        sbt -v "++${{ matrix.scala }}" test scripted
