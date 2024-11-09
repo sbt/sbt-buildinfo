@@ -37,8 +37,10 @@ object BuildInfo {
       // val typeExpr = TypeExpression.parse(info.manifest.toString())._1
 
       val result = info match {
-        case PluginCompat.Setting(key)        => extracted.getOpt(project / key).map((v) => task(ident(key) -> v))
-        case PluginCompat.Task(key)           => Some(task(ident(key) -> extracted.runTask(project / key, state)._2))
+        case PluginCompat.Setting(key) =>
+          extracted.getOpt(Scoped.scopedSetting(scope(key, project), key.key)).map((v) => task(ident(key) -> v))
+        case PluginCompat.Task(key) =>
+          Some(task(ident(key) -> extracted.runTask(Scoped.scopedTask(scope(key, project), key.key), state)._2))
         case PluginCompat.TaskValue(task)     => Some(task.map(x => ident(task) -> x))
         case PluginCompat.Constant(tuple)     => Some(task(tuple))
         case PluginCompat.Action(name, fun)   => Some(task(name -> fun.apply))
