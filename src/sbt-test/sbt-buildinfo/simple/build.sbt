@@ -57,9 +57,9 @@ lazy val root = (project in file("."))
              scalaVersionInfo ::
              """  /** The value is scala.xml.NodeSeq.Empty. */""" ::
              """  val ivyXML: scala.xml.NodeSeq = scala.xml.NodeSeq.Empty""" ::
-             """  /** The value is scala.Some(new java.net.URI("http://example.com").toURL). */""" ::
-             """  val homepage: scala.Option[java.net.URL] = scala.Some(new java.net.URI("http://example.com").toURL)""" ::
-             """  /** The value is scala.collection.immutable.Seq(("MIT License" -> new java.net.URI("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE").toURL)). */""" ::
+             homepageComment ::
+             homepageCode ::
+             licenseComment ::
              licensesCode ::
              """  /** The value is Map(). */""" ::
              apiMappingsCode ::
@@ -83,10 +83,10 @@ lazy val root = (project in file("."))
              """    )""" ::
              """  }""" ::
              """}""" ::
-             """// $COVERAGE-ON$""" :: Nil if (targetInfo contains "val target: java.io.File = new java.io.File(") &&
-             (scalaVersionInfo.trim == s"""val scalaVersion: String = "$sv"""") &&
-             (someCpInfo.contains("/tmp/f.txt")) &&
-             (projectVer.contains("val projectVersion")) => ()
+             """// $COVERAGE-ON$""" :: Nil if targetInfo.contains("target: java.io.File = new java.io.File(") &&
+               (scalaVersionInfo.trim == s"""val scalaVersion: String = "$sv"""") &&
+               (someCpInfo.contains("/tmp/f.txt")) &&
+               (projectVer.contains("val projectVersion")) => ()
         case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
       }
       ()

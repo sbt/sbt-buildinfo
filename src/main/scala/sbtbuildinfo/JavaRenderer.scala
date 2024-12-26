@@ -40,6 +40,14 @@ abstract class JavaRenderer(pkg: String, cl: String, makeStatic: Boolean) extend
       |      return null;
       |    }
       |  }
+      |
+      |  private static java.net.URI internalAsUri(String uriString) {
+      |    try {
+      |      return new java.net.URI(uriString);
+      |    } catch (Exception e) {
+      |      return null;
+      |    }
+      |  }
       |""".stripMargin
 
   protected val buildMapLines: String =
@@ -152,6 +160,8 @@ abstract class JavaRenderer(pkg: String, cl: String, makeStatic: Boolean) extend
         case TypeExpression("java.lang.String", Nil)  => Some("String")
         case TypeExpression("java.net.URL", Nil)      => Some("java.net.URL")
         case TypeExpression("sbt.URL", Nil)           => Some("java.net.URL")
+        case TypeExpression("java.net.URI", Nil)      => Some("java.net.URI")
+        case TypeExpression("sbt.URI", Nil)           => Some("java.net.URI")
         case TypeExpression("java.io.File", Nil)      => Some("java.io.File")
         case TypeExpression("sbt.File", Nil)          => Some("java.io.File")
         case TypeExpression("scala.xml.NodeSeq", Nil) => None
@@ -183,9 +193,10 @@ abstract class JavaRenderer(pkg: String, cl: String, makeStatic: Boolean) extend
             x0 <- tpeToReturnType(arg0)
             x1 <- tpeToReturnType(arg1)
           } yield s"java.util.Map.Entry<$x0, $x1>"
-        
+
         case TypeExpression("java.time.LocalDate", Nil) => Some("java.time.LocalDate")
         case TypeExpression("java.time.Instant", Nil) => Some("java.time.Instant")
+        case TypeExpression("sbt.librarymanagement.License", Nil) => Some("String")
 
         case _ =>
           // println(s"java other: $tpe")
@@ -208,6 +219,7 @@ abstract class JavaRenderer(pkg: String, cl: String, makeStatic: Boolean) extend
     case op: Option[_] =>
       op map { x => "java.util.Optional.of(" + quote(x) + ")" } getOrElse { "java.util.Optional.empty()" }
     case url: java.net.URL       => "internalAsUrl(%s)" format quote(url.toString)
+    case uri: java.net.URI       => "internalAsUri(%s)" format quote(uri.toString)
     case file: java.io.File      => "new java.io.File(%s)" format quote(file.toString)
     case attr: sbt.Attributed[_] => quote(attr.data)
     case date: java.time.LocalDate  => "java.time.LocalDate.parse(%s)" format quote(date.toString)

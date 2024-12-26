@@ -23,6 +23,9 @@ object PluginCompat:
   def toClasspath(cp: Vector[NioPath])(using conv: FileConverter): Seq[Attributed[HashedVirtualFileRef]] =
     cp.map((x) => Attributed.blank(conv.toVirtualFile(x)))
 
+  def taskName(task: Task[?]): Option[String] = task.name
+  def taskAttributes(task: Task[?]) = task.attributes
+
   trait BuildInfoKeys0:
     @nowarn inline given [A1]: Conversion[SettingKey[A1], Entry[A1]] = BuildInfoKey(_)
     @nowarn inline given [A1]: Conversion[TaskKey[A1], Entry[A1]] = BuildInfoKey(_)

@@ -47,10 +47,10 @@ lazy val root = (project in file("."))
              """  val scalaVersion: String = "2.12.12"""" ::
              """  /** The value is scala.xml.NodeSeq.Empty. */""" ::
              """  val ivyXML: scala.xml.NodeSeq = scala.xml.NodeSeq.Empty""" ::
-             """  /** The value is scala.Some(new java.net.URI("http://example.com").toURL). */""" ::
-             """  val homepage: scala.Option[java.net.URL] = scala.Some(new java.net.URI("http://example.com").toURL)""" ::
-             """  /** The value is scala.collection.immutable.Seq(("MIT License" -> new java.net.URI("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE").toURL)). */""" ::
-             """  val licenses: scala.collection.immutable.Seq[(String, java.net.URL)] = scala.collection.immutable.Seq(("MIT License" -> new java.net.URI("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE").toURL))""" ::
+            homepageComment ::
+            homepageCode ::
+            licensesComment ::
+            licensesCode ::
              """  /** The value is Map(). */""" ::
              apiMappingsCode ::
              """  /** The value is false. */""" ::
@@ -69,7 +69,7 @@ lazy val root = (project in file("."))
              """    )""" ::
              """  }""" ::
              """}""" ::
-             """// $COVERAGE-ON$""" :: Nil if (targetInfo contains "val target: java.io.File = new java.io.File(") =>
+             """// $COVERAGE-ON$""" :: Nil if targetInfo.contains("target: java.io.File = new java.io.File(") => ()
         case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
       }
       ()
