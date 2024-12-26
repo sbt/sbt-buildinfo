@@ -34,6 +34,9 @@ object PluginCompat {
   def toClasspath(cp: Vector[NioPath]): Seq[Attributed[File]] =
     cp.map((x) => Attributed.blank(x.toFile()))
 
+  def taskName(task: Task[?]): Option[String] = task.info.name
+  def taskAttributes(task: Task[?]) = task.info.attributes
+
   implicit class RichScope(scope: Scope) {
     @nowarn
     def rescope(ref: Reference): Scope = scope.in(ref)

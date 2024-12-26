@@ -39,7 +39,7 @@ lazy val app = (project in file("app"))
              projectIdCode :: // project id changed in sbt 2.x
              """  /** The value is "0.1". */""" ::
              """  val version: String = "0.1"""" ::
-             """  /** The value is new java.net.URI("http://example.com").toURL. */""" ::
+             homepageComment ::
              homepageCode ::
              scalaVersionInfoComment ::
              scalaVersionInfo ::

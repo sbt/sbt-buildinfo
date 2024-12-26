@@ -53,10 +53,10 @@ lazy val root = (project in file("."))
           """  public final String name = "helloworld";""" ::
           """  /** The value is "2.12.12". */""" ::
           """  public final String scalaVersion = "2.12.12";""" ::
-          """  /** The value is java.util.Optional.of(internalAsUrl("http://example.com")). */""" ::
-          """  public final java.util.Optional<java.net.URL> homepage = java.util.Optional.of(internalAsUrl("http://example.com"));""" ::
-          """  /** The value is java.util.Collections.unmodifiableList(java.util.Arrays.asList(new java.util.AbstractMap.SimpleImmutableEntry<>("MIT License", internalAsUrl("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE")))). */""" ::
-          """  public final java.util.Collection<java.util.Map.Entry<String, java.net.URL>> licenses = java.util.Collections.unmodifiableList(java.util.Arrays.asList(new java.util.AbstractMap.SimpleImmutableEntry<>("MIT License", internalAsUrl("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))));""" ::
+          homepageComment ::
+          homepageCode ::
+          licensesComment ::
+          licensesCode ::
           """  /** The value is internalAsMap(). */""" ::
           apiMappingsCode ::
           """  /** The value is false. */""" ::
@@ -100,6 +100,14 @@ lazy val root = (project in file("."))
           """  private static java.net.URL internalAsUrl(String urlString) {""" ::
           """    try {""" ::
           """      return new java.net.URI(urlString).toURL();""" ::
+          """    } catch (Exception e) {""" ::
+          """      return null;""" ::
+          """    }""" ::
+          """  }""" ::
+          """""" ::
+          """  private static java.net.URI internalAsUri(String uriString) {""" ::
+          """    try {""" ::
+          """      return new java.net.URI(uriString);""" ::
           """    } catch (Exception e) {""" ::
           """      return null;""" ::
           """    }""" ::
@@ -151,7 +159,8 @@ lazy val root = (project in file("."))
           """""" ::
           """  public final String toJson = toJsonValue(toMap());""" ::
           """}""" ::
-          """// $COVERAGE-ON$""" :: Nil if ((targetInfo contains "public final java.io.File target = new java.io.File(") && (targetInfoComment contains "/** The value is new java.io.File(")) =>
+          """// $COVERAGE-ON$""" :: Nil if targetInfo.contains("target = new java.io.File(") &&
+            targetInfoComment.contains("/** The value is new java.io.File(") => ()
         case _ => sys.error("unexpected output: \n" + lines.mkString("\n"))
       }
       ()

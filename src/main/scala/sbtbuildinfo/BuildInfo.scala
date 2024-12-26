@@ -73,12 +73,13 @@ object BuildInfo {
     Seq(config, inTask, Some(key)).flatten mkString "_"
   }
 
-  private def ident(task: Task[_]): String = (
-    task.info.name
-      orElse (task.info.attributes get taskDefinitionKey map ident)
-      getOrElse s"<anon-${System identityHashCode task}>"
-  )
-
+  private def ident(task: Task[_]): String =
+    taskName(task) match {
+      case Some(name) => name
+      case None =>
+        (taskAttributes(task) get taskDefinitionKey map ident)
+        .getOrElse(s"<anon-${System identityHashCode task}>")
+    }
 
   private case class BuildInfoTask(dir: File,
                                    renderer: BuildInfoRenderer,

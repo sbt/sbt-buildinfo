@@ -54,6 +54,7 @@ abstract class ScalaRenderer extends BuildInfoRenderer {
         case TypeExpression("java.lang.String", Nil) => Some("String")
         case TypeExpression("java.net.URL", Nil) => Some("java.net.URL")
         case TypeExpression("sbt.URL", Nil) => Some("java.net.URL")
+        case TypeExpression("java.net.URI", Nil) => Some("java.net.URI")
         case TypeExpression("java.io.File", Nil) => Some("java.io.File")
         case TypeExpression("sbt.File", Nil) => Some("java.io.File")
         case TypeExpression("scala.xml.NodeSeq", Nil) => Some("scala.xml.NodeSeq")
@@ -106,6 +107,7 @@ abstract class ScalaRenderer extends BuildInfoRenderer {
     case seq: collection.Seq[_] => seq.map(quote).mkString("scala.collection.immutable.Seq(", ", ", ")")
     case op: Option[_]      => op map { x => "scala.Some(" + quote(x) + ")" } getOrElse {"scala.None"}
     case url: java.net.URL  => "new java.net.URI(%s).toURL" format quote(url.toString)
+    case uri: java.net.URI  => "new java.net.URI(%s)" format quote(uri.toString)
     case file: java.io.File => "new java.io.File(%s)" format quote(file.toString)
     case attr: sbt.Attributed[_] => quote(attr.data)
     case date: java.time.LocalDate  => "java.time.LocalDate.parse(%s)" format quote(date.toString)
