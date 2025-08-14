@@ -3,7 +3,7 @@ package sbtbuildinfo
 import java.nio.file.{ Path => NioPath }
 import sbt.*
 import scala.language.higherKinds
-import scala.annotation.nowarn
+import scala.annotation.{ meta, nowarn, StaticAnnotation }
 
 object PluginCompat {
   type FileRef = java.io.File
@@ -51,4 +51,11 @@ object PluginCompat {
     def flatMapN[R](f: (A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11) => Task[R]) =
       taskable.flatMap(f)
   }
+  implicit class DefOp(singleton: Def.type) {
+    def uncached[A1](a: A1): A1 = a
+  }
+  @meta.getter
+  class cacheLevel(
+      include: Array[String]
+  ) extends StaticAnnotation
 }

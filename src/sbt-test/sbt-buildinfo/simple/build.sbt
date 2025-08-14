@@ -14,6 +14,7 @@ lazy val root = (project in file("."))
     TaskKey[Classpath]("someCp") := {
       val c0 = fileConverter.value
       implicit val c: xsbti.FileConverter = c0
+      IO.touch(file("/tmp/f.txt"))
       PluginCompat.toClasspath(Vector(file("/tmp/f.txt").toPath()))
     },
     buildInfoKeys := Seq[BuildInfoKey](
