@@ -4,6 +4,7 @@ import sbt._, Keys._
 import java.io.File
 import PluginCompat.*
 import sbt.Plugins.Basic
+import sbt.util.CacheImplicits.{ *, given }
 
 object BuildInfoPlugin extends AutoPlugin {
   type BuildInfoKey = PluginCompat.Entry[_]
@@ -61,7 +62,7 @@ object BuildInfoPlugin extends AutoPlugin {
   import TupleSyntax._
 
   def buildInfoScopedSettings(conf: Configuration): Seq[Def.Setting[_]] = inConfig(conf)(Seq(
-    buildInfo := (
+    buildInfo := Def.uncached((
         RichRichTaskable11((
           buildInfoRenderer,
           sourceManaged,
@@ -102,12 +103,12 @@ object BuildInfoPlugin extends AutoPlugin {
           }
           BuildInfo(dir, renderer, obj, keys, opts, pr, s, taskStreams.cacheDirectory) map (Seq(_))
         }
-    ).value,
-    buildInfoValues := (
+    ).value),
+    buildInfoValues := Def.uncached((
       RichRichTaskable4((buildInfoKeys, buildInfoOptions, thisProjectRef, state)).flatMapN ((keys, opts, pr, s) =>
         BuildInfo.results(keys, opts, pr, s)
       )
-    ).value,
+    ).value),
 
     sourceGenerators ++= (if (buildInfoRenderer.value.isSource) Seq(buildInfo.taskValue) else Nil),
     resourceGenerators ++= (if (buildInfoRenderer.value.isResource) Seq(buildInfo.taskValue) else Nil),
