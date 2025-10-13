@@ -7,7 +7,7 @@ import sbt.Plugins.Basic
 import sbt.util.CacheImplicits.{ *, given }
 
 object BuildInfoPlugin extends AutoPlugin {
-  type BuildInfoKey = PluginCompat.Entry[_]
+  type BuildInfoKey = PluginCompat.Entry[?]
 
   override def requires = plugins.JvmPlugin
 
@@ -39,7 +39,7 @@ object BuildInfoPlugin extends AutoPlugin {
     buildInfoRenderFactory := (if(scalaVersion.value.startsWith("3")) Scala3CaseObjectRenderer.apply else ScalaCaseObjectRenderer.apply)
   )
 
-  override def projectSettings: Seq[Def.Setting[_]] = buildInfoScopedSettings(Compile) ++ buildInfoDefaultSettings
+  override def projectSettings: Seq[Def.Setting[?]] = buildInfoScopedSettings(Compile) ++ buildInfoDefaultSettings
 
   def buildNumberTask(dir: File, increment: Int): Int = {
     val file: File = dir / "buildinfo.properties"
@@ -61,7 +61,7 @@ object BuildInfoPlugin extends AutoPlugin {
 
   import TupleSyntax._
 
-  def buildInfoScopedSettings(conf: Configuration): Seq[Def.Setting[_]] = inConfig(conf)(Seq(
+  def buildInfoScopedSettings(conf: Configuration): Seq[Def.Setting[?]] = inConfig(conf)(Seq(
     buildInfo := Def.uncached((
         RichRichTaskable11((
           buildInfoRenderer,
