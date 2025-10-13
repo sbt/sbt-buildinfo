@@ -61,9 +61,9 @@ object BuildInfo {
   }
 
   private def ident(scoped: Scoped): String = ident(scoped.scope, scoped.key)
-  private def ident(scoped: ScopedKey[_]): String = ident(scoped.scope, scoped.key)
+  private def ident(scoped: ScopedKey[?]): String = ident(scoped.scope, scoped.key)
 
-  private def ident(scope: Scope, attrKey: AttributeKey[_]): String = {
+  private def ident(scope: Scope, attrKey: AttributeKey[?]): String = {
     val config = scope.config.toOption map (_.name) filter (_ != "compile")
     val inTask = scope.task.toOption map (_.label)
     val key = attrKey.label.split("-").toList match {
@@ -73,7 +73,7 @@ object BuildInfo {
     Seq(config, inTask, Some(key)).flatten mkString "_"
   }
 
-  private def ident(task: Task[_]): String =
+  private def ident(task: Task[?]): String =
     taskName(task) match {
       case Some(name) => name
       case None =>
