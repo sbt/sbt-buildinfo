@@ -3,7 +3,7 @@ import sbtbuildinfo.ScalaCaseClassRenderer
 lazy val check = taskKey[Unit]("checks this plugin")
 
 ThisBuild / version := "0.1"
-ThisBuild / scalaVersion := "2.12.12"
+ThisBuild / scalaVersion := "2.12.21"
 ThisBuild / homepage := Some(url("http://example.com"))
 ThisBuild / licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
 
@@ -105,7 +105,7 @@ lazy val root = (project in file("."))
           """  def apply(): BuildInfo = new BuildInfo(""" ::
           """    name = "helloworld",""" ::
           """    projectVersion = 0.1,""" ::
-          """    scalaVersion = "2.12.12",""" ::
+          """    scalaVersion = "2.12.21",""" ::
           """    ivyXML = scala.xml.NodeSeq.Empty,""" ::
           homepage ::
           licenses ::

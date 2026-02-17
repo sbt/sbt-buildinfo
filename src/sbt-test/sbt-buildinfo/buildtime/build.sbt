@@ -2,7 +2,7 @@ import scala.collection.immutable.::
 
 lazy val check = taskKey[Unit]("checks this plugin")
 
-ThisBuild / scalaVersion := "2.12.12"
+ThisBuild / scalaVersion := "2.12.21"
 ThisBuild / organization := "com.example"
 ThisBuild / version := "0.1"
 ThisBuild / homepage := Some(url("http://example.com"))
@@ -38,8 +38,8 @@ lazy val root = (project in file("."))
           """  val name: String = "helloworld"""" ::
           """  /** The value is "0.1". */"""::
           """  val version: String = "0.1"""" ::
-          """  /** The value is "2.12.12". */""" ::
-          """  val scalaVersion: String = "2.12.12"""" ::
+          """  /** The value is "2.12.21". */""" ::
+          """  val scalaVersion: String = "2.12.21"""" ::
           builtAtStringComment ::
           builtAtString ::
           builtAtMillisComment ::

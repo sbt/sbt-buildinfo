@@ -1,7 +1,7 @@
 import StableState.{ counterOutOfTaskGraph, counterInTaskGraph }
 
 ThisBuild / version := "0.1"
-ThisBuild / scalaVersion := "2.12.12"
+ThisBuild / scalaVersion := "2.12.21"
 ThisBuild / homepage := Some(url("http://example.com"))
 ThisBuild / licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
 
