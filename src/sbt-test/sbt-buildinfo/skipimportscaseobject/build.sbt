@@ -1,7 +1,7 @@
 lazy val check = taskKey[Unit]("checks this plugin")
 
 ThisBuild / version := "0.1"
-ThisBuild / scalaVersion := "2.12.12"
+ThisBuild / scalaVersion := "2.12.21"
 
 lazy val root = (project in file("."))
   .enablePlugins(BuildInfoPlugin)
@@ -33,8 +33,8 @@ lazy val root = (project in file("."))
               """private[hello] case object BuildInfo extends TestTrait1 with TestTrait2 with TestTrait3 {""" ::
               """  /** The value is "helloworld". */""" ::
               """  val name: String = "helloworld"""" ::
-              """  /** The value is "2.12.12". */""" ::
-              """  val scalaVersion: String = "2.12.12"""" ::
+              """  /** The value is "2.12.21". */""" ::
+              """  val scalaVersion: String = "2.12.21"""" ::
               """  override val toString: String = {""" ::
               """    "name: %s, scalaVersion: %s".format(""" ::
               """      name, scalaVersion""" ::

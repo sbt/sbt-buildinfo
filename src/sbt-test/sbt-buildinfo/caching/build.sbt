@@ -1,6 +1,6 @@
 lazy val check = taskKey[Unit]("check")
 
-ThisBuild / scalaVersion := "2.12.12"
+ThisBuild / scalaVersion := "2.12.21"
 ThisBuild / organization := "com.example"
 ThisBuild / version := "0.1"
 ThisBuild / homepage := Some(url("http://example.com"))

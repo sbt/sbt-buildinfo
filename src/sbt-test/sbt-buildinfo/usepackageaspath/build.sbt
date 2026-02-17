@@ -1,7 +1,7 @@
 lazy val check = taskKey[Unit]("checks this plugin")
 
 ThisBuild / version := "0.1"
-ThisBuild / scalaVersion := "2.12.12"
+ThisBuild / scalaVersion := "2.12.21"
 ThisBuild / homepage := Some(url("http://example.com"))
 ThisBuild / licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
 
@@ -43,8 +43,8 @@ lazy val root = (project in file("."))
              """  val name: String = "helloworld"""" ::
              """  /** The value is 0.1. */"""::
              projectVer ::
-             """  /** The value is "2.12.12". */""" ::
-             """  val scalaVersion: String = "2.12.12"""" ::
+             """  /** The value is "2.12.21". */""" ::
+             """  val scalaVersion: String = "2.12.21"""" ::
              """  /** The value is scala.xml.NodeSeq.Empty. */""" ::
              """  val ivyXML: scala.xml.NodeSeq = scala.xml.NodeSeq.Empty""" ::
             homepageComment ::

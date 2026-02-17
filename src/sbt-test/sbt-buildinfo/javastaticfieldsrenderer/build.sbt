@@ -3,7 +3,7 @@ import sbtbuildinfo.JavaStaticFieldsRenderer
 lazy val check = taskKey[Unit]("checks this plugin")
 
 ThisBuild / version := "0.1"
-ThisBuild / scalaVersion := "2.12.12"
+ThisBuild / scalaVersion := "2.12.21"
 ThisBuild / homepage := Some(url("http://example.com"))
 ThisBuild / licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
 
@@ -49,8 +49,8 @@ lazy val root = (project in file("."))
           """""" ::
           """  /** The value is "helloworld". */""" ::
           """  public static final String name = "helloworld";""" ::
-          """  /** The value is "2.12.12". */""" ::
-          """  public static final String scalaVersion = "2.12.12";""" ::
+          """  /** The value is "2.12.21". */""" ::
+          """  public static final String scalaVersion = "2.12.21";""" ::
           homepageComment ::
           homepageCode ::
           licensesComment ::
