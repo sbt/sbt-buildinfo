@@ -6,7 +6,7 @@ ThisBuild / version := {
   if (orig.endsWith("-SNAPSHOT")) "0.11.0-SNAPSHOT"
   else orig
 }
-val scala3 = "3.7.2"
+val scala3 = "3.8.1"
 ThisBuild / scalaVersion := scala3
 
 lazy val root = (project in file("."))
@@ -15,7 +15,7 @@ lazy val root = (project in file("."))
     name := "sbt-buildinfo",
     scalacOptions := {
       scalaBinaryVersion.value match {
-        case "2.12" => Seq("-Xsource:3", "-Xfatal-warnings", "-unchecked", "-deprecation", "-feature", "-language:implicitConversions")
+        case "2.12" => Seq("-Xsource:3", "-Xfatal-warnings", "-unchecked", "-deprecation", "-feature", "-language:implicitConversions", "-release:8")
         case _      => Seq("-Vdebug")
       }
     },
@@ -32,13 +32,13 @@ lazy val root = (project in file("."))
     (pluginCrossBuild / sbtVersion) := {
       scalaBinaryVersion.value match {
         case "2.12" => "1.5.8"
-        case _      => "2.0.0-RC2"
+        case _      => "2.0.0-RC9"
       }
     },
     scriptedSbt := {
       scalaBinaryVersion.value match {
         case "2.12" => "1.10.7"
-        case _      => "2.0.0-RC2"
+        case _      => (pluginCrossBuild / sbtVersion).value
       }
     },
   )
