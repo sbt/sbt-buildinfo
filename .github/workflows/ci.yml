@@ -9,11 +9,11 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-            java: 8
+            java: 17
             distribution: zulu
             scala: 3.x
           - os: ubuntu-latest
-            java: 8
+            java: 17
             distribution: zulu
             scala: 3.x
           - os: ubuntu-latest
