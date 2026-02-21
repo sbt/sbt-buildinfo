@@ -23,7 +23,7 @@ lazy val root = (project in file("."))
     libraryDependencies ++= {
       scalaBinaryVersion.value match {
         case "2.12" => "org.scala-lang" % "scala-reflect" % scalaVersion.value % Provided :: Nil
-        case _      => "org.scala-lang" % "scala-reflect" % "2.13.12" % Provided :: manifesto :: Nil
+        case _      => manifesto :: Nil
       }
     },
     scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Xss4M", "-Dplugin.version=" + version.value),
