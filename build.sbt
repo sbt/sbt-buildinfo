@@ -6,7 +6,7 @@ ThisBuild / version := {
   if (orig.endsWith("-SNAPSHOT")) "0.11.0-SNAPSHOT"
   else orig
 }
-val scala3 = "3.8.1"
+val scala3 = "3.8.2"
 ThisBuild / scalaVersion := scala3
 
 lazy val root = (project in file("."))
@@ -32,7 +32,7 @@ lazy val root = (project in file("."))
     (pluginCrossBuild / sbtVersion) := {
       scalaBinaryVersion.value match {
         case "2.12" => "1.5.8"
-        case _      => "2.0.0-RC9"
+        case _      => "2.0.0-RC10"
       }
     },
     scriptedSbt := {
