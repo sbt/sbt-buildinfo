@@ -80,9 +80,8 @@ lazy val root = (project in file(".")).
           targetInfoComment ::
           targetInfo :: // """
           """  override val toString: String = {""" ::
-          """    "name: %s, version: %s, projectVersion: %s, scalaVersion: %s, ivyXML: %s, homepage: %s, licenses: %s, apiMappings: %s, isSnapshot: %s, year: %s, sym: %s, now: %s, instant: %s, buildTime: %s, target: %s".format(""" ::
-          """      name, version, projectVersion, scalaVersion, ivyXML, homepage, licenses, apiMappings, isSnapshot, year, sym, now, instant, buildTime, target""" ::
-          """    )""" ::
+          """    import _root_.scala.StringContext""" ::
+          """    s"name: ${name}, version: ${version}, projectVersion: ${projectVersion}, scalaVersion: ${scalaVersion}, ivyXML: ${ivyXML}, homepage: ${homepage}, licenses: ${licenses}, apiMappings: ${apiMappings}, isSnapshot: ${isSnapshot}, year: ${year}, sym: ${sym}, now: ${now}, instant: ${instant}, buildTime: ${buildTime}, target: ${target}"""" ::
           """  }""" ::
           """}""" ::
           """// $COVERAGE-ON$""" :: Nil  if targetInfo.contains("target: java.io.File = new java.io.File(") &&

@@ -44,9 +44,8 @@ lazy val app = (project in file("app"))
              scalaVersionInfoComment ::
              scalaVersionInfo ::
              """  override val toString: String = {""" ::
-             """    "name: %s, projectID: %s, version: %s, homepage: %s, scalaVersion: %s".format(""" ::
-             """      name, projectID, version, homepage, scalaVersion""" ::
-             """    )""" ::
+             """    import _root_.scala.StringContext""" ::
+             """    s"name: ${name}, projectID: ${projectID}, version: ${version}, homepage: ${homepage}, scalaVersion: ${scalaVersion}"""" ::
              """  }""" ::
              """}""" ::
              """// $COVERAGE-ON$""" :: Nil if (scalaVersionInfo.trim == s"""val scalaVersion: String = "$sv"""") => ()
