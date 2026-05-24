@@ -77,8 +77,8 @@ object BuildInfo {
     taskName(task) match {
       case Some(name) => name
       case None =>
-        (taskAttributes(task) get taskDefinitionKey map ident)
-        .getOrElse(s"<anon-${System identityHashCode task}>")
+        taskAttributes(task).get(taskDefinitionKey).map(ident)
+        .getOrElse(s"<anon-${System.identityHashCode(task)}>")
     }
 
   private case class BuildInfoTask(dir: File,
