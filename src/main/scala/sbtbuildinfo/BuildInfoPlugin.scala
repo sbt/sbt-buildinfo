@@ -101,7 +101,7 @@ object BuildInfoPlugin extends AutoPlugin {
             else
               parentDir / "sbt-buildinfo"
           }
-          BuildInfo(dir, renderer, obj, keys, opts, pr, s, taskStreams.cacheDirectory) map (Seq(_))
+          BuildInfo(dir, renderer, obj, keys, opts, pr, s, taskStreams.cacheDirectory).map(Seq(_))
         }
     ).value),
     buildInfoValues := Def.uncached((
