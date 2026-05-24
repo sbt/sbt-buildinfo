@@ -212,18 +212,18 @@ abstract class JavaRenderer(pkg: String, cl: String, makeStatic: Boolean) extend
     case x: Long                                                  => x.toString + "L"
     case node: scala.xml.NodeSeq if node.toString().trim.nonEmpty => node.toString()
     case node: scala.xml.NodeSeq                                  => scala.xml.NodeSeq.Empty.toString()
-    case (k, _v)                                                  => "new java.util.AbstractMap.SimpleImmutableEntry<>(%s, %s)" format (quote(k), quote(_v))
+    case (k, _v)                                                  => s"new java.util.AbstractMap.SimpleImmutableEntry<>(${quote(k)}, ${quote(_v)})"
     case mp: Map[?, ?]                                            => mp.toList.map(quote(_)).mkString("internalAsMap(", ", ", ")")
     case seq: collection.Seq[?] =>
       seq.map(quote).mkString("java.util.Collections.unmodifiableList(java.util.Arrays.asList(", ", ", "))")
     case op: Option[?] =>
       op map { x => "java.util.Optional.of(" + quote(x) + ")" } getOrElse { "java.util.Optional.empty()" }
-    case url: java.net.URL       => "internalAsUrl(%s)" format quote(url.toString)
-    case uri: java.net.URI       => "internalAsUri(%s)" format quote(uri.toString)
-    case file: java.io.File      => "new java.io.File(%s)" format quote(file.toString)
+    case url: java.net.URL       => s"internalAsUrl(${quote(url.toString)})"
+    case uri: java.net.URI       => s"internalAsUri(${quote(uri.toString)})"
+    case file: java.io.File      => s"new java.io.File(${quote(file.toString)})"
     case attr: sbt.Attributed[?] => quote(attr.data)
-    case date: java.time.LocalDate  => "java.time.LocalDate.parse(%s)" format quote(date.toString)
-    case instant: java.time.Instant => "java.time.Instant.parse(%s)" format quote(instant.toString)
+    case date: java.time.LocalDate  => s"java.time.LocalDate.parse(${quote(date.toString)})"
+    case instant: java.time.Instant => s"java.time.Instant.parse(${quote(instant.toString)})"
     case s                       => "\"%s\"" format encodeStringLiteral(s.toString)
   }
 

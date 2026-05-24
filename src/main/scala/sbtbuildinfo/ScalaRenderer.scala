@@ -102,16 +102,16 @@ abstract class ScalaRenderer extends BuildInfoRenderer {
     case x: Long            => x.toString + "L"
     case node: scala.xml.NodeSeq if node.toString().trim.nonEmpty => node.toString()
     case _: scala.xml.NodeSeq => "scala.xml.NodeSeq.Empty"
-    case (k, _v)            => "(%s -> %s)" format(quote(k), quote(_v))
+    case (k, _v)            => s"(${quote(k)} -> ${quote(_v)})"
     case mp: Map[?, ?]      => mp.toList.map(quote(_)).mkString("Map(", ", ", ")")
     case seq: collection.Seq[?] => seq.map(quote).mkString("scala.collection.immutable.Seq(", ", ", ")")
     case op: Option[?]      => op map { x => "scala.Some(" + quote(x) + ")" } getOrElse {"scala.None"}
-    case url: java.net.URL  => "new java.net.URI(%s).toURL" format quote(url.toString)
-    case uri: java.net.URI  => "new java.net.URI(%s)" format quote(uri.toString)
-    case file: java.io.File => "new java.io.File(%s)" format quote(file.toString)
+    case url: java.net.URL  => s"new java.net.URI(${quote(url.toString)}).toURL"
+    case uri: java.net.URI  => s"new java.net.URI(${quote(uri.toString)})"
+    case file: java.io.File => s"new java.io.File(${quote(file.toString)})"
     case attr: sbt.Attributed[?] => quote(attr.data)
-    case date: java.time.LocalDate  => "java.time.LocalDate.parse(%s)" format quote(date.toString)
-    case instant: java.time.Instant => "java.time.Instant.parse(%s)" format quote(instant.toString)
+    case date: java.time.LocalDate  => s"java.time.LocalDate.parse(${quote(date.toString)})"
+    case instant: java.time.Instant => s"java.time.Instant.parse(${quote(instant.toString)})"
     case s                  => "\"%s\"" format encodeStringLiteral(s.toString)
   }
 
