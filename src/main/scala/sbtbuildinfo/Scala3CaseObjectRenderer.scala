@@ -60,12 +60,10 @@ case class Scala3CaseObjectRenderer(options: Seq[BuildInfoOption], pkg: String, 
 
   def toStringLines(results: Seq[BuildInfoResult]): String = {
     val idents = results.map(_.identifier)
-    val fmt = idents.map("%s: %%s" format _).mkString(", ")
-    val vars = idents.mkString(", ")
+    val values = idents.map(x => s"${x}: $${$x}").mkString("s\"", ", ", "\"")
     s"""  override val toString: String = {
-         |    "$fmt".format(
-         |      $vars
-         |    )
+         |    import _root_.scala.StringContext
+         |    ${values}
          |  }""".stripMargin
   }
 }

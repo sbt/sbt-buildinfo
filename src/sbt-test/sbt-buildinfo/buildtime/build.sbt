@@ -45,9 +45,8 @@ lazy val root = (project in file("."))
           builtAtMillisComment ::
           builtAtMillis ::
           """  override val toString: String = {""" ::
-          """    "name: %s, version: %s, scalaVersion: %s, builtAtString: %s, builtAtMillis: %s".format(""" ::
-          """      name, version, scalaVersion, builtAtString, builtAtMillis""" ::
-          """    )""" ::
+          """    import _root_.scala.StringContext""" ::
+          """    s"name: ${name}, version: ${version}, scalaVersion: ${scalaVersion}, builtAtString: ${builtAtString}, builtAtMillis: ${builtAtMillis}"""" ::
           """  }""" ::
           """}""" ::
           """// $COVERAGE-ON$""" :: Nil =>
