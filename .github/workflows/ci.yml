@@ -25,7 +25,7 @@ jobs:
       JAVA_OPTS: -Xms800M -Xmx2G -Xss2M -XX:ReservedCodeCacheSize=128M -Dfile.encoding=UTF-8
       JVM_OPTS: -Xms800M -Xmx2G -Xss2M -XX:ReservedCodeCacheSize=128M -Dfile.encoding=UTF-8
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - uses: actions/setup-java@v5
       with:
         distribution: "${{ matrix.distribution }}"
