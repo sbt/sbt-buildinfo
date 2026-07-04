@@ -43,7 +43,7 @@ object BuildInfo {
           Some(task(ident(key) -> extracted.runTask(Scoped.scopedTask(scope(key, project), key.key), state)._2))
         case PluginCompat.TaskValue(task)     => Some(task.map(x => ident(task) -> x))
         case PluginCompat.Constant(tuple)     => Some(task(tuple))
-        case PluginCompat.Action(name, fun)   => Some(task(name -> fun.apply))
+        case PluginCompat.Action(name, fun)   => Some(task(name -> fun.apply()))
         case m@PluginCompat.Mapped(from, fun) => entry(from).map { (t) => t.map((r) => fun((r.identifier, r.value.asInstanceOf[from.A]))) }
       }
       result.map(_.map {
