@@ -4,6 +4,7 @@ import com.eed3si9n.manifesto.Manifesto
 import java.nio.file.{ Path => NioPath }
 import sbt.*
 import scala.annotation.nowarn
+import scala.language.implicitConversions
 import xsbti.{ FileConverter, HashedVirtualFileRef, VirtualFile }
 
 object PluginCompat:
@@ -28,7 +29,10 @@ object PluginCompat:
 
   trait BuildInfoKeys0:
     @nowarn inline given [A1]: Conversion[SettingKey[A1], Entry[A1]] = BuildInfoKey(_)
-    @nowarn inline given [A1]: Conversion[TaskKey[A1], Entry[A1]] = BuildInfoKey(_)
+    // An `inline def`, not a `Conversion` given: applying a `Conversion` passes
+    // the key through a lambda parameter, and the setting macro (`:=`, `+=`, ...)
+    // would then see `param.taskValue` instead of the key. See `BuildInfoKey.apply`.
+    implicit inline def sbtbuildinfoTaskEntry[A1: Manifest](inline key: TaskKey[A1]): Entry[A1] = BuildInfoKey(key)
     @nowarn inline given [A1]: Conversion[sbt.Task[A1], Entry[A1]] = Entry.TaskValue[A1](_)
     @nowarn inline given [A1]: Conversion[(String, A1), Entry[A1]] = BuildInfoKey(_)
   end BuildInfoKeys0

@@ -7,7 +7,7 @@ ThisBuild / licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-bui
 
 val projOutOfTaskGraph1 = project
   .settings (
-    Compile / sourceGenerators += Def.task { counterOutOfTaskGraph.incrementAndGet(); Nil }.taskValue
+    Compile / sourceGenerators += Def.task { counterOutOfTaskGraph.incrementAndGet(); Seq.empty[File] }.taskValue
   )
 
 val projOutOfTaskGraph2 = project
@@ -20,7 +20,7 @@ val projOutOfTaskGraph2 = project
 
 val projInTaskGraph1 = project
   .settings (
-    Compile / sourceGenerators += Def.task { counterInTaskGraph.incrementAndGet(); Nil }.taskValue
+    Compile / sourceGenerators += Def.task { counterInTaskGraph.incrementAndGet(); Seq.empty[File] }.taskValue
   )
 
 val projInTaskGraph2 = project
