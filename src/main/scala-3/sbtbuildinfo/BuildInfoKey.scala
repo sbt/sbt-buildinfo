@@ -10,8 +10,13 @@ object BuildInfoKey:
   def apply[A1: PluginCompat.Manifest](key: SettingKey[A1]): Entry[A1] =
     Entry.Setting(key)
 
-  def apply[A1: PluginCompat.Manifest](key: TaskKey[A1]): Entry[A1] =
-    Entry.Task(key)
+  // Expands to `key.taskValue`, which only works inside a setting macro
+  // (`:=`, `+=`, ...): the macro makes the task a dependency of buildInfo, so
+  // it runs once, as part of the build, instead of being run separately by the
+  // plugin (#237). The `inline` parameter keeps the key expression itself in
+  // the expansion, where the setting macro looks for it.
+  inline def apply[A1: PluginCompat.Manifest](inline key: TaskKey[A1]): Entry[A1] =
+    Entry.TaskValue(key.taskValue)
 
   def apply[A1: PluginCompat.Manifest](tuple: (String, A1)): Entry[A1] =
     Entry.Constant(tuple)
