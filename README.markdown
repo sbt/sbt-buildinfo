@@ -85,6 +85,13 @@ This generates:
 
 Tasks can be added only if they do not depend on `sourceGenerators`. Otherwise, it will cause an infinite loop.
 
+A `TaskKey` must appear directly inside the setting macro, as in `buildInfoKeys ++= Seq[BuildInfoKey](taskKey)`. Helper methods that take a `TaskKey` work if they are `inline` with an `inline` parameter:
+
+```scala
+inline def named[A](inline key: TaskKey[A], name: String): BuildInfoKey =
+  BuildInfoKey.map(key) { case (_, v) => name -> v }
+```
+
 Here's how to change the generated object name:
 
 ```scala
