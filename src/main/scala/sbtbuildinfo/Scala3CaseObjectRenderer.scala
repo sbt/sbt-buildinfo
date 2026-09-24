@@ -62,7 +62,6 @@ case class Scala3CaseObjectRenderer(options: Seq[BuildInfoOption], pkg: String, 
     val idents = results.map(_.identifier)
     val values = idents.map(x => s"${x}: $${$x}").mkString("s\"", ", ", "\"")
     s"""  override val toString: String = {
-         |    import _root_.scala.StringContext
          |    ${values}
          |  }""".stripMargin
   }
