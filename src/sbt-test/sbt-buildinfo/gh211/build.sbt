@@ -17,7 +17,7 @@ lazy val a3 = project
       val sv = scalaVersion.value
       val _ = (Compile / compile).value
       val f = (Compile / sourceManaged).value / "sbt-buildinfo" / ("BuildInfo.scala")
-      val lines = scala.io.Source.fromFile(f).getLines.toList
+      val lines = scala.io.Source.fromFile(f).getLines().toList
       assert(lines.contains("  val scalaVersion_a2: String = \"3.3.4\""), lines.toString)
     },
   )
