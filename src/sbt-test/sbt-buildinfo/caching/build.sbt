@@ -17,7 +17,7 @@ lazy val root = (project in file("."))
     check := {
       val dir = (Compile / sourceManaged).value
       val f = dir / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
-      val lines = scala.io.Source.fromFile(f).getLines.toList
+      val lines = scala.io.Source.fromFile(f).getLines().toList
       lines match {
         case """// $COVERAGE-OFF$""" ::
              """package hello""" ::

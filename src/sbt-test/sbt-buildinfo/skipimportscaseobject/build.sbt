@@ -24,7 +24,7 @@ lazy val root = (project in file("."))
     scalacOptions ++= Seq("-Xlint", "-Xfatal-warnings"),
     check := {
       val f = (Compile / sourceManaged).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
-      val lines = scala.io.Source.fromFile(f).getLines.toList
+      val lines = scala.io.Source.fromFile(f).getLines().toList
       lines match {
         case  """// $COVERAGE-OFF$""" ::
               """package hello""" ::

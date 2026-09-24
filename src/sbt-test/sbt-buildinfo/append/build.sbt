@@ -20,7 +20,7 @@ lazy val root = (project in file("."))
     resolvers ++= Seq("Sonatype Public" at "https://oss.sonatype.org/content/groups/public"),
     check := {
       val f = (Compile / sourceManaged).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
-      val lines = scala.io.Source.fromFile(f).getLines.toList
+      val lines = scala.io.Source.fromFile(f).getLines().toList
       lines match {
         case """// $COVERAGE-OFF$""" ::
              """package hello""" ::

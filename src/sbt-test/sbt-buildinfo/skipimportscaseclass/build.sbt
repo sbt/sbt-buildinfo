@@ -35,7 +35,7 @@ lazy val root = (project in file("."))
     libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
     check := {
       val f = (Compile / sourceManaged).value / "sbt-buildinfo" / ("%s.scala" format "BuildInfo")
-      val lines = scala.io.Source.fromFile(f).getLines.toList
+      val lines = scala.io.Source.fromFile(f).getLines().toList
       lines match {
         case """// $COVERAGE-OFF$""" ::
           """package hello""" ::
