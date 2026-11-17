@@ -20,6 +20,14 @@ jobs:
             java: 8
             distribution: zulu
             scala: 2.12.x
+          - os: ubuntu-latest
+            java: 21
+            distribution: zulu
+            scala: 3.x
+          - os: ubuntu-latest
+            java: 25
+            distribution: zulu
+            scala: 3.x
     runs-on: ${{ matrix.os }}
     env:
       JAVA_OPTS: -Xms800M -Xmx2G -Xss2M -XX:ReservedCodeCacheSize=128M -Dfile.encoding=UTF-8

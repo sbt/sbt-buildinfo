@@ -19,7 +19,7 @@ object BuildInfoPlugin extends AutoPlugin {
     val BuildInfoType = sbtbuildinfo.BuildInfoType
     type BuildInfoType = sbtbuildinfo.BuildInfoType
 
-    val addBuildInfoToConfig = buildInfoScopedSettings _
+    val addBuildInfoToConfig: Configuration => Seq[Def.Setting[?]] = buildInfoScopedSettings
 
     val buildInfoValues: TaskKey[Seq[BuildInfoResult]] =
       taskKey("BuildInfo keys/values/types for use in the sbt build")
