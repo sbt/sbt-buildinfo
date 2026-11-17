@@ -1,7 +1,7 @@
 lazy val check = taskKey[Unit]("checks this plugin")
 
 ThisBuild / version := "0.1"
-ThisBuild / scalaVersion := "2.13.3"
+ThisBuild / scalaVersion := "2.13.18"
 ThisBuild / homepage := Some(url("http://example.com"))
 ThisBuild / licenses := Seq("MIT License" -> url("https://github.com/sbt/sbt-buildinfo/blob/master/LICENSE"))
 
