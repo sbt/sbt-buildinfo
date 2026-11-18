@@ -6,7 +6,7 @@ ThisBuild / version := {
   if (orig.endsWith("-SNAPSHOT")) "0.11.0-SNAPSHOT"
   else orig
 }
-val scala3 = "3.8.4"
+val scala3 = "3.9.0"
 ThisBuild / scalaVersion := scala3
 
 lazy val root = (project in file("."))
@@ -28,16 +28,16 @@ lazy val root = (project in file("."))
     },
     scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Xss4M", "-Dplugin.version=" + version.value),
     scriptedBufferLog := false,
-    crossScalaVersions := List(scala3, "2.12.20"),
+    crossScalaVersions := List(scala3, "2.12.21"),
     (pluginCrossBuild / sbtVersion) := {
       scalaBinaryVersion.value match {
         case "2.12" => "1.5.8"
-        case _      => "2.0.0"
+        case _      => "2.1.0"
       }
     },
     scriptedSbt := {
       scalaBinaryVersion.value match {
-        case "2.12" => "1.10.7"
+        case "2.12" => "1.13.1"
         case _      => (pluginCrossBuild / sbtVersion).value
       }
     },
